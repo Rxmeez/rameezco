@@ -12,6 +12,17 @@
   --graph-tag: #8fbc8f;
   --graph-project: #ff6b2b;
   --graph-note: #5b9bd5;
+  --projects-color: #ff6b2b;
+  --notes-color: #5b9bd5;
+  --writing-color: #4ec9b0;
+  --syntax-string: #ce9178;
+  --syntax-number: #b5cea8;
+  --syntax-title: #569cd6;
+  --syntax-attr: #9cdcfe;
+  --syntax-built_in: #4ec9b0;
+  --syntax-regexp: #d16969;
+  --syntax-selector: #d7ba7d;
+  --syntax-link: #569cd6;
   --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", monospace;
   --font-body: "Inter", system-ui, -apple-system, sans-serif;
   --spacing-xs: 0.25rem;
@@ -37,6 +48,17 @@
   --graph-tag: #2e7d32;
   --graph-project: #d42b00;
   --graph-note: #3b7abf;
+  --projects-color: #d42b00;
+  --notes-color: #3b7abf;
+  --writing-color: #2a9d8f;
+  --syntax-string: #a31515;
+  --syntax-number: #098658;
+  --syntax-title: #0000ff;
+  --syntax-attr: #001080;
+  --syntax-built_in: #267f99;
+  --syntax-regexp: #811f3f;
+  --syntax-selector: #795e26;
+  --syntax-link: #0000ff;
 }
 
 [data-theme="neon"] {
@@ -52,6 +74,17 @@
   --graph-tag: #ff6b9d;
   --graph-project: #2dff6e;
   --graph-note: #7b9cff;
+  --projects-color: #2dff6e;
+  --notes-color: #7b9cff;
+  --writing-color: #ffd700;
+  --syntax-string: #ffd700;
+  --syntax-number: #ff6b9d;
+  --syntax-title: #7b9cff;
+  --syntax-attr: #00d4ff;
+  --syntax-built_in: #2dff6e;
+  --syntax-regexp: #ff6b9d;
+  --syntax-selector: #ffd700;
+  --syntax-link: #7b9cff;
 }
 
 [data-theme="mono"] {
@@ -67,6 +100,17 @@
   --graph-tag: #666666;
   --graph-project: #000000;
   --graph-note: #333333;
+  --projects-color: #000000;
+  --notes-color: #333333;
+  --writing-color: #666666;
+  --syntax-string: #555555;
+  --syntax-number: #333333;
+  --syntax-title: #000000;
+  --syntax-attr: #666666;
+  --syntax-built_in: #333333;
+  --syntax-regexp: #555555;
+  --syntax-selector: #333333;
+  --syntax-link: #000000;
 }
 
 [data-theme="sepia"] {
@@ -82,6 +126,17 @@
   --graph-tag: #5a7a5a;
   --graph-project: #c05020;
   --graph-note: #4a7a9b;
+  --projects-color: #c05020;
+  --notes-color: #4a7a9b;
+  --writing-color: #8b6914;
+  --syntax-string: #8b4513;
+  --syntax-number: #2e7d32;
+  --syntax-title: #4a7a9b;
+  --syntax-attr: #5a3d2b;
+  --syntax-built_in: #2e7d32;
+  --syntax-regexp: #8b4513;
+  --syntax-selector: #b8860b;
+  --syntax-link: #4a7a9b;
 }
 
 *,
@@ -347,7 +402,7 @@ th {
   border-color: var(--accent);
 }
 
-.nav .theme-select {
+.nav .theme-select-trigger {
   margin-top: var(--spacing-md);
   width: 100%;
   padding: var(--spacing-sm) var(--spacing-md);
@@ -370,7 +425,12 @@ th {
 .footer-link { font-family: var(--font-mono); font-size: 0.8rem; border-bottom: none; }
 .footer-link:hover { background: var(--accent); color: var(--bg); }
 
-.theme-select {
+.theme-select-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.theme-select-trigger {
   cursor: pointer;
   background: var(--bg);
   border: var(--border-width) solid var(--border);
@@ -378,11 +438,64 @@ th {
   font-size: 0.8rem;
   color: var(--fg);
   padding: 0.15rem 0.4rem;
-  appearance: none;
   border-radius: 0;
   outline: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
 }
-.theme-select:hover { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+
+.theme-select-trigger:hover {
+  background: var(--fg);
+  color: var(--bg);
+  border-color: var(--fg);
+}
+
+.theme-select-chevron {
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.theme-select-dropdown {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  z-index: 100;
+  background: var(--bg);
+  border: var(--border-width) solid var(--border);
+  min-width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.theme-select-option {
+  cursor: pointer;
+  background: none;
+  border: none;
+  border-bottom: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--fg);
+  padding: 0.35rem 0.6rem;
+  text-align: left;
+  text-transform: capitalize;
+  transition: background 0.1s ease, color 0.1s ease;
+}
+
+.theme-select-option:last-child {
+  border-bottom: none;
+}
+
+.theme-select-option:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.theme-select-option.active {
+  background: var(--accent-muted);
+  color: var(--fg);
+}
 
 .theme-toggle-btn {
   cursor: pointer;
@@ -491,13 +604,13 @@ th {
 
 .hero-cta-ghost {
   background: transparent;
-  color: var(--fg);
-  border-color: var(--border);
+  color: var(--writing-color);
+  border-color: var(--writing-color);
 }
 .hero-cta-ghost:hover {
-  background: var(--fg);
+  background: var(--writing-color);
   color: var(--bg);
-  border-color: var(--fg);
+  border-color: var(--writing-color);
 }
 
 .hero-cta-notes {
@@ -1080,7 +1193,7 @@ th {
 }
 
 /* link + button hover */
-a, .graph-btn, .theme-select {
+a, .graph-btn, .theme-select-trigger {
   transition: background 150ms ease, color 150ms ease;
 }
 
@@ -1102,7 +1215,7 @@ a, .graph-btn, .theme-select {
 
 /* touch devices: no hover transitions */
 @media (hover: hover) and (pointer: fine) {
-  a:hover, button:hover, .graph-btn:hover, .theme-select:hover,
+  a:hover, button:hover, .graph-btn:hover, .theme-select-trigger:hover,
   .project-card:hover, .post-card:hover {
     transition-duration: 150ms;
   }
@@ -1166,6 +1279,7 @@ a, .graph-btn, .theme-select {
     max-width: none;
     height: auto;
     flex-direction: row;
+    align-items: center;
     transform: none;
     transition: none;
     background: transparent;
@@ -1193,11 +1307,11 @@ a, .graph-btn, .theme-select {
   .nav-toggle {
     display: none;
   }
-  .nav .theme-select {
+  .nav .theme-select-trigger {
     margin-top: 0;
     width: auto;
-    padding: 0.15rem 0.4rem;
-    font-size: 0.8rem;
+    padding: 0.15rem 0.5rem;
+    font-size: 0.85rem;
   }
   .footer-inner {
     padding: var(--spacing-lg) var(--spacing-md);
@@ -1207,5 +1321,55 @@ a, .graph-btn, .theme-select {
   }
   .hero-tagline {
     max-width: 540px;
+  }
+}
+
+/* ── Section Colors ── */
+.nav-link[href="/projects"] { color: var(--projects-color); border-bottom-color: var(--projects-color); }
+.nav-link[href="/writing"] { color: var(--writing-color); border-bottom-color: var(--writing-color); }
+.nav-link[href="/notes"] { color: var(--notes-color); border-bottom-color: var(--notes-color); }
+
+.nav-link[href="/projects"]:hover, .nav-link[href="/projects"].active { background: var(--projects-color); color: var(--bg); border-color: var(--projects-color); }
+.nav-link[href="/writing"]:hover, .nav-link[href="/writing"].active { background: var(--writing-color); color: var(--bg); border-color: var(--writing-color); }
+.nav-link[href="/notes"]:hover, .nav-link[href="/notes"].active { background: var(--notes-color); color: var(--bg); border-color: var(--notes-color); }
+
+.projects-page h1 { color: var(--projects-color); }
+.writing-page h1 { color: var(--writing-color); }
+.notes-page h1 { color: var(--notes-color); }
+
+.projects-page a:hover { background: var(--projects-color); color: var(--bg); }
+.projects-page ::selection { background: var(--projects-color); color: var(--bg); }
+.writing-page a:hover { background: var(--writing-color); color: var(--bg); }
+.writing-page ::selection { background: var(--writing-color); color: var(--bg); }
+.notes-page a:hover { background: var(--notes-color); color: var(--bg); }
+.notes-page ::selection { background: var(--notes-color); color: var(--bg); }
+
+.home-stat[href="/projects"]:hover { background: var(--projects-color); color: var(--bg); }
+.home-stat[href="/projects"]:hover .home-stat-label { color: var(--bg); }
+.home-stat[href="/writing"]:hover { background: var(--writing-color); color: var(--bg); }
+.home-stat[href="/writing"]:hover .home-stat-label { color: var(--bg); }
+.home-stat[href="/notes"]:hover { background: var(--notes-color); color: var(--bg); }
+.home-stat[href="/notes"]:hover .home-stat-label { color: var(--bg); }
+
+.home-note[href^="/writing"]:hover { background: var(--writing-color); color: var(--bg); }
+.home-note[href^="/writing"]:hover .home-note-date { color: var(--bg); }
+.home-note[href^="/notes"]:hover { background: var(--notes-color); color: var(--bg); }
+.home-note[href^="/notes"]:hover .home-note-date { color: var(--bg); }
+
+@media (min-width: 768px) {
+  .nav-link[href="/projects"]:hover, .nav-link[href="/projects"].active {
+    background: none;
+    color: var(--projects-color);
+    border-color: var(--projects-color);
+  }
+  .nav-link[href="/writing"]:hover, .nav-link[href="/writing"].active {
+    background: none;
+    color: var(--writing-color);
+    border-color: var(--writing-color);
+  }
+  .nav-link[href="/notes"]:hover, .nav-link[href="/notes"].active {
+    background: none;
+    color: var(--notes-color);
+    border-color: var(--notes-color);
   }
 }

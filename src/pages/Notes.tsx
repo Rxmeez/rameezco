@@ -12,7 +12,7 @@ export default function Notes() {
   );
 
   return (
-    <>
+    <div className="notes-page">
       <h1>/notes</h1>
       <p className="page-subtitle">
         Quick thoughts, code snippets, learnings, and things too small for a full post.
@@ -36,6 +36,6 @@ export default function Notes() {
           </article>
         ))}
       </div>
-    </>
+    </div>
   );
 }

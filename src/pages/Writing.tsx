@@ -12,7 +12,7 @@ export default function Writing() {
   );
 
   return (
-    <>
+    <div className="writing-page">
       <h1>/writing</h1>
       <p className="page-subtitle">
         Essays, articles, and deep dives on data engineering, tools, and whatever else I'm thinking about.
@@ -22,6 +22,6 @@ export default function Writing() {
       {allPosts.map((post) => (
         <PostCard key={post.slug} post={post} />
       ))}
-    </>
+    </div>
   );
 }

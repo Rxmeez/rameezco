@@ -8,7 +8,7 @@ export default function ProjectsPage() {
   }, []);
 
   return (
-    <>
+    <div className="projects-page">
       <h1>/projects</h1>
       <p>Projects I've built and contributed to.</p>
       <div className="project-placeholder-banner">
@@ -20,6 +20,6 @@ export default function ProjectsPage() {
       {projects.map((project) => (
         <ProjectCard key={project.title} project={project} />
       ))}
-    </>
+    </div>
   );
 }
