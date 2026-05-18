@@ -1,3 +1,4 @@
+import { usePostHog } from "@posthog/react";
 import type { Project } from "../data/projects";
 
 interface Props {
@@ -5,6 +6,8 @@ interface Props {
 }
 
 export default function ProjectCard({ project }: Props) {
+  const posthog = usePostHog();
+
   return (
     <div className="project-card">
       <div className="project-meta">{project.year}</div>
@@ -24,6 +27,7 @@ export default function ProjectCard({ project }: Props) {
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "live" })}
           >
             Live &rarr;
           </a>
@@ -34,6 +38,7 @@ export default function ProjectCard({ project }: Props) {
             href={project.repo}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "source" })}
           >
             Source &rarr;
           </a>

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { usePostHog } from "@posthog/react";
 import type { BlogPost } from "../data/posts";
 import type { MediumPost } from "../data/medium";
 
@@ -11,11 +12,12 @@ interface MediumProps {
 }
 
 export default function PostCard({ post }: Props) {
+  const posthog = usePostHog();
   return (
     <article className="post-card">
       <div className="post-meta">{post.date}</div>
       <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`}>{post.title}</Link>
+        <Link to={`/writing/${post.slug}`} onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" })}>{post.title}</Link>
       </h3>
       <p className="post-excerpt">{post.excerpt}</p>
     </article>
@@ -23,6 +25,7 @@ export default function PostCard({ post }: Props) {
 }
 
 export function MediumCard({ post }: MediumProps) {
+  const posthog = usePostHog();
   return (
     <article className="post-card">
       <div className="post-meta">
@@ -31,7 +34,7 @@ export function MediumCard({ post }: MediumProps) {
         {post.publication && <span className="medium-pub">{post.publication}</span>}
       </div>
       <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`}>
+        <Link to={`/writing/${post.slug}`} onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" })}>
           {post.title}
         </Link>
       </h3>

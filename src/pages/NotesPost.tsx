@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
+import { usePostHog } from "@posthog/react";
 import { notes } from "../data/notes";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
@@ -21,10 +22,14 @@ hljs.registerLanguage("javascript", javascript);
 export default function NotesPost() {
   const { slug } = useParams<{ slug: string }>();
   const contentRef = useRef<HTMLDivElement>(null);
+  const posthog = usePostHog();
   const note = notes.find((n) => n.slug === slug);
 
   useEffect(() => {
-    if (note) document.title = `${note.title} — Rameez Khan`;
+    if (note) {
+      document.title = `${note.title} — Rameez Khan`;
+      posthog?.capture("note_opened", { slug: note.slug, title: note.title, tags: note.tags });
+    }
   }, [note]);
 
   useEffect(() => {

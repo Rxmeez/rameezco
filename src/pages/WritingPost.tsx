@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
+import { usePostHog } from "@posthog/react";
 import { mediumPosts } from "../data/medium";
 import { buildFullGraph } from "../lib/graph";
 import hljs from "highlight.js/lib/core";
@@ -26,13 +27,17 @@ hljs.registerLanguage("ts", javascript);
 export default function WritingPost() {
   const { slug } = useParams<{ slug: string }>();
   const contentRef = useRef<HTMLDivElement>(null);
+  const posthog = usePostHog();
 
   const mediumPost = mediumPosts.find((p) => p.slug === slug);
   const article = mediumPost;
   const fullGraph = useMemo(() => buildFullGraph(), []);
 
   useEffect(() => {
-    if (article) document.title = `${article.title} — Rameez Khan`;
+    if (article) {
+      document.title = `${article.title} — Rameez Khan`;
+      posthog?.capture("writing_post_opened", { slug: article.slug, title: article.title, tags: article.tags ?? [] });
+    }
   }, [article]);
 
   useEffect(() => {
@@ -61,7 +66,7 @@ export default function WritingPost() {
             })}
           </time>
           <span className="post-tags-sep" />
-          <a href={mediumPost?.url} target="_blank" rel="noopener noreferrer" className="medium-src-link">
+          <a href={mediumPost?.url} target="_blank" rel="noopener noreferrer" className="medium-src-link" onClick={() => posthog?.capture("medium_link_clicked", { slug: article.slug, title: article.title })}>
             medium ↗
           </a>
           {tags.length > 0 && <span className="post-tags-sep" />}
@@ -80,7 +85,7 @@ export default function WritingPost() {
       <hr />
       <nav className="post-nav">
         <Link to="/writing" className="post-back">&larr; Back to writing</Link>
-        <Link to="/graph" className="post-back">&rarr; Full graph</Link>
+        <Link to="/graph" className="post-back" onClick={() => posthog?.capture("writing_graph_opened", { from_slug: article.slug })}>&rarr; Full graph</Link>
       </nav>
     </article>
   );
