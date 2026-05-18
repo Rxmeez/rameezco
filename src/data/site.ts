@@ -7,6 +7,7 @@ export const SITE = {
   socials: {
     github: "https://github.com/rxmeez",
     linkedin: "https://linkedin.com/in/rxmeez",
+    medium: "https://medium.com/@rxmeez",
   },
 };
 

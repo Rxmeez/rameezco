@@ -45,11 +45,12 @@ function nodeColor(type: NodeType, c: ReturnType<typeof css>): string {
   }
 }
 
-function getRadius(node: GraphNode, compact?: boolean): number {
+function getRadius(node: GraphNode, compact?: boolean, width?: number): number {
   const isTag = node.type === "tag";
   const baseRadius = isTag ? 3 : 4;
   const maxRadius = compact ? (isTag ? 6 : 8) : (isTag ? 6 : 12);
-  return Math.min(baseRadius + Math.sqrt(node.linkCount || 0) * 2, maxRadius);
+  const radius = Math.min(baseRadius + Math.sqrt(node.linkCount || 0) * 2, maxRadius);
+  return width && width < 520 ? radius * 0.85 : radius;
 }
 
 type SimNode = GraphNode & d3.SimulationNodeDatum;
@@ -152,7 +153,7 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
       )
       .force("charge", d3.forceManyBody().strength(-250))
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collide", d3.forceCollide().radius((d) => getRadius(d as GraphNode, compact) + 4))
+      .force("collide", d3.forceCollide().radius((d) => getRadius(d as GraphNode, compact, dims.w) + 4))
       .alphaDecay(0.02)
       .velocityDecay(0.4);
 
@@ -174,7 +175,7 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
         const dx = gx - nx;
         const dy = gy - ny;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        const radius = getRadius(node, compact) + 6;
+        const radius = getRadius(node, compact, dims.w) + 6;
         if (dist < radius && dist < closestDist) {
           closest = node;
           closestDist = dist;
@@ -224,7 +225,7 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
         const hov = hoveredRef.current === node.id;
         const isHighlighted = highlightedIdRef.current === node.id;
         const color = nodeColor(node.type as NodeType, c);
-        const baseRadius = getRadius(node, compact);
+        const baseRadius = getRadius(node, compact, dims.w);
         const radius = baseRadius * (hov || isHighlighted ? 1.5 : 1);
 
         let isDimmed = false;
@@ -266,7 +267,8 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
 
         if (hov || isHighlighted) {
           const label = trunc(node.label, 30);
-          ctx.font = `11px ${c.fontMono}`;
+          const fontSize = dims.w < 520 ? 10 : 11;
+          ctx.font = `${fontSize}px ${c.fontMono}`;
           ctx.textAlign = "center";
           ctx.textBaseline = "top";
 

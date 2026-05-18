@@ -5,7 +5,6 @@ import Hero from "../components/Hero";
 import NowSection from "../components/NowSection";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
-import { SITE } from "../data/site";
 
 export default function Home() {
   const posthog = usePostHog();
@@ -104,18 +103,6 @@ export default function Home() {
         </div>
       </section>
 
-      <hr />
-
-      <footer className="home-footer">
-        <p>
-          Built by <strong>{SITE.author}</strong>.{" "}
-          <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer" onClick={() => posthog?.capture("social_link_clicked", { platform: "github" })}>GitHub</a>
-          {" · "}
-          <a href={SITE.socials.linkedin} target="_blank" rel="noopener noreferrer" onClick={() => posthog?.capture("social_link_clicked", { platform: "linkedin" })}>LinkedIn</a>
-          {" · "}
-          <a href="https://medium.com/@rxmeez" target="_blank" rel="noopener noreferrer" onClick={() => posthog?.capture("social_link_clicked", { platform: "medium" })}>Medium</a>
-        </p>
-      </footer>
     </>
   );
 }

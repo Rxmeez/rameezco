@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { SITE } from "../data/site";
 
 export default function Footer() {
@@ -34,12 +33,18 @@ export default function Footer() {
                 LinkedIn
               </a>
             )}
+            {SITE.socials.medium && " / "}
+            {SITE.socials.medium && (
+              <a
+                className="footer-link"
+                href={SITE.socials.medium}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Medium
+              </a>
+            )}
           </span>
-        </div>
-        <div className="footer-line">
-          <Link to="/writing" className="footer-link">
-            RSS
-          </Link>
         </div>
       </div>
     </footer>
