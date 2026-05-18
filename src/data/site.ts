@@ -5,8 +5,8 @@ export const SITE = {
   author: "Rameez Khan",
   role: "Software Engineer",
   socials: {
-    github: "https://github.com/rameezk",
-    linkedin: "https://linkedin.com/in/rameezkhan",
+    github: "https://github.com/rxmeez",
+    linkedin: "https://linkedin.com/in/rxmeez",
   },
 };
 
