@@ -1,0 +1,24 @@
+[tools]
+node = "20"
+
+[env]
+# disable anonymous telemetry for build tools
+
+[tasks.install]
+description = "Install project dependencies"
+run = "npm install"
+
+[tasks.dev]
+description = "Start the development server"
+run = "npm run dev"
+depends = ["install"]
+
+[tasks.build]
+description = "Build for production"
+run = "npm run build"
+depends = ["install"]
+
+[tasks.preview]
+description = "Preview production build"
+run = "npm run preview"
+depends = ["build"]

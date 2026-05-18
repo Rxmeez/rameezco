@@ -1,0 +1,48 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "RK" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /projects
+        - link "Writing" [ref=e8] [cursor=pointer]:
+          - /url: /writing
+        - link "Notes" [ref=e9] [cursor=pointer]:
+          - /url: /notes
+        - link "Graph" [ref=e10] [cursor=pointer]:
+          - /url: /graph
+        - link "Now" [ref=e11] [cursor=pointer]:
+          - /url: /now
+      - combobox "Select theme" [ref=e12] [cursor=pointer]:
+        - option "industrial" [selected]
+        - option "paper"
+        - option "neon"
+        - option "mono"
+        - option "sepia"
+  - main [ref=e13]:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - heading "/graph" [level=1] [ref=e16]
+        - paragraph [ref=e17]: 38 nodes connected by 50 links. Click a node to explore.
+      - generic [ref=e19]:
+        - generic [ref=e20]: 38 nodes · 50 links
+        - generic [ref=e21]:
+          - text: posts ·
+          - text: notes ·
+          - text: tags ·
+          - text: projects
+        - button "reset" [ref=e26] [cursor=pointer]
+  - contentinfo [ref=e29]:
+    - generic [ref=e30]:
+      - generic [ref=e31]:
+        - generic [ref=e32]: © 2026 Rameez Khan
+        - generic [ref=e34]: Software Engineer
+        - generic [ref=e36]:
+          - link "GitHub" [ref=e37] [cursor=pointer]:
+            - /url: https://github.com/rameezk
+          - text: /
+          - link "LinkedIn" [ref=e38] [cursor=pointer]:
+            - /url: https://linkedin.com/in/rameezkhan
+      - link "RSS" [ref=e40] [cursor=pointer]:
+        - /url: /writing

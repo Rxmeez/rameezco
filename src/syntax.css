@@ -1,0 +1,33 @@
+/* Syntax highlighting — uses CSS vars to adapt to every theme */
+
+.hljs { background: var(--code-bg); color: var(--fg); }
+.hljs-comment,
+.hljs-quote { color: var(--muted); font-style: italic; }
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-type { color: var(--accent); font-weight: 600; }
+.hljs-string,
+.hljs-addition { color: #6a9955; }
+.hljs-number,
+.hljs-literal { color: #b5cea8; }
+.hljs-title,
+.hljs-section,
+.hljs-name { color: #569cd6; }
+.hljs-attr,
+.hljs-attribute,
+.hljs-variable,
+.hljs-template-variable { color: #9cdcfe; }
+.hljs-built_in,
+.hljs-builtin-name { color: #4ec9b0; }
+.hljs-params { color: var(--fg); }
+.hljs-meta { color: var(--muted); }
+.hljs-tag { color: #569cd6; }
+.hljs-selector-class { color: #d7ba7d; }
+.hljs-selector-id { color: #d7ba7d; }
+.hljs-selector-pseudo { color: #569cd6; }
+.hljs-regexp { color: #d16969; }
+.hljs-symbol { color: #b5cea8; }
+.hljs-deletion { color: #d16969; }
+.hljs-link { color: #569cd6; text-decoration: underline; }
+.hljs-emphasis { font-style: italic; }
+.hljs-strong { font-weight: 700; }

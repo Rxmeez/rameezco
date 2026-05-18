@@ -1,0 +1,76 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "RK" [ref=e5] [cursor=pointer]:
+        - /url: /
+      - navigation [ref=e6]:
+        - link "Projects" [ref=e7] [cursor=pointer]:
+          - /url: /projects
+        - link "Writing" [ref=e8] [cursor=pointer]:
+          - /url: /writing
+        - link "Notes" [ref=e9] [cursor=pointer]:
+          - /url: /notes
+        - link "Graph" [ref=e10] [cursor=pointer]:
+          - /url: /graph
+        - link "Now" [ref=e11] [cursor=pointer]:
+          - /url: /now
+      - combobox "Select theme" [ref=e12] [cursor=pointer]:
+        - option "industrial" [selected]
+        - option "paper"
+        - option "neon"
+        - option "mono"
+        - option "sepia"
+  - main [ref=e13]:
+    - heading "/projects" [level=1] [ref=e14]
+    - paragraph [ref=e15]: Projects I've built and contributed to.
+    - generic [ref=e16]:
+      - generic [ref=e17]: Note
+      - generic [ref=e18]: These are placeholder projects for demo purposes. Real projects coming soon.
+    - generic [ref=e19]:
+      - generic [ref=e20]: "2025"
+      - heading "Data Pipeline Orchestrator" [level=3] [ref=e21]
+      - paragraph [ref=e22]: Built an event-driven pipeline orchestrator processing 10M+ events/day with Apache Kafka, Spark, and Airflow on AWS.
+      - generic [ref=e23]:
+        - generic [ref=e24]: data-engineering
+        - generic [ref=e25]: streaming
+        - generic [ref=e26]: Kafka
+        - generic [ref=e27]: Spark
+        - generic [ref=e28]: Airflow
+        - generic [ref=e29]: AWS
+    - generic [ref=e30]:
+      - generic [ref=e31]: "2024"
+      - heading "Real-time Analytics Dashboard" [level=3] [ref=e32]
+      - paragraph [ref=e33]: Streaming analytics platform with sub-second latency using ClickHouse, dbt, and a custom React frontend.
+      - generic [ref=e34]:
+        - generic [ref=e35]: data-engineering
+        - generic [ref=e36]: sql
+        - generic [ref=e37]: dbt
+        - generic [ref=e38]: ClickHouse
+        - generic [ref=e39]: React
+        - generic [ref=e40]: WebSockets
+      - link "Live →" [ref=e42] [cursor=pointer]:
+        - /url: https://example.com/dashboard
+    - generic [ref=e43]:
+      - generic [ref=e44]: "2024"
+      - heading "Data Quality Framework" [level=3] [ref=e45]
+      - paragraph [ref=e46]: Open-source data validation library with Great Expectations integration and custom anomaly detection.
+      - generic [ref=e47]:
+        - generic [ref=e48]: data-engineering
+        - generic [ref=e49]: python
+        - generic [ref=e50]: Great Expectations
+        - generic [ref=e51]: PySpark
+      - link "Source →" [ref=e53] [cursor=pointer]:
+        - /url: https://github.com/rameezk/data-quality
+  - contentinfo [ref=e54]:
+    - generic [ref=e55]:
+      - generic [ref=e56]:
+        - generic [ref=e57]: © 2026 Rameez Khan
+        - generic [ref=e59]: Software Engineer
+        - generic [ref=e61]:
+          - link "GitHub" [ref=e62] [cursor=pointer]:
+            - /url: https://github.com/rameezk
+          - text: /
+          - link "LinkedIn" [ref=e63] [cursor=pointer]:
+            - /url: https://linkedin.com/in/rameezkhan
+      - link "RSS" [ref=e65] [cursor=pointer]:
+        - /url: /writing
