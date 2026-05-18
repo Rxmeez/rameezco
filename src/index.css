@@ -400,6 +400,17 @@ th {
   border-color: var(--fg);
 }
 
+.hero-cta-notes {
+  background: transparent;
+  color: var(--note-color);
+  border-color: var(--note-color);
+}
+.hero-cta-notes:hover {
+  background: var(--note-color);
+  color: var(--bg);
+  border-color: var(--note-color);
+}
+
 @keyframes fade-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }

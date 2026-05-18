@@ -26,6 +26,7 @@ export default function Hero() {
         <div className="hero-links">
           <a href="/projects" className="hero-cta" onClick={() => handleCtaClick("See my projects")}>See my projects</a>
           <a href="/writing" className="hero-cta hero-cta-ghost" onClick={() => handleCtaClick("Read my writing")}>Read my writing</a>
+          <a href="/notes" className="hero-cta hero-cta-notes" onClick={() => handleCtaClick("Read my notes")}>Read my notes</a>
         </div>
       </div>
       <div className="hero-bracket hero-bracket-bottom">*/</div>
