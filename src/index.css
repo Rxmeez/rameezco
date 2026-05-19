@@ -1420,9 +1420,7 @@ a, .graph-btn, .theme-select-trigger {
   gap: var(--spacing-md);
   margin: var(--spacing-lg) 0;
   padding: var(--spacing-md) var(--spacing-lg);
-  border: var(--border-width) solid var(--border);
-  border-radius: 4px;
-  background: var(--accent-muted);
+  background: transparent;
   font-family: var(--font-mono);
   font-size: 0.9rem;
   color: var(--muted);
