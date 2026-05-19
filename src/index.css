@@ -15,6 +15,7 @@
   --projects-color: #ff6b2b;
   --notes-color: #5b9bd5;
   --writing-color: #4ec9b0;
+  --now-color: #e8a849;
   --syntax-string: #ce9178;
   --syntax-number: #b5cea8;
   --syntax-title: #569cd6;
@@ -51,6 +52,7 @@
   --projects-color: #d42b00;
   --notes-color: #3b7abf;
   --writing-color: #2a9d8f;
+  --now-color: #b8860b;
   --syntax-string: #a31515;
   --syntax-number: #098658;
   --syntax-title: #0000ff;
@@ -77,6 +79,7 @@
   --projects-color: #2dff6e;
   --notes-color: #7b9cff;
   --writing-color: #ffd700;
+  --now-color: #ff6b9d;
   --syntax-string: #ffd700;
   --syntax-number: #ff6b9d;
   --syntax-title: #7b9cff;
@@ -103,6 +106,7 @@
   --projects-color: #000000;
   --notes-color: #333333;
   --writing-color: #666666;
+  --now-color: #444444;
   --syntax-string: #555555;
   --syntax-number: #333333;
   --syntax-title: #000000;
@@ -129,6 +133,7 @@
   --projects-color: #c05020;
   --notes-color: #4a7a9b;
   --writing-color: #8b6914;
+  --now-color: #a0522d;
   --syntax-string: #8b4513;
   --syntax-number: #2e7d32;
   --syntax-title: #4a7a9b;
@@ -923,7 +928,11 @@ th {
 .post-back { font-family: var(--font-mono); font-size: 0.85rem; border-bottom: none; }
 
 .now-page { max-width: 620px; }
-.now-page h1 { margin-bottom: var(--spacing-xs); }
+.now-page h1 {
+  margin-bottom: var(--spacing-xs);
+  opacity: 0;
+  animation: fade-in 400ms 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
 
 .now-header {
   margin-bottom: var(--spacing-xl);
@@ -939,6 +948,8 @@ th {
   letter-spacing: 0.08em;
   color: var(--accent);
   margin-bottom: var(--spacing-sm);
+  opacity: 0;
+  animation: fade-in 400ms 100ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .now-pulse {
@@ -955,6 +966,8 @@ th {
   color: var(--muted);
   font-size: 1rem;
   margin-top: var(--spacing-sm);
+  opacity: 0;
+  animation: fade-in 400ms 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
 .now-grid {
@@ -967,6 +980,9 @@ th {
   border: var(--border-width) solid var(--border);
   padding: var(--spacing-lg);
   transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  animation: fade-in 400ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 60ms + 400ms);
 }
 .now-card:hover {
   transform: translateX(4px);
@@ -1328,14 +1344,17 @@ a, .graph-btn, .theme-select-trigger {
 .nav-link[href="/projects"] { color: var(--projects-color); border-bottom-color: var(--projects-color); }
 .nav-link[href="/writing"] { color: var(--writing-color); border-bottom-color: var(--writing-color); }
 .nav-link[href="/notes"] { color: var(--notes-color); border-bottom-color: var(--notes-color); }
+.nav-link[href="/now"] { color: var(--now-color); border-bottom-color: var(--now-color); }
 
 .nav-link[href="/projects"]:hover, .nav-link[href="/projects"].active { background: var(--projects-color); color: var(--bg); border-color: var(--projects-color); }
 .nav-link[href="/writing"]:hover, .nav-link[href="/writing"].active { background: var(--writing-color); color: var(--bg); border-color: var(--writing-color); }
 .nav-link[href="/notes"]:hover, .nav-link[href="/notes"].active { background: var(--notes-color); color: var(--bg); border-color: var(--notes-color); }
+.nav-link[href="/now"]:hover, .nav-link[href="/now"].active { background: var(--now-color); color: var(--bg); border-color: var(--now-color); }
 
 .projects-page h1 { color: var(--projects-color); }
 .writing-page h1 { color: var(--writing-color); }
 .notes-page h1 { color: var(--notes-color); }
+.now-page h1 { color: var(--now-color); }
 
 .projects-page a:hover { background: var(--projects-color); color: var(--bg); }
 .projects-page ::selection { background: var(--projects-color); color: var(--bg); }
@@ -1343,6 +1362,8 @@ a, .graph-btn, .theme-select-trigger {
 .writing-page ::selection { background: var(--writing-color); color: var(--bg); }
 .notes-page a:hover { background: var(--notes-color); color: var(--bg); }
 .notes-page ::selection { background: var(--notes-color); color: var(--bg); }
+.now-page a:hover { background: var(--now-color); color: var(--bg); }
+.now-page ::selection { background: var(--now-color); color: var(--bg); }
 
 .home-stat[href="/projects"]:hover { background: var(--projects-color); color: var(--bg); }
 .home-stat[href="/projects"]:hover .home-stat-label { color: var(--bg); }
@@ -1371,5 +1392,10 @@ a, .graph-btn, .theme-select-trigger {
     background: none;
     color: var(--notes-color);
     border-color: var(--notes-color);
+  }
+  .nav-link[href="/now"]:hover, .nav-link[href="/now"].active {
+    background: none;
+    color: var(--now-color);
+    border-color: var(--now-color);
   }
 }

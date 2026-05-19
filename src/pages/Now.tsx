@@ -55,8 +55,8 @@ export default function Now() {
       </div>
 
       <div className="now-grid">
-        {sections.map((s) => (
-          <div key={s.title} className="now-card">
+        {sections.map((s, i) => (
+          <div key={s.title} className="now-card" style={{ "--i": i } as React.CSSProperties}>
             <h3 className="now-card-head">
               <span className="now-card-icon">{s.icon}</span>
               {s.title}
