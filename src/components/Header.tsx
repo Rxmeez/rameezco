@@ -3,7 +3,11 @@ import { NavLink } from "react-router-dom";
 import { NAV } from "../data/site";
 import ThemeSelector from "./ThemeSelector";
 
-export default function Header() {
+interface HeaderProps {
+  onSearchClick?: () => void;
+}
+
+export default function Header({ onSearchClick }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -36,6 +40,18 @@ export default function Header() {
             </NavLink>
           ))}
           <ThemeSelector />
+          {onSearchClick && (
+            <button
+              type="button"
+              className="search-trigger"
+              onClick={() => { onSearchClick(); setMenuOpen(false); }}
+              aria-label="Search"
+              title="Search (Ctrl+K)"
+            >
+              <span className="search-trigger-icon">/</span>
+              <span className="search-trigger-text">Search</span>
+            </button>
+          )}
         </nav>
       </div>
     </header>

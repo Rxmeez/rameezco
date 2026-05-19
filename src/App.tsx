@@ -8,6 +8,7 @@ import WritingGraph from "./pages/WritingGraph";
 import Now from "./pages/Now";
 import Notes from "./pages/Notes";
 import NotesPost from "./pages/NotesPost";
+import NotFound from "./pages/NotFound";
 import { useEffect } from "react";
 
 function ScrollToTop() {
@@ -45,6 +46,7 @@ export default function App() {
           <Route path="now" element={<Now />} />
           <Route path="notes" element={<Notes />} />
           <Route path="notes/:slug" element={<NotesPost />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </>

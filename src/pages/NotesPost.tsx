@@ -1,7 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import { notes } from "../data/notes";
+import { buildFullGraph } from "../lib/graph";
+import Backlinks from "../components/Backlinks";
+import { readingTimeMinutes } from "../lib/readingTime";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -24,6 +27,7 @@ export default function NotesPost() {
   const contentRef = useRef<HTMLDivElement>(null);
   const posthog = usePostHog();
   const note = notes.find((n) => n.slug === slug);
+  const fullGraph = useMemo(() => buildFullGraph(), []);
 
   useEffect(() => {
     if (note) {
@@ -59,6 +63,8 @@ export default function NotesPost() {
           {note.tags.map((tag) => (
             <span key={tag} className="post-tag">{tag}</span>
           ))}
+          <span className="post-tags-sep" />
+          <span className="post-meta-read">{readingTimeMinutes(note.content)} min read</span>
         </div>
       </header>
       <hr />
@@ -67,6 +73,12 @@ export default function NotesPost() {
         className="post-content"
         dangerouslySetInnerHTML={{ __html: note.content }}
       />
+      <Backlinks
+        currentSlug={note.slug}
+        edges={fullGraph.edges}
+        allNodes={fullGraph.nodes}
+      />
+
       <hr />
       <nav className="post-nav">
         <Link to="/notes" className="post-back">&larr; All notes</Link>

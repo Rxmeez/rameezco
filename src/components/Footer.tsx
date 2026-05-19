@@ -46,6 +46,10 @@ export default function Footer() {
             )}
           </span>
         </div>
+        <div className="footer-cta">
+          <span className="footer-cta-text">Want to get in touch?</span>
+          <a className="footer-cta-link" href={`mailto:hello@${SITE.url.replace(/^https?:\/\//, "")}`}>hello@{SITE.url.replace(/^https?:\/\//, "")}</a>
+        </div>
       </div>
     </footer>
   );

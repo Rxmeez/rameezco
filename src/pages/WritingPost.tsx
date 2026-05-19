@@ -4,6 +4,8 @@ import { usePostHog } from "@posthog/react";
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { buildFullGraph } from "../lib/graph";
+import Backlinks from "../components/Backlinks";
+import { readingTimeMinutes } from "../lib/readingTime";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -80,6 +82,8 @@ export default function WritingPost() {
           {tags.map((tag) => (
             <span key={tag} className="post-tag">{tag}</span>
           ))}
+          <span className="post-tags-sep" />
+          <span className="post-meta-read">{readingTimeMinutes(content)} min read</span>
         </div>
       </header>
       <hr />
@@ -87,6 +91,12 @@ export default function WritingPost() {
         ref={contentRef}
         className="post-content"
         dangerouslySetInnerHTML={{ __html: content }}
+      />
+
+      <Backlinks
+        currentSlug={article.slug}
+        edges={fullGraph.edges}
+        allNodes={fullGraph.nodes}
       />
 
       <hr />

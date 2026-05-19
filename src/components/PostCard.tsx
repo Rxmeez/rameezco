@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import type { BlogPost } from "../data/posts";
 import type { MediumPost } from "../data/medium";
+import { readingTimeMinutes } from "../lib/readingTime";
 
 interface Props {
   post: BlogPost;
@@ -19,6 +20,8 @@ export default function PostCard({ post, style }: Props) {
     <article className="post-card" style={style}>
       <div className="post-meta">
         {post.date}
+        <span className="post-meta-sep" />
+        <span className="post-meta-read">{readingTimeMinutes(post.content)} min read</span>
       </div>
       <h3 className="post-title">
         <Link to={`/writing/${post.slug}`} onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" })}>{post.title}</Link>
@@ -39,6 +42,8 @@ export function MediumCard({ post, style }: MediumProps) {
     <article className="post-card" style={style}>
       <div className="post-meta">
         {post.date}
+        <span className="post-meta-sep" />
+        <span className="post-meta-read">{readingTimeMinutes(post.content)} min read</span>
         <span className="medium-badge">medium</span>
         {post.publication && <span className="medium-pub">{post.publication}</span>}
       </div>
