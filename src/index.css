@@ -1371,6 +1371,21 @@ a, .graph-btn, .theme-select-trigger {
   padding-left: var(--spacing-sm);
 }
 
+/* ── Mascot ── */
+.mascot-wrap {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.mascot-img {
+  color: var(--fg);
+  filter: none;
+}
+.mascot-text {
+  border-left: var(--border-width) solid var(--border);
+  padding-left: var(--spacing-sm);
+}
+
 /* ── Code Copy Button ── */
 pre {
   position: relative;
