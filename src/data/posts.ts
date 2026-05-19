@@ -17,7 +17,7 @@ export const posts: BlogPost[] = [
     content: `<p>There's a trap in data engineering. You read about someone's stack at Airbnb or Uber — their fancy orchestration layers, their custom streaming frameworks, their perfectly governed data catalogs. And you think: <em>I need that.</em></p>
 <p>You don't.</p>
 <div class="mascot-aside">
-<img src="/mascot.svg" alt="" width="40" height="40" class="mascot-img mascot-animated-default" />
+<img src="/mascot.svg" alt="" width="56" height="56" class="mascot-img mascot-animated-default" />
 <span class="mascot-aside-text">Node is floating by. He thinks you might be overthinking this.</span>
 </div>
 <h2>The Stack Is Not the Product</h2>
@@ -25,7 +25,7 @@ export const posts: BlogPost[] = [
 <p>What I didn't have: a team that understood <em>why</em> we were building any of this.</p>
 <p>The moment I stopped worrying about the stack and started worrying about the humans, things got better. Not because the tools changed. Because the conversations did.</p>
 <div class="mascot-aside">
-<img src="/mascot-thinking.svg" alt="" width="40" height="40" class="mascot-img mascot-animated-thinking" />
+<img src="/mascot-thinking.svg" alt="" width="56" height="56" class="mascot-img mascot-animated-thinking" />
 <span class="mascot-aside-text">Node is processing this take. He suspects you already knew it.</span>
 </div>
 <h2>What Actually Matters</h2>
@@ -33,7 +33,7 @@ export const posts: BlogPost[] = [
 <li><strong>Contracts over schemas.</strong> Type safety at the boundary beats column-level documentation.</li>
 <li><strong>The simplest thing that works.</strong> A cron job and a Python script that runs reliably is a better pipeline than a Spark cluster that fails silently.</li></ol>
 <div class="mascot-aside">
-<img src="/mascot-surprised.svg" alt="" width="40" height="40" class="mascot-img mascot-animated-surprised" />
+<img src="/mascot-surprised.svg" alt="" width="56" height="56" class="mascot-img mascot-animated-surprised" />
 <span class="mascot-aside-text">Node is surprised you read this far. He didn't think anyone would.</span>
 </div>
 <h2>The Takeaway</h2>
