@@ -41,9 +41,13 @@ export default function NotesPost() {
 
   useEffect(() => {
     if (contentRef.current) {
-      contentRef.current.querySelectorAll("pre code").forEach((block) => {
+      for (const block of contentRef.current.querySelectorAll("pre code")) {
         hljs.highlightElement(block as HTMLElement);
-      });
+      }
+      const h2s = contentRef.current.querySelectorAll("h2");
+      for (let i = 0; i < h2s.length; i++) {
+        h2s[i].id = `heading-${i}`;
+      }
     }
   }, [note]);
 
