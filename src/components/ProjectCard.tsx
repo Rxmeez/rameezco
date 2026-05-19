@@ -3,13 +3,14 @@ import type { Project } from "../data/projects";
 
 interface Props {
   project: Project;
+  style?: React.CSSProperties;
 }
 
-export default function ProjectCard({ project }: Props) {
+export default function ProjectCard({ project, style }: Props) {
   const posthog = usePostHog();
 
   return (
-    <div className="project-card">
+    <div className="project-card" style={style}>
       <div className="project-meta">{project.year}</div>
       <h3 className="project-title">{project.title}</h3>
       <p className="project-desc">{project.description}</p>

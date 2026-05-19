@@ -20,8 +20,8 @@ export default function Notes() {
       <hr />
 
       <div className="notes-list">
-        {sorted.map((note) => (
-          <article key={note.slug} className="notes-item">
+        {sorted.map((note, i) => (
+          <article key={note.slug} className="notes-item" style={{ "--i": i } as React.CSSProperties}>
             <div className="notes-item-meta">
               <time dateTime={note.date}>
                 {new Date(note.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}

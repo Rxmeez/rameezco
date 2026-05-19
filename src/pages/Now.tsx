@@ -54,6 +54,10 @@ export default function Now() {
         </p>
       </div>
 
+      <p className="now-footer">
+        Last updated: May 2025
+      </p>
+
       <div className="now-grid">
         {sections.map((s, i) => (
           <div key={s.title} className="now-card" style={{ "--i": i } as React.CSSProperties}>
@@ -65,18 +69,14 @@ export default function Now() {
               <p className="now-card-text">{s.content}</p>
             ) : (
               <ul className="now-card-list">
-                {s.items!.map((item, i) => (
-                  <li key={i}>{item}</li>
+                {s.items!.map((item, j) => (
+                  <li key={j}>{item}</li>
                 ))}
               </ul>
             )}
           </div>
         ))}
       </div>
-
-      <p className="now-footer">
-        Last updated: May 2025
-      </p>
     </div>
   );
 }

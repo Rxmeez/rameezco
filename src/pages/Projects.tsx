@@ -17,8 +17,8 @@ export default function ProjectsPage() {
           These are placeholder projects for demo purposes. Real projects coming soon.
         </span>
       </div>
-      {projects.map((project) => (
-        <ProjectCard key={project.title} project={project} />
+      {projects.map((project, i) => (
+        <ProjectCard key={project.title} project={project} style={{ "--i": i } as React.CSSProperties} />
       ))}
     </div>
   );

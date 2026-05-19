@@ -19,8 +19,8 @@ export default function Writing() {
       </p>
       <hr />
 
-      {allPosts.map((post) => (
-        <PostCard key={post.slug} post={post} />
+      {allPosts.map((post, i) => (
+        <PostCard key={post.slug} post={post} style={{ "--i": i } as React.CSSProperties} />
       ))}
     </div>
   );
