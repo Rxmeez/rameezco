@@ -1329,6 +1329,26 @@ a, .graph-btn, .theme-select-trigger {
   pointer-events: none;
 }
 
+@keyframes scroll-progress-glow {
+  0% {
+    box-shadow: 0 0 0 0 var(--accent);
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 12px 3px var(--accent);
+    opacity: 1;
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--accent);
+    opacity: 1;
+  }
+}
+
+.scroll-progress-complete {
+  animation: scroll-progress-glow 1s ease-out;
+  opacity: 1;
+}
+
 /* ── Table of Contents ── */
 .toc {
   border: var(--border-width) solid var(--border);
