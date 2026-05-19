@@ -18,7 +18,7 @@ export const posts: BlogPost[] = [
 <p>You don't.</p>
 <div class="mascot-aside">
 <img src="/mascot.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-default" />
-<span class="mascot-aside-text">Node: floating by. He thinks you might be overthinking this.</span>
+<span class="mascot-aside-text">Node: I'm floating by. I think you might be overthinking this.</span>
 </div>
 <h2>The Stack Is Not the Product</h2>
 <p>For three years I chased the ideal pipeline. Spark on Kubernetes? Check. dbt with slim CI? Check. Airflow with dynamic DAGs? Check. DataHub for cataloging? Check.</p>
@@ -26,7 +26,7 @@ export const posts: BlogPost[] = [
 <p>The moment I stopped worrying about the stack and started worrying about the humans, things got better. Not because the tools changed. Because the conversations did.</p>
 <div class="mascot-aside">
 <img src="/mascot-thinking.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-thinking" />
-<span class="mascot-aside-text">Node: processing this take. He suspects you already knew it.</span>
+<span class="mascot-aside-text">Node: I'm processing this take. I suspect you already knew it.</span>
 </div>
 <h2>What Actually Matters</h2>
 <ol><li><strong>Observability before scale.</strong> If you can't see what's broken, more data won't help.</li>
@@ -34,7 +34,7 @@ export const posts: BlogPost[] = [
 <li><strong>The simplest thing that works.</strong> A cron job and a Python script that runs reliably is a better pipeline than a Spark cluster that fails silently.</li></ol>
 <div class="mascot-aside">
 <img src="/mascot-surprised.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-surprised" />
-<span class="mascot-aside-text">Node: surprised you read this far. He didn't think anyone would.</span>
+<span class="mascot-aside-text">Node: I'm surprised you read this far. I didn't think anyone would.</span>
 </div>
 <h2>The Takeaway</h2>
 <p>Your stack should serve your team, not the other way around. If you're spending more time configuring your tooling than delivering value, step back. Build the boring thing first. The interesting stuff can wait.</p>
