@@ -17,7 +17,12 @@ export default function PostCard({ post, style }: Props) {
   const posthog = usePostHog();
   return (
     <article className="post-card" style={style}>
-      <div className="post-meta">{post.date}</div>
+      <div className="post-meta">
+        {post.date}
+        {post.tags.map((tag) => (
+          <span key={tag} className="post-card-tag">{tag}</span>
+        ))}
+      </div>
       <h3 className="post-title">
         <Link to={`/writing/${post.slug}`} onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" })}>{post.title}</Link>
       </h3>
@@ -34,6 +39,9 @@ export function MediumCard({ post, style }: MediumProps) {
         {post.date}
         <span className="medium-badge">medium</span>
         {post.publication && <span className="medium-pub">{post.publication}</span>}
+        {post.tags.map((tag) => (
+          <span key={tag} className="post-card-tag">{tag}</span>
+        ))}
       </div>
       <h3 className="post-title">
         <Link to={`/writing/${post.slug}`} onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" })}>

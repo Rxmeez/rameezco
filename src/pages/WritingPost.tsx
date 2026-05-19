@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
+import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { buildFullGraph } from "../lib/graph";
 import hljs from "highlight.js/lib/core";
@@ -29,8 +30,9 @@ export default function WritingPost() {
   const contentRef = useRef<HTMLDivElement>(null);
   const posthog = usePostHog();
 
+  const blogPost = posts.find((p) => p.slug === slug);
   const mediumPost = mediumPosts.find((p) => p.slug === slug);
-  const article = mediumPost;
+  const article = blogPost ?? mediumPost;
   const fullGraph = useMemo(() => buildFullGraph(), []);
 
   useEffect(() => {
@@ -66,9 +68,14 @@ export default function WritingPost() {
             })}
           </time>
           <span className="post-tags-sep" />
-          <a href={mediumPost?.url} target="_blank" rel="noopener noreferrer" className="medium-src-link" onClick={() => posthog?.capture("medium_link_clicked", { slug: article.slug, title: article.title })}>
-            medium ↗
-          </a>
+          {mediumPost && (
+            <>
+              <span className="post-tags-sep" />
+              <a href={mediumPost.url} target="_blank" rel="noopener noreferrer" className="medium-src-link" onClick={() => posthog?.capture("medium_link_clicked", { slug: article.slug, title: article.title })}>
+                medium ↗
+              </a>
+            </>
+          )}
           {tags.length > 0 && <span className="post-tags-sep" />}
           {tags.map((tag) => (
             <span key={tag} className="post-tag">{tag}</span>
