@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
+import SeoMeta from "../components/SeoMeta";
 import { notes } from "../data/notes";
 import { readingTimeMinutes } from "../lib/readingTime";
+import { SITE } from "../data/site";
 
 export default function Notes() {
   useEffect(() => {
@@ -30,6 +32,11 @@ export default function Notes() {
 
   return (
     <div className="notes-page">
+      <SeoMeta
+        title="Notes — Rameez Khan"
+        description="Quick thoughts, code snippets, learnings, and things too small for a full post."
+        url={`${SITE.url}/notes`}
+      />
       <h1>/notes</h1>
       <p className="page-subtitle">
         Quick thoughts, code snippets, learnings, and things too small for a full post.

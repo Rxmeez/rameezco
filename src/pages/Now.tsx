@@ -1,4 +1,6 @@
 import { useEffect } from "react";
+import SeoMeta from "../components/SeoMeta";
+import { SITE } from "../data/site";
 
 const sections = [
   {
@@ -42,6 +44,11 @@ export default function Now() {
 
   return (
     <div className="now-page">
+      <SeoMeta
+        title="Now — Rameez Khan"
+        description="What I'm focused on right now."
+        url={`${SITE.url}/now`}
+      />
       <div className="now-header">
         <div className="now-status">
           <span className="now-pulse" />

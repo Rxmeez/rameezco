@@ -1,6 +1,7 @@
 import type { Plugin } from "vite";
 import { posts } from "./src/data/posts";
 import { mediumPosts } from "./src/data/medium";
+import { notes } from "./src/data/notes";
 import { SITE } from "./src/data/site";
 
 function escapeXml(unsafe: string): string {
@@ -66,6 +67,54 @@ ${itemsXml}
 </rss>`;
 }
 
+function generateSitemap(): string {
+  const routes = [
+    { path: "/", priority: "1.0", changefreq: "weekly" },
+    { path: "/writing", priority: "0.9", changefreq: "weekly" },
+    { path: "/notes", priority: "0.9", changefreq: "weekly" },
+    { path: "/projects", priority: "0.8", changefreq: "monthly" },
+    { path: "/now", priority: "0.7", changefreq: "weekly" },
+    { path: "/graph", priority: "0.6", changefreq: "monthly" },
+  ];
+
+  const postUrls = posts.map((p) => ({
+    loc: `${SITE.url}/writing/${p.slug}`,
+    lastmod: p.date,
+    priority: "0.8",
+    changefreq: "monthly",
+  }));
+
+  const noteUrls = notes.map((n) => ({
+    loc: `${SITE.url}/notes/${n.slug}`,
+    lastmod: n.date,
+    priority: "0.7",
+    changefreq: "monthly",
+  }));
+
+  const allUrls = [
+    ...routes.map((r) => ({
+      loc: `${SITE.url}${r.path}`,
+      lastmod: new Date().toISOString().split("T")[0],
+      priority: r.priority,
+      changefreq: r.changefreq,
+    })),
+    ...postUrls,
+    ...noteUrls,
+  ];
+
+  const urlXml = allUrls.map((u) => `  <url>
+    <loc>${u.loc}</loc>
+    <lastmod>${u.lastmod}</lastmod>
+    <changefreq>${u.changefreq}</changefreq>
+    <priority>${u.priority}</priority>
+  </url>`).join("\n");
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlXml}
+</urlset>`;
+}
+
 export default function rssPlugin(): Plugin {
   return {
     name: "rss-feed",
@@ -75,6 +124,13 @@ export default function rssPlugin(): Plugin {
         type: "asset",
         fileName: "rss.xml",
         source: rss,
+      });
+
+      const sitemap = generateSitemap();
+      this.emitFile({
+        type: "asset",
+        fileName: "sitemap.xml",
+        source: sitemap,
       });
     },
   };

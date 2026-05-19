@@ -1,9 +1,11 @@
 import { useEffect, useState, useMemo } from "react";
 import PostCard, { MediumCard } from "../components/PostCard";
+import SeoMeta from "../components/SeoMeta";
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import type { BlogPost } from "../data/posts";
 import type { MediumPost } from "../data/medium";
+import { SITE } from "../data/site";
 
 type WritingEntry =
   | { kind: "post"; post: BlogPost }
@@ -39,6 +41,11 @@ export default function Writing() {
 
   return (
     <div className="writing-page">
+      <SeoMeta
+        title="Writing — Rameez Khan"
+        description="Essays, articles, and deep dives on data engineering, tools, and whatever else I'm thinking about."
+        url={`${SITE.url}/writing`}
+      />
       <h1>/writing</h1>
       <p className="page-subtitle">
         Essays, articles, and deep dives on data engineering, tools, and whatever else I'm thinking about.

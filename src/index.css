@@ -1297,6 +1297,122 @@ a, .graph-btn, .theme-select-trigger {
     transition-duration: 150ms;
   }
 }
+/* ── Skip Link ── */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--accent);
+  color: var(--bg);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  z-index: 1000;
+  transition: top 0.2s ease;
+  border: none;
+  text-decoration: none;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* ── Scroll Progress ── */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--accent);
+  transform-origin: left;
+  z-index: 999;
+  pointer-events: none;
+}
+
+/* ── Table of Contents ── */
+.toc {
+  border: var(--border-width) solid var(--border);
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+  background: var(--code-bg);
+}
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  margin-bottom: var(--spacing-sm);
+}
+.toc-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.toc-list li {
+  margin: 0;
+  border-bottom: 1px solid var(--border);
+}
+.toc-list li:last-child {
+  border-bottom: none;
+}
+.toc-link {
+  display: block;
+  padding: var(--spacing-xs) 0;
+  border-bottom: none;
+  font-size: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  transition: padding-left 0.15s ease;
+}
+.toc-link:hover {
+  background: none;
+  color: var(--accent);
+  padding-left: var(--spacing-sm);
+}
+
+/* ── Related Posts ── */
+.related-posts {
+  margin-top: var(--spacing-xl);
+}
+.related-posts-heading {
+  margin-bottom: var(--spacing-md);
+  font-size: 1.1rem;
+}
+.related-posts-list {
+  list-style: none;
+  padding: 0;
+  border: var(--border-width) solid var(--border);
+}
+.related-posts-list li {
+  margin: 0;
+  border-bottom: var(--border-width) solid var(--border);
+}
+.related-posts-list li:last-child {
+  border-bottom: none;
+}
+.related-post-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-bottom: none;
+  font-size: 0.9rem;
+  transition: background 0.1s ease;
+}
+.related-post-link:hover {
+  background: var(--accent);
+  color: var(--bg);
+}
+.related-post-arrow {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  min-width: 1.2em;
+}
+.related-post-title {
+  flex: 1;
+}
+
 /* ── Skeletons ── */
 .graph-skeleton {
   display: flex;

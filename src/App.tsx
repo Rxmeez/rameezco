@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import MainLayout from "./components/MainLayout";
+import ScrollProgress from "./components/ScrollProgress";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Writing from "./pages/Writing";
@@ -34,6 +35,7 @@ function Analytics() {
 export default function App() {
   return (
     <>
+      <ScrollProgress />
       <ScrollToTop />
       <Analytics />
       <Routes>

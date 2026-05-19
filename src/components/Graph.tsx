@@ -433,11 +433,97 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
       draw();
     }
 
+    function handleTouchStart(event: TouchEvent) {
+      event.preventDefault();
+      const touch = event.touches[0];
+      const rect = cvs.getBoundingClientRect();
+      const mx = touch.clientX - rect.left;
+      const my = touch.clientY - rect.top;
+      const node = getNodeAtPoint(mx, my);
+
+      interactionRef.current = {
+        type: node ? "drag" : "pan",
+        node: node as SimNode | null,
+        startX: mx,
+        startY: my,
+        startTime: Date.now(),
+        panStartTransform: transformRef.current,
+      };
+    }
+
+    function handleTouchMove(event: TouchEvent) {
+      event.preventDefault();
+      const touch = event.touches[0];
+      const rect = cvs.getBoundingClientRect();
+      const mx = touch.clientX - rect.left;
+      const my = touch.clientY - rect.top;
+      const ix = interactionRef.current;
+
+      if (ix.type === "drag" && ix.node) {
+        const [gx, gy] = screenToGraph(mx, my);
+        ix.node.fx = gx;
+        ix.node.fy = gy;
+        simulation.alpha(0.3).restart();
+      } else if (ix.type === "pan") {
+        const dx = mx - ix.startX;
+        const dy = my - ix.startY;
+        transformRef.current = d3.zoomIdentity
+          .translate(ix.panStartTransform.x + dx, ix.panStartTransform.y + dy)
+          .scale(ix.panStartTransform.k);
+        draw();
+      }
+    }
+
+    function handleTouchEnd(event: TouchEvent) {
+      event.preventDefault();
+      const touch = event.changedTouches[0];
+      const rect = cvs.getBoundingClientRect();
+      const mx = touch.clientX - rect.left;
+      const my = touch.clientY - rect.top;
+      const ix = interactionRef.current;
+
+      if (ix.type === "drag" && ix.node) {
+        const dx = mx - ix.startX;
+        const dy = my - ix.startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const duration = Date.now() - ix.startTime;
+
+        ix.node.fx = null;
+        ix.node.fy = null;
+        simulation.alphaTarget(0);
+
+        if (dist < 10 && duration < 400) {
+          onNodeClickRef.current?.(ix.node.id);
+        }
+      } else if (ix.type === "pan") {
+        const dx = mx - ix.startX;
+        const dy = my - ix.startY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const duration = Date.now() - ix.startTime;
+
+        if (dist < 10 && duration < 400) {
+          onBgClickRef.current?.();
+        }
+      }
+
+      interactionRef.current = {
+        type: null,
+        node: null,
+        startX: 0,
+        startY: 0,
+        startTime: 0,
+        panStartTransform: d3.zoomIdentity,
+      };
+    }
+
     cvs.addEventListener("mousemove", handleMouseMove);
     cvs.addEventListener("mousedown", handleMouseDown);
     cvs.addEventListener("mouseup", handleMouseUp);
     cvs.addEventListener("mouseleave", handleMouseLeave);
     cvs.addEventListener("wheel", handleWheel, { passive: false });
+    cvs.addEventListener("touchstart", handleTouchStart, { passive: false });
+    cvs.addEventListener("touchmove", handleTouchMove, { passive: false });
+    cvs.addEventListener("touchend", handleTouchEnd, { passive: false });
 
     simulation.on("tick", draw);
     simulation.tick(30);
@@ -449,6 +535,9 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
       cvs.removeEventListener("mouseup", handleMouseUp);
       cvs.removeEventListener("mouseleave", handleMouseLeave);
       cvs.removeEventListener("wheel", handleWheel);
+      cvs.removeEventListener("touchstart", handleTouchStart);
+      cvs.removeEventListener("touchmove", handleTouchMove);
+      cvs.removeEventListener("touchend", handleTouchEnd);
       simulation.stop();
       drawRef.current = null;
     };

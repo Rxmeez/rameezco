@@ -20,8 +20,9 @@ export default function MainLayout() {
 
   return (
     <>
+      <a href="#main" className="skip-link">Skip to content</a>
       <Header onSearchClick={() => setSearchOpen(true)} />
-      <main className="main-content">
+      <main id="main" className="main-content">
         <Outlet />
       </main>
       <Footer />

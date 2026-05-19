@@ -1,10 +1,13 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
+import SeoMeta from "../components/SeoMeta";
+import Backlinks from "../components/Backlinks";
 import { notes } from "../data/notes";
 import { buildFullGraph } from "../lib/graph";
-import Backlinks from "../components/Backlinks";
 import { readingTimeMinutes } from "../lib/readingTime";
+import { SITE } from "../data/site";
+import { noteJsonLd } from "../lib/jsonLd";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -44,10 +47,31 @@ export default function NotesPost() {
     }
   }, [note]);
 
-  if (!note) return <p>Note not found.</p>;
+  if (!note) {
+    return (
+      <div className="not-found">
+        <div className="not-found-bracket">[404]</div>
+        <h1 className="not-found-title">Note not found</h1>
+        <p className="not-found-desc">The note you're looking for doesn't exist.</p>
+        <nav className="not-found-nav">
+          <Link to="/notes" className="not-found-link">&larr; Browse notes</Link>
+          <Link to="/" className="not-found-link">Back to home</Link>
+        </nav>
+      </div>
+    );
+  }
 
   return (
     <article className="post-content-wrapper">
+      <SeoMeta
+        title={`${note.title} — Rameez Khan`}
+        description={note.content.replace(/<[^>]*>/g, " ").slice(0, 160)}
+        url={`${SITE.url}/notes/${note.slug}`}
+        type="article"
+        publishedAt={note.date}
+        tags={note.tags}
+      />
+      <script type="application/ld+json">{noteJsonLd(note)}</script>
       <header className="post-header">
         <div className="notes-label">note</div>
         <h1 className="post-title-heading">{note.title}</h1>

@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import SeoMeta from "../components/SeoMeta";
 import { buildFullGraph } from "../lib/graph";
 import type { GraphNode } from "../lib/graph";
 import Graph from "../components/Graph";
+import { SITE } from "../data/site";
 
 export default function WritingGraph() {
   useEffect(() => {
@@ -69,6 +71,11 @@ export default function WritingGraph() {
 
   return (
     <div className="graph-fullpage">
+      <SeoMeta
+        title="Graph — Rameez Khan"
+        description="Interactive knowledge graph of posts, notes, projects, and tags."
+        url={`${SITE.url}/graph`}
+      />
       <div className="graph-page-header">
         <h1>/graph</h1>
         <p className="page-subtitle">

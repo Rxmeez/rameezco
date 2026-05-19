@@ -1,11 +1,16 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
+import SeoMeta from "../components/SeoMeta";
+import TableOfContents from "../components/TableOfContents";
+import RelatedPosts from "../components/RelatedPosts";
+import Backlinks from "../components/Backlinks";
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { buildFullGraph } from "../lib/graph";
-import Backlinks from "../components/Backlinks";
 import { readingTimeMinutes } from "../lib/readingTime";
+import { SITE } from "../data/site";
+import { blogPostingJsonLd } from "../lib/jsonLd";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -52,13 +57,35 @@ export default function WritingPost() {
     }
   }, [article]);
 
-  if (!article) return <p>Post not found.</p>;
+  if (!article) {
+    return (
+      <div className="not-found">
+        <div className="not-found-bracket">[404]</div>
+        <h1 className="not-found-title">Post not found</h1>
+        <p className="not-found-desc">The article you're looking for doesn't exist.</p>
+        <nav className="not-found-nav">
+          <Link to="/writing" className="not-found-link">&larr; Browse writing</Link>
+          <Link to="/" className="not-found-link">Back to home</Link>
+        </nav>
+      </div>
+    );
+  }
 
   const content = article.content ?? "";
   const tags = article.tags ?? [];
 
   return (
     <article className="post-content-wrapper">
+      <SeoMeta
+        title={`${article.title} — Rameez Khan`}
+        description={article.excerpt}
+        url={`${SITE.url}/writing/${article.slug}`}
+        type="article"
+        publishedAt={article.date}
+        tags={tags}
+      />
+      {blogPost && <script type="application/ld+json">{blogPostingJsonLd(blogPost)}</script>}
+      <TableOfContents content={content} />
       <header className="post-header">
         <h1 className="post-title-heading">{article.title}</h1>
         <div className="post-meta-row">
@@ -92,6 +119,14 @@ export default function WritingPost() {
         className="post-content"
         dangerouslySetInnerHTML={{ __html: content }}
       />
+
+      {blogPost && (
+        <RelatedPosts
+          currentSlug={blogPost.slug}
+          type="post"
+          tags={tags}
+        />
+      )}
 
       <Backlinks
         currentSlug={article.slug}

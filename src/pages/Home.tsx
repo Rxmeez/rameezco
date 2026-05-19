@@ -3,8 +3,11 @@ import { Link } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import Hero from "../components/Hero";
 import NowSection from "../components/NowSection";
+import SeoMeta from "../components/SeoMeta";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
+import { SITE } from "../data/site";
+import { personJsonLd } from "../lib/jsonLd";
 
 export default function Home() {
   const posthog = usePostHog();
@@ -23,6 +26,13 @@ export default function Home() {
 
   return (
     <>
+      <SeoMeta
+        title="Rameez Khan — Software Engineer"
+        description={SITE.description}
+        url={SITE.url}
+      />
+      <script type="application/ld+json">{personJsonLd()}</script>
+
       <Hero />
 
       <div className="home-grid">

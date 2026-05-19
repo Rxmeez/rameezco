@@ -1,8 +1,15 @@
 import { Link } from "react-router-dom";
+import SeoMeta from "../components/SeoMeta";
+import { SITE } from "../data/site";
 
 export default function NotFound() {
   return (
     <div className="not-found">
+      <SeoMeta
+        title="404 — Page Not Found"
+        description="The page you're looking for doesn't exist or has been moved."
+        url={SITE.url}
+      />
       <div className="not-found-bracket">[404]</div>
       <h1 className="not-found-title">Page not found</h1>
       <p className="not-found-desc">
