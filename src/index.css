@@ -1709,7 +1709,7 @@ pre:hover .code-copy-btn,
   color: var(--fg);
   padding: 0.4rem;
   cursor: pointer;
-  font-size: 1.2rem;
+  font-size: 1.6rem;
   line-height: 1;
 }
 .search-toggle:hover {
