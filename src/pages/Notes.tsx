@@ -26,13 +26,15 @@ export default function Notes() {
               <time dateTime={note.date}>
                 {new Date(note.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
               </time>
-              {note.tags.map((tag) => (
-                <span key={tag} className="notes-tag">{tag}</span>
-              ))}
             </div>
             <h3 className="notes-item-title">
               <Link to={`/notes/${note.slug}`}>{note.title}</Link>
             </h3>
+            <div className="notes-tags">
+              {note.tags.map((tag) => (
+                <span key={tag} className="notes-tag">{tag}</span>
+              ))}
+            </div>
           </article>
         ))}
       </div>

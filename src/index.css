@@ -1293,6 +1293,7 @@ a, .graph-btn, .theme-select-trigger {
   display: flex; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm);
   font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-bottom: var(--spacing-xs);
 }
+.notes-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-xs); }
 .notes-tag { font-family: var(--font-mono); font-size: 0.65rem; border: 1px solid var(--border); padding: 0 0.3rem; }
 .notes-item-title { font-size: 1rem; margin-bottom: 0; }
 .notes-item-title a { border-bottom: none; }
