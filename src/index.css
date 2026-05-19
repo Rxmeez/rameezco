@@ -777,7 +777,7 @@ th {
 }
 
 .project-card { border: var(--border-width) solid var(--border); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
-.project-meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin-bottom: var(--spacing-sm); display: flex; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); }
+.project-meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin-bottom: var(--spacing-sm); }
 .project-title { margin-bottom: var(--spacing-sm); }
 .project-desc { color: var(--muted); margin-bottom: var(--spacing-md); }
 .project-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); }
@@ -822,7 +822,8 @@ th {
 .post-title { margin-bottom: var(--spacing-xs); }
 .post-title a { border-bottom: none; }
 .post-title a:hover { background: var(--accent); color: var(--bg); }
-.post-excerpt { color: var(--muted); font-size: 0.95rem; }
+.post-excerpt { color: var(--muted); font-size: 0.95rem; margin-bottom: var(--spacing-sm); }
+.post-card-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); }
 
 .now-badge { display: inline-flex; align-items: center; gap: var(--spacing-sm); font-family: var(--font-mono); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: var(--spacing-md); }
 .now-indicator { display: inline-block; width: 8px; height: 8px; background: var(--accent); animation: pulse 2s infinite; }

@@ -11,14 +11,14 @@ export default function ProjectCard({ project, style }: Props) {
 
   return (
     <div className="project-card" style={style}>
-      <div className="project-meta">
-        {project.year}
+      <div className="project-meta">{project.year}</div>
+      <h3 className="project-title">{project.title}</h3>
+      <p className="project-desc">{project.description}</p>
+      <div className="project-tags">
         {project.tags.map((tag) => (
           <span key={tag} className="tag">{tag}</span>
         ))}
       </div>
-      <h3 className="project-title">{project.title}</h3>
-      <p className="project-desc">{project.description}</p>
       <div className="project-links">
         {project.url && (
           <a
