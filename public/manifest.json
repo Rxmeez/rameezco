@@ -1,0 +1,21 @@
+{
+  "name": "Rameez Khan",
+  "short_name": "Rameez",
+  "description": "Software engineer. Second brain. Building things that matter.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0d0d0c",
+  "theme_color": "#ff6b2b",
+  "icons": [
+    {
+      "src": "/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

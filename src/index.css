@@ -1297,6 +1297,19 @@ a, .graph-btn, .theme-select-trigger {
     transition-duration: 150ms;
   }
 }
+/* ── Skeletons ── */
+.graph-skeleton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--muted);
+  border: var(--border-width) solid var(--border);
+  background: var(--code-bg);
+}
+
 /* ── Search ── */
 .search-overlay {
   position: fixed;

@@ -11,7 +11,10 @@ posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN, {
   defaults: "2026-01-30",
 });
 
-createRoot(document.getElementById("root")!).render(
+const root = document.getElementById("root");
+if (!root) throw new Error("Root element not found");
+
+createRoot(root).render(
   <PostHogProvider client={posthog}>
     <PostHogErrorBoundary>
       <BrowserRouter>
@@ -20,3 +23,11 @@ createRoot(document.getElementById("root")!).render(
     </PostHogErrorBoundary>
   </PostHogProvider>,
 );
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js").catch(() => {
+      // Silent fail — PWA is progressive, not required
+    });
+  });
+}

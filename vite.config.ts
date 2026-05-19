@@ -5,4 +5,15 @@ import rssPlugin from "./vite-rss-plugin";
 export default defineConfig({
   plugins: [react(), rssPlugin()],
   base: "/",
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          graph: ["d3"],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 });

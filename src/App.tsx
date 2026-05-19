@@ -1,15 +1,16 @@
 import { Routes, Route, useLocation, Navigate } from "react-router-dom";
+import { lazy, Suspense, useEffect } from "react";
 import MainLayout from "./components/MainLayout";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Writing from "./pages/Writing";
 import WritingPost from "./pages/WritingPost";
-import WritingGraph from "./pages/WritingGraph";
 import Now from "./pages/Now";
 import Notes from "./pages/Notes";
 import NotesPost from "./pages/NotesPost";
 import NotFound from "./pages/NotFound";
-import { useEffect } from "react";
+
+const WritingGraph = lazy(() => import("./pages/WritingGraph"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -41,7 +42,11 @@ export default function App() {
           <Route path="projects" element={<Projects />} />
           <Route path="writing" element={<Writing />} />
           <Route path="writing/graph" element={<Navigate to="/graph" replace />} />
-          <Route path="graph" element={<WritingGraph />} />
+          <Route path="graph" element={
+            <Suspense fallback={<div className="graph-skeleton">Loading graph...</div>}>
+              <WritingGraph />
+            </Suspense>
+          } />
           <Route path="writing/:slug" element={<WritingPost />} />
           <Route path="now" element={<Now />} />
           <Route path="notes" element={<Notes />} />
