@@ -16,6 +16,17 @@ export default function Header({ onSearchClick }: HeaderProps) {
         <NavLink to="/" className="logo">
           RK
         </NavLink>
+        {onSearchClick && (
+          <button
+            type="button"
+            className="search-toggle"
+            onClick={() => { onSearchClick(); setMenuOpen(false); }}
+            aria-label="Search"
+            title="Search"
+          >
+            <span className="search-toggle-icon">&#8981;</span>
+          </button>
+        )}
         <button
           type="button"
           className="nav-toggle"
