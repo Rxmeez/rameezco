@@ -1371,6 +1371,34 @@ a, .graph-btn, .theme-select-trigger {
   padding-left: var(--spacing-sm);
 }
 
+/* ── Code Copy Button ── */
+pre {
+  position: relative;
+}
+.code-copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--bg);
+  border: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--muted);
+  padding: 0.15rem 0.4rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+pre:hover .code-copy-btn,
+.code-copy-btn:focus-visible {
+  opacity: 1;
+}
+.code-copy-btn:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
 /* ── Related Posts ── */
 .related-posts {
   margin-top: var(--spacing-xl);

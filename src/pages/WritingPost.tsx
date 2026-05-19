@@ -58,6 +58,22 @@ export default function WritingPost() {
       for (let i = 0; i < h2s.length; i++) {
         h2s[i].id = `heading-${i}`;
       }
+      for (const pre of contentRef.current.querySelectorAll("pre")) {
+        if (pre.querySelector(".code-copy-btn")) continue;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "code-copy-btn";
+        btn.textContent = "Copy";
+        btn.addEventListener("click", () => {
+          const code = pre.querySelector("code");
+          if (!code) return;
+          navigator.clipboard.writeText(code.textContent ?? "").then(() => {
+            btn.textContent = "Copied!";
+            setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+          });
+        });
+        pre.appendChild(btn);
+      }
     }
   }, [article]);
 
