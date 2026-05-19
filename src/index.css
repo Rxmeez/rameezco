@@ -1386,6 +1386,54 @@ a, .graph-btn, .theme-select-trigger {
   padding-left: var(--spacing-sm);
 }
 
+/* Mascot Animations */
+@keyframes mascot-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes mascot-bounce {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.12) rotate(-6deg); }
+  50% { transform: scale(0.95) rotate(3deg); }
+  75% { transform: scale(1.06) rotate(-3deg); }
+}
+@keyframes mascot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  33% { transform: scale(1.08) rotate(-4deg); opacity: 0.85; }
+  66% { transform: scale(0.96) rotate(4deg); opacity: 0.95; }
+}
+
+.mascot-animated-default {
+  animation: mascot-float 3s ease-in-out infinite;
+}
+.mascot-animated-surprised {
+  animation: mascot-bounce 1.4s ease-in-out infinite;
+}
+.mascot-animated-thinking {
+  animation: mascot-pulse 2.2s ease-in-out infinite;
+}
+
+/* Mascot Aside (used in posts) */
+.mascot-aside {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border: var(--border-width) solid var(--border);
+  border-radius: 4px;
+  background: var(--accent-muted);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+.mascot-aside .mascot-img {
+  flex-shrink: 0;
+}
+.mascot-aside-text {
+  line-height: 1.5;
+}
+
 /* ── Code Copy Button ── */
 pre {
   position: relative;
