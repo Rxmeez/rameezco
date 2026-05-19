@@ -1,30 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <!-- Body -->
-  <rect x="20" y="55" width="60" height="35" rx="12" fill="none" stroke="currentColor" stroke-width="3"/>
-  
-  <!-- Head -->
-  <rect x="25" y="15" width="50" height="45" rx="14" fill="none" stroke="currentColor" stroke-width="3"/>
-  
-  <!-- Left ear / antenna -->
-  <rect x="18" y="8" width="12" height="18" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-  <circle cx="24" cy="6" r="3" fill="var(--accent, #ff6b2b)"/>
-  
-  <!-- Right ear / antenna -->
-  <rect x="70" y="8" width="12" height="18" rx="6" fill="none" stroke="currentColor" stroke-width="2.5"/>
-  <circle cx="76" cy="6" r="3" fill="currentColor"/>
-  
-  <!-- Eyes (looking up - thinking) -->
-  <circle cx="38" cy="35" r="4" fill="currentColor"/>
-  <circle cx="62" cy="35" r="4" fill="currentColor"/>
-  
-  <!-- Blush -->
-  <circle cx="32" cy="43" r="2.5" fill="var(--accent, #ff6b2b)" opacity="0.6"/>
-  <circle cx="68" cy="43" r="2.5" fill="var(--accent, #ff6b2b)" opacity="0.6"/>
-  
-  <!-- Mouth (small hmm) -->
-  <line x1="46" y1="50" x2="54" y2="50" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
-  
-  <!-- Screen on body -->
-  <rect x="30" y="62" width="40" height="20" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-  <line x1="34" y1="70" x2="48" y2="70" stroke="currentColor" stroke-width="1.5"/>
+  <!-- Core: plump rounded rect -->
+  <rect x="22" y="25" width="56" height="50" rx="22" fill="none" stroke="currentColor" stroke-width="3"/>
+
+  <!-- Top node -->
+  <circle cx="50" cy="14" r="5" fill="currentColor"/>
+
+  <!-- Left node (new, thinking) -->
+  <circle cx="14" cy="50" r="5" fill="var(--accent, #ff6b2b)"/>
+
+  <!-- Bottom-left node -->
+  <circle cx="26" cy="82" r="5" fill="currentColor"/>
+
+  <!-- Bottom-right node -->
+  <circle cx="74" cy="82" r="5" fill="currentColor"/>
+
+  <!-- Inner core ring (processing) -->
+  <circle cx="50" cy="50" r="10" fill="none" stroke="var(--accent, #ff6b2b)" stroke-width="2" opacity="0.6"/>
+  <circle cx="50" cy="50" r="4" fill="var(--accent, #ff6b2b)" opacity="0.8"/>
 </svg>
