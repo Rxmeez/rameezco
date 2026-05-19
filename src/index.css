@@ -777,7 +777,7 @@ th {
 }
 
 .project-card { border: var(--border-width) solid var(--border); padding: var(--spacing-lg); margin-bottom: var(--spacing-lg); }
-.project-meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin-bottom: var(--spacing-sm); }
+.project-meta { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); margin-bottom: var(--spacing-sm); display: flex; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); }
 .project-title { margin-bottom: var(--spacing-sm); }
 .project-desc { color: var(--muted); margin-bottom: var(--spacing-md); }
 .project-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); }
