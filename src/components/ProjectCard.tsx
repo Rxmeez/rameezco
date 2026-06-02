@@ -26,7 +26,7 @@ export default function ProjectCard({ project, style }: Props) {
             href={project.url}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "live" })}
+            onClick={() => setTimeout(() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "live" }), 0)}
           >
             Live &rarr;
           </a>
@@ -37,7 +37,7 @@ export default function ProjectCard({ project, style }: Props) {
             href={project.repo}
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "source" })}
+            onClick={() => setTimeout(() => posthog?.capture("project_link_clicked", { project: project.title, link_type: "source" }), 0)}
           >
             Source &rarr;
           </a>

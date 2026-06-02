@@ -5,7 +5,7 @@ export default function Hero() {
   const posthog = usePostHog();
 
   const handleCtaClick = (label: string) => {
-    posthog?.capture("hero_cta_clicked", { label });
+    setTimeout(() => posthog?.capture("hero_cta_clicked", { label }), 0);
   };
 
   return (

@@ -77,7 +77,7 @@ export default function Home() {
               to={`/writing/${post.slug}`}
               className="home-note stagger-item"
               style={{ "--i": i } as React.CSSProperties}
-              onClick={() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "home" })}
+              onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "home" }), 0)}
             >
               <span className="home-note-date">
                 {new Date(post.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
@@ -102,7 +102,7 @@ export default function Home() {
               to={`/notes/${note.slug}`}
               className="home-note stagger-item"
               style={{ "--i": i } as React.CSSProperties}
-              onClick={() => posthog?.capture("note_clicked", { slug: note.slug, title: note.title, source: "home" })}
+              onClick={() => setTimeout(() => posthog?.capture("note_clicked", { slug: note.slug, title: note.title, source: "home" }), 0)}
             >
               <span className="home-note-date">
                 {new Date(note.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}

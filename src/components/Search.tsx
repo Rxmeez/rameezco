@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, lazy, Suspense } from "react";
 import { Link } from "react-router-dom";
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
@@ -15,39 +15,41 @@ interface SearchItem {
   date?: string;
 }
 
-const index: SearchItem[] = [
-  ...posts.map((p) => ({
-    title: p.title,
-    path: `/writing/${p.slug}`,
-    type: "post" as const,
-    excerpt: p.excerpt,
-    tags: p.tags,
-    date: p.date,
-  })),
-  ...mediumPosts.map((p) => ({
-    title: p.title,
-    path: `/writing/${p.slug}`,
-    type: "medium" as const,
-    excerpt: p.excerpt,
-    tags: p.tags,
-    date: p.date,
-  })),
-  ...notes.map((n) => ({
-    title: n.title,
-    path: `/notes/${n.slug}`,
-    type: "note" as const,
-    excerpt: `${stripHtml(n.content).slice(0, 160)}...`,
-    tags: n.tags,
-    date: n.date,
-  })),
-  ...projects.map((p) => ({
-    title: p.title,
-    path: "/projects",
-    type: "project" as const,
-    excerpt: p.description,
-    tags: p.tags,
-  })),
-];
+function buildSearchIndex(): SearchItem[] {
+  return [
+    ...posts.map((p) => ({
+      title: p.title,
+      path: `/writing/${p.slug}`,
+      type: "post" as const,
+      excerpt: p.excerpt,
+      tags: p.tags,
+      date: p.date,
+    })),
+    ...mediumPosts.map((p) => ({
+      title: p.title,
+      path: `/writing/${p.slug}`,
+      type: "medium" as const,
+      excerpt: p.excerpt,
+      tags: p.tags,
+      date: p.date,
+    })),
+    ...notes.map((n) => ({
+      title: n.title,
+      path: `/notes/${n.slug}`,
+      type: "note" as const,
+      excerpt: `${stripHtml(n.content).slice(0, 160)}...`,
+      tags: n.tags,
+      date: n.date,
+    })),
+    ...projects.map((p) => ({
+      title: p.title,
+      path: "/projects",
+      type: "project" as const,
+      excerpt: p.description,
+      tags: p.tags,
+    })),
+  ];
+}
 
 interface Props {
   isOpen: boolean;
@@ -56,13 +58,27 @@ interface Props {
 
 export default function Search({ isOpen, onClose }: Props) {
   const [query, setQuery] = useState("");
+  const [indexReady, setIndexReady] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const indexRef = useRef<SearchItem[]>([]);
 
   useEffect(() => {
     if (isOpen) {
       setQuery("");
-      inputRef.current?.focus();
       document.body.style.overflow = "hidden";
+      // Build index on first open, not at module init
+      if (!indexRef.current.length) {
+        requestIdleCallback(() => {
+          indexRef.current = buildSearchIndex();
+          setIndexReady(true);
+        });
+      } else {
+        setIndexReady(true);
+      }
+      // Focus after a short delay to allow render
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
     } else {
       document.body.style.overflow = "";
     }
@@ -82,9 +98,9 @@ export default function Search({ isOpen, onClose }: Props) {
   }, [isOpen, onClose]);
 
   const results = useMemo(() => {
-    if (!query.trim()) return [];
+    if (!query.trim() || !indexReady) return [];
     const q = query.toLowerCase();
-    return index
+    return indexRef.current
       .filter(
         (item) =>
           item.title.toLowerCase().includes(q) ||
@@ -92,7 +108,7 @@ export default function Search({ isOpen, onClose }: Props) {
           item.tags.some((t) => t.toLowerCase().includes(q)),
       )
       .slice(0, 8);
-  }, [query]);
+  }, [query, indexReady]);
 
   if (!isOpen) return null;
 
@@ -117,7 +133,11 @@ export default function Search({ isOpen, onClose }: Props) {
           )}
         </div>
 
-        {query.trim() && results.length === 0 && (
+        {!indexReady && (
+          <div className="search-empty">Loading search index...</div>
+        )}
+
+        {indexReady && query.trim() && results.length === 0 && (
           <div className="search-empty">No results for "{query}"</div>
         )}
 

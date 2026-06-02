@@ -120,7 +120,7 @@ export default function WritingPost() {
           {mediumPost && (
             <>
               <span className="post-tags-sep" />
-              <a href={mediumPost.url} target="_blank" rel="noopener noreferrer" className="medium-src-link" onClick={() => posthog?.capture("medium_link_clicked", { slug: article.slug, title: article.title })}>
+              <a href={mediumPost.url} target="_blank" rel="noopener noreferrer" className="medium-src-link" onClick={() => setTimeout(() => posthog?.capture("medium_link_clicked", { slug: article.slug, title: article.title }), 0)}>
                 medium ↗
               </a>
             </>
@@ -157,7 +157,7 @@ export default function WritingPost() {
       <hr />
       <nav className="post-nav">
         <Link to="/writing" className="post-back">&larr; Back to writing</Link>
-        <Link to="/graph" className="post-back" onClick={() => posthog?.capture("writing_graph_opened", { from_slug: article.slug })}>&rarr; Full graph</Link>
+        <Link to="/graph" className="post-back" onClick={() => setTimeout(() => posthog?.capture("writing_graph_opened", { from_slug: article.slug }), 0)}>&rarr; Full graph</Link>
       </nav>
     </article>
   );
