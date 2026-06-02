@@ -6,17 +6,17 @@ const sections = [
   {
     icon: "⚙",
     title: "Work",
-    content: "Managing Data Infrastructure at RVU for the money.co.uk brand. Improving data pipelines using dbt-core and SQL, and writing Python/TypeScript for ingestion pipelines. Also improving money.co.uk backend internal apps and implementing AI to improve processes across the money.co.uk team and wider FS team.",
+    content: "Leading data infrastructure at RVU for the money.co.uk brand. Modernising data pipelines with dbt-core and SQL, building ingestion systems in Python and TypeScript, and improving backend internal applications. Currently focused on implementing AI solutions to streamline processes across the money.co.uk and wider Financial Services teams.",
   },
   {
     icon: "→",
     title: "Side Project",
-    content: "Looking into what a mini AI-first platform would look like to standardise how AI is deployed for multiple teams.",
+    content: "Exploring what a mini AI-first platform could look like — standardising how AI tools and agents are deployed and managed across multiple teams, with a focus on reproducibility and governance.",
   },
   {
     icon: "★",
     title: "Learning",
-    content: "Continuing to work on learning Go. I've built mini CLI applications but looking to build something bigger in it.",
+    content: "Continuing to work on learning Go. I've built mini CLI applications but looking to build something bigger in it. The goal is to get comfortable enough with Go's concurrency model and standard library to ship a production-grade service.",
   },
   {
     icon: "☗",
@@ -74,8 +74,8 @@ export default function Now() {
               <p className="now-card-text">{s.content}</p>
             ) : (
               <ul className="now-card-list">
-                {s.items!.map((item, j) => (
-                  <li key={j}>{item}</li>
+                {s.items!.map((item) => (
+                  <li key={item}>{item}</li>
                 ))}
               </ul>
             )}

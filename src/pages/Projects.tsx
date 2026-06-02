@@ -20,12 +20,6 @@ export default function ProjectsPage() {
       {projects[0] && <script type="application/ld+json">{creativeWorkJsonLd(projects[0])}</script>}
       <h1>/projects</h1>
       <p>Projects I've built and contributed to.</p>
-      <div className="project-placeholder-banner">
-        <span className="project-placeholder-label">Note</span>
-        <span className="project-placeholder-text">
-          These are placeholder projects for demo purposes. Real projects coming soon.
-        </span>
-      </div>
       {projects.map((project, i) => (
         <ProjectCard key={project.title} project={project} style={{ "--i": i } as React.CSSProperties} />
       ))}
