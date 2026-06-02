@@ -9,23 +9,24 @@ export interface Project {
 
 export const projects: Project[] = [
   {
-    title: "Data Pipeline Orchestrator",
-    description: "Built an event-driven pipeline orchestrator processing 10M+ events/day with Apache Kafka, Spark, and Airflow on AWS.",
-    tags: ["data-engineering", "streaming", "kafka", "spark", "airflow", "aws"],
+    title: "ox-db",
+    description: "A developer-focused database query tool built with TypeScript. Features a clean UI for writing and executing SQL queries across multiple database types.",
+    repo: "https://github.com/Rxmeez/ox-db",
+    tags: ["typescript", "sql", "database", "developer-tools"],
     year: 2025,
   },
   {
-    title: "Real-time Analytics Dashboard",
-    description: "Streaming analytics platform with sub-second latency using ClickHouse, dbt, and a custom React frontend.",
-    url: "https://example.com/dashboard",
-    tags: ["data-engineering", "sql", "dbt", "clickhouse", "react", "websockets"],
-    year: 2024,
+    title: "bragdoc",
+    description: "A second brain for tracking what you worked on. Built to solve the problem of forgetting your own accomplishments when it matters most — performance reviews, interviews, and 1:1s.",
+    repo: "https://github.com/Rxmeez/bragdoc",
+    tags: ["typescript", "productivity", "developer-tools"],
+    year: 2025,
   },
   {
-    title: "Data Quality Framework",
-    description: "Open-source data validation library with Great Expectations integration and custom anomaly detection.",
-    repo: "https://github.com/rameezk/data-quality",
-    tags: ["data-engineering", "python", "great-expectations", "pyspark"],
-    year: 2024,
+    title: "Self-Driving Car — Behavioral Cloning",
+    description: "Udacity Self-Driving Car Nanodegree project using deep neural networks and convolutional neural networks (CNNs) to clone human driving behavior in a simulator. Built end-to-end autonomous steering prediction pipeline.",
+    repo: "https://github.com/Rxmeez/SDCND-1-BehaviorialCloning",
+    tags: ["machine-learning", "deep-learning", "computer-vision", "tensorflow", "python"],
+    year: 2017,
   },
 ];
