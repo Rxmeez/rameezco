@@ -19,7 +19,11 @@ export const mediumPosts: MediumPost[] = [
     tags: ["big-data-analytics", "sql", "bigquery"],
     url: "https://medium.com/@rxmeez/untangling-first-value-and-last-value-in-bigquery-sql-494cce988f20",
     isMedium: true,
-    content: `<p>Window functions in SQL are powerful — until they're not. <code>FIRST_VALUE</code> and <code>LAST_VALUE</code> are two functions that seem straightforward but often produce unexpected results when you don't fully understand their frame clause behavior.</p>
+    content: `<div class="mascot-aside">
+<img src="/mascot-thinking.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-thinking" />
+<span class="mascot-aside-text">Node: I'm still processing window functions. If you think <code>FIRST_VALUE</code> is straightforward, wait until you meet <code>LAST_VALUE</code>'s frame clause.</span>
+</div>
+<p>Window functions in SQL are powerful — until they're not. <code>FIRST_VALUE</code> and <code>LAST_VALUE</code> are two functions that seem straightforward but often produce unexpected results when you don't fully understand their frame clause behavior.</p>
 <h2>The Problem</h2>
 <p>Consider this common pattern: you want the first and last value within a partition. You write:</p>
 <pre><code class="language-sql">SELECT
@@ -45,6 +49,10 @@ ORDER BY category, sale_date;</code></pre>
   <li>Consider using <code>ARRAY_AGG</code> with <code>ORDER BY</code> and <code>LIMIT 1</code> as an alternative pattern in BigQuery</li>
 </ul>
 <p>This is a common pitfall that catches even experienced SQL developers. The key is understanding that window functions don't "see" the entire partition by default — they see a sliding window defined by the frame clause.</p>
+<div class="mascot-aside">
+<img src="/mascot.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-default" />
+<span class="mascot-aside-text">Node: I'm floating by. I once spent an hour debugging a <code>LAST_VALUE</code> query only to realise the frame clause was the culprit. You're welcome.</span>
+</div>
 <p class="medium-cta"><a href="https://medium.com/@rxmeez/untangling-first-value-and-last-value-in-bigquery-sql-494cce988f20" target="_blank" rel="noopener noreferrer">Read the full article on Medium ↗</a></p>`,
   },
   {
@@ -56,7 +64,11 @@ ORDER BY category, sale_date;</code></pre>
     url: "https://towardsdev.com/exploring-dbt-1-8-unit-tests-expanding-to-macros-07a0d089c7f9",
     publication: "Towards Dev",
     isMedium: true,
-    content: `<p>dbt 1.8 introduced native unit testing — a feature the community has been asking for. While most of the documentation focuses on testing models, there's a powerful use case that deserves more attention: unit testing macros.</p>
+    content: `<div class="mascot-aside">
+<img src="/mascot-surprised.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-surprised" />
+<span class="mascot-aside-text">Node: I'm surprised you can unit test dbt macros now. I remember when debugging Jinja felt like reading hieroglyphics.</span>
+</div>
+<p>dbt 1.8 introduced native unit testing — a feature the community has been asking for. While most of the documentation focuses on testing models, there's a powerful use case that deserves more attention: unit testing macros.</p>
 <h2>Why Test Macros?</h2>
 <p>Macros are the backbone of reusable logic in dbt. A broken macro can silently corrupt data across dozens of models. Unit tests give you confidence that your Jinja logic is correct before it touches real data.</p>
 <h2>A Practical Example</h2>
@@ -83,6 +95,10 @@ ORDER BY category, sale_date;</code></pre>
   <li>Version your test fixtures alongside your macro code</li>
 </ul>
 <p>Unit testing macros catches logic errors early and makes refactoring safe. If you're on dbt 1.8+, start with your most critical macros — the ones that touch the most models.</p>
+<div class="mascot-aside">
+<img src="/mascot-thinking.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-thinking" />
+<span class="mascot-aside-text">Node: I'm processing this. A macro is just a function. Functions should be tested. This shouldn't be revolutionary, but here we are.</span>
+</div>
 <p class="medium-cta"><a href="https://towardsdev.com/exploring-dbt-1-8-unit-tests-expanding-to-macros-07a0d089c7f9" target="_blank" rel="noopener noreferrer">Read the full article on Towards Dev ↗</a></p>`,
   },
   {
@@ -93,7 +109,11 @@ ORDER BY category, sale_date;</code></pre>
     tags: ["software-development", "golang", "data", "database"],
     url: "https://medium.com/@rxmeez/streamlining-database-changes-unlocking-the-power-of-schema-migration-tools-with-goose-f6f2e964b19b",
     isMedium: true,
-    content: `<p>Database migrations are one of those things every project needs but nobody wants to think about. Goose is a minimal, no-fuss migration tool written in Go that deserves more attention.</p>
+    content: `<div class="mascot-aside">
+<img src="/mascot.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-default" />
+<span class="mascot-aside-text">Node: I'm floating by. If you're still managing database schemas by hand, Goose will change your life. Or at least your migrations.</span>
+</div>
+<p>Database migrations are one of those things every project needs but nobody wants to think about. Goose is a minimal, no-fuss migration tool written in Go that deserves more attention.</p>
 <h2>Why Goose Over Alternatives?</h2>
 <p>Unlike ORM-coupled migration tools, Goose works with plain SQL files. You write <code>.sql</code> files, and Goose applies them in order. No DSL, no framework lock-in.</p>
 <h2>Getting Started</h2>
@@ -117,6 +137,10 @@ DROP TABLE users;</code></pre>
   <li><strong>Go-based migrations:</strong> For complex logic, write migrations in Go instead of SQL</li>
 </ul>
 <p>If you're building a Go application that needs database migrations, Goose is worth a look. It's battle-tested, actively maintained, and stays out of your way.</p>
+<div class="mascot-aside">
+<img src="/mascot-thinking.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-thinking" />
+<span class="mascot-aside-text">Node: I'm processing this take. Plain SQL migrations + Go tooling = the pragmatic choice. No ORM magic required.</span>
+</div>
 <p class="medium-cta"><a href="https://medium.com/@rxmeez/streamlining-database-changes-unlocking-the-power-of-schema-migration-tools-with-goose-f6f2e964b19b" target="_blank" rel="noopener noreferrer">Read the full article on Medium ↗</a></p>`,
   },
   {
@@ -127,7 +151,11 @@ DROP TABLE users;</code></pre>
     tags: ["go", "developer", "golang", "software-development", "error-handling"],
     url: "https://medium.com/@rxmeez/understanding-go-error-handling-1e6720cc6756",
     isMedium: true,
-    content: `<p>Go's error handling is one of its most debated features. No exceptions, no try-catch — just values. But once you understand the philosophy, it becomes one of Go's greatest strengths.</p>
+    content: `<div class="mascot-aside">
+<img src="/mascot-surprised.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-surprised" />
+<span class="mascot-aside-text">Node: I'm surprised you're reading about Go error handling. Most people just complain about the verbosity and miss the point entirely.</span>
+</div>
+<p>Go's error handling is one of its most debated features. No exceptions, no try-catch — just values. But once you understand the philosophy, it becomes one of Go's greatest strengths.</p>
 <h2>Errors Are Values</h2>
 <p>In Go, errors are just values that implement the <code>error</code> interface:</p>
 <pre><code class="language-go">type error interface {
@@ -173,6 +201,10 @@ func (e *ValidationError) Error() string {
   <li>Reserve panics for truly unrecoverable situations</li>
 </ul>
 <p>Go's explicit error handling forces you to think about failure modes at every step. That's not a bug — it's the feature.</p>
+<div class="mascot-aside">
+<img src="/mascot.svg" alt="" width="67" height="67" class="mascot-img mascot-animated-default" />
+<span class="mascot-aside-text">Node: I'm floating by. I used to miss try-catch. Now I miss it less. Explicit errors make you think. Thinking is good.</span>
+</div>
 <p class="medium-cta"><a href="https://medium.com/@rxmeez/understanding-go-error-handling-1e6720cc6756" target="_blank" rel="noopener noreferrer">Read the full article on Medium ↗</a></p>`,
   },
 ];
