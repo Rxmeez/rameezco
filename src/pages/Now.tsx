@@ -6,33 +6,31 @@ const sections = [
   {
     icon: "⚙",
     title: "Work",
-    content: "Building data pipelines at scale. Currently designing a real-time event ingestion system processing 50M+ events/day across multiple regions with sub-second latency. Stack: Kafka, Flink, and a lot of YAML.",
+    content: "Managing Data Infrastructure at RVU for the money.co.uk brand. Improving data pipelines using dbt-core and SQL, and writing Python/TypeScript for ingestion pipelines. Also improving money.co.uk backend internal apps and implementing AI to improve processes across the money.co.uk team and wider FS team.",
   },
   {
     icon: "→",
     title: "Side Project",
-    content: "Building oh-my-openagent — a multi-agent harness for OpenCode that orchestrates Claude, GPT, Gemini, and open-source models. The big focus right now is Ralph Loop, a self-referential agent loop that doesn't stop until the task is truly done.",
+    content: "Looking into what a mini AI-first platform would look like to standardise how AI is deployed for multiple teams.",
   },
   {
     icon: "★",
     title: "Learning",
-    content: "Deep into Rust. Not for work — for fun. Building a tiny CLI tool that benchmarks serialization formats (JSON, MessagePack, Avro, Parquet) against real-world data shapes. The borrow checker is humbling in the best way.",
+    content: "Continuing to work on learning Go. I've built mini CLI applications but looking to build something bigger in it.",
   },
   {
     icon: "☗",
     title: "Reading",
     items: [
-      "Designing Data-Intensive Applications — rereading for the third time. Still finding new things.",
-      "Staff Engineer by Will Larson — thinking about the next step.",
+      "Designing Data-Intensive Applications — the new edition.",
+      "Manning's Designing AI Systems.",
     ],
   },
   {
     icon: "♨",
     title: "Outside Tech",
     items: [
-      "Running again. 5K three times a week. Slow but consistent.",
-      "Cooking through an Iranian cookbook. The rice section alone is worth it.",
-      "Learning to make better coffee. Currently on a V60, considering an espresso machine.",
+      "Playing 007 First Light game.",
     ],
   },
 ];
@@ -62,12 +60,12 @@ export default function Now() {
       </div>
 
       <p className="now-footer">
-        Last updated: May 2025
+        Last updated: June 2025
       </p>
 
       <div className="now-grid">
-        {sections.map((s, i) => (
-          <div key={s.title} className="now-card" style={{ "--i": i } as React.CSSProperties}>
+        {sections.map((s) => (
+          <div key={s.title} className="now-card">
             <h3 className="now-card-head">
               <span className="now-card-icon">{s.icon}</span>
               {s.title}
