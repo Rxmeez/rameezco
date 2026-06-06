@@ -2,6 +2,7 @@ import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { lazy, Suspense, useEffect } from "react";
 import MainLayout from "./components/MainLayout";
 import ScrollProgress from "./components/ScrollProgress";
+import CookieConsent from "./components/CookieConsent";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Writing from "./pages/Writing";
@@ -9,7 +10,9 @@ import WritingPost from "./pages/WritingPost";
 import Now from "./pages/Now";
 import Notes from "./pages/Notes";
 import NotesPost from "./pages/NotesPost";
+import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
+import { allowsAnalytics } from "./lib/cookieConsent";
 
 const WritingGraph = lazy(() => import("./pages/WritingGraph"));
 
@@ -22,12 +25,13 @@ function ScrollToTop() {
 function Analytics() {
   const { pathname } = useLocation();
   useEffect(() => {
+    if (!allowsAnalytics()) return;
     const d = new Date();
-    const k = "v=" + d.getUTCFullYear() + "-" + (d.getUTCMonth() + 1) + "-" + d.getUTCDate();
+    const k = `v=${d.getUTCFullYear()}-${d.getUTCMonth() + 1}-${d.getUTCDate()}`;
     const s = localStorage.getItem("_pv");
     if (s === k + pathname) return;
     localStorage.setItem("_pv", k + pathname);
-    new Image().src = "/_analytics?" + k + "&p=" + encodeURIComponent(pathname);
+    new Image().src = `/_analytics?${k}&p=${encodeURIComponent(pathname)}`;
   }, [pathname]);
   return null;
 }
@@ -38,6 +42,7 @@ export default function App() {
       <ScrollProgress />
       <ScrollToTop />
       <Analytics />
+      <CookieConsent />
       <Routes>
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
@@ -53,6 +58,7 @@ export default function App() {
           <Route path="now" element={<Now />} />
           <Route path="notes" element={<Notes />} />
           <Route path="notes/:slug" element={<NotesPost />} />
+          <Route path="cookies" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

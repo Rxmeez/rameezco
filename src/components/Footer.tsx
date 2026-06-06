@@ -44,6 +44,8 @@ export default function Footer() {
                 Medium
               </a>
             )}
+            <span className="footer-sep" />
+            <a className="footer-link" href="/cookies">Cookies</a>
           </span>
         </div>
         <div className="footer-cta">
