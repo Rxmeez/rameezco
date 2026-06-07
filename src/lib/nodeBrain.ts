@@ -102,13 +102,21 @@ export async function askNode(
   const context = topChunks.map((c) => c.text).join("\n\n");
   const sources = [...new Set(topChunks.map((c) => c.source).filter(Boolean))];
 
-  let systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context. Be concise, friendly, and honest. If the context doesn't contain the answer, say so.`;
+  let systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context.
+
+Formatting rules:
+- Use **bold** for key terms and section headers
+- Use bullet points (- item) for lists, not paragraphs
+- Keep answers concise (2-4 sentences max for summaries)
+- For summaries: cover the main argument, key insight, and practical takeaway
+- Do not mention "the context says" or "according to the text" — just answer directly
+- If the user asks to summarize, give a tight overview in 2-3 bullet points`;
 
   if (pageContext) {
     systemPrompt += `\n\nThe user is currently reading a ${pageContext.type} titled "${pageContext.title}". Here is its content:\n${pageContext.content}`;
   }
 
-  systemPrompt += `\n\nContext:\n${context}`;
+  systemPrompt += `\n\nRetrieved knowledge base context:\n${context}`;
 
   const useStreaming = typeof onToken === "function";
 

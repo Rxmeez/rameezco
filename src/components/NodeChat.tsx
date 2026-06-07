@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions } from "../lib/pageContext";
+import { formatMarkdown } from "../lib/markdown";
 
 interface Message {
   id: string;
@@ -165,7 +166,14 @@ export default function NodeChat() {
                     <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                   )}
                   <div className="node-chat-bubble">
-                    <div className="node-chat-text">{msg.text}</div>
+                    {msg.role === "node" ? (
+                      <div
+                        className="node-chat-text"
+                        dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.text) }}
+                      />
+                    ) : (
+                      <div className="node-chat-text">{msg.text}</div>
+                    )}
                     {msg.sources && msg.sources.length > 0 && (
                       <div className="node-chat-sources">
                         From: {msg.sources.join(", ")}
@@ -179,10 +187,12 @@ export default function NodeChat() {
               <div className="node-chat-message node-chat-message-node node-chat-streaming">
                 <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                 <div className="node-chat-bubble">
-                  <div className="node-chat-text node-chat-streaming-text">
-                    {messages.find((m) => m.id === streamingId)?.text}
-                    <span className="node-chat-cursor" />
-                  </div>
+                  <div
+                    className="node-chat-text node-chat-streaming-text"
+                    dangerouslySetInnerHTML={{
+                      __html: `${formatMarkdown(messages.find((m) => m.id === streamingId)?.text ?? "")}<span class="node-chat-cursor"></span>`,
+                    }}
+                  />
                 </div>
               </div>
             )}
