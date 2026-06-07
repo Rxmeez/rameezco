@@ -4,6 +4,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import Search from "./Search";
 import NodeGuide from "./NodeGuide";
+import NodeChat from "./NodeChat";
 
 export default function MainLayout() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function MainLayout() {
       <Footer />
       <Search isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
       <NodeGuide />
+      <NodeChat />
     </>
   );
 }
