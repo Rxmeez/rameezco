@@ -12,6 +12,7 @@ import { readingTimeMinutes } from "../lib/readingTime";
 import { SITE } from "../data/site";
 import { blogPostingJsonLd } from "../lib/jsonLd";
 import { triggerNodeGuide } from "../components/NodeGuide";
+import { replaceMascotImages } from "../lib/mascotHtml";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -113,7 +114,7 @@ export default function WritingPost() {
     );
   }
 
-  const content = article.content ?? "";
+  const content = replaceMascotImages(article.content ?? "");
   const tags = article.tags ?? [];
 
   return (

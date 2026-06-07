@@ -9,6 +9,7 @@ import { readingTimeMinutes } from "../lib/readingTime";
 import { SITE } from "../data/site";
 import { noteJsonLd } from "../lib/jsonLd";
 import { triggerNodeGuide } from "../components/NodeGuide";
+import { replaceMascotImages } from "../lib/mascotHtml";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -137,7 +138,7 @@ export default function NotesPost() {
       <div
         ref={contentRef}
         className="post-content"
-        dangerouslySetInnerHTML={{ __html: note.content }}
+        dangerouslySetInnerHTML={{ __html: replaceMascotImages(note.content) }}
       />
       <Backlinks
         currentSlug={note.slug}
