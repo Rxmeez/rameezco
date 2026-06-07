@@ -15,6 +15,17 @@ interface Message {
 
 let messageIdCounter = 0;
 
+const THINKING_PHRASES = [
+  "Indexing knowledge base",
+  "Computing embeddings",
+  "Running vector search",
+  "Ranking relevant chunks",
+  "Querying the model",
+  "Synthesizing an answer",
+  "Parsing context",
+  "Traversing the graph",
+];
+
 function createMessage(role: Message["role"], text: string, sources?: string[]): Message {
   messageIdCounter += 1;
   return { id: `msg-${messageIdCounter}`, role, text, sources };
@@ -31,8 +42,25 @@ export default function NodeChat() {
   const [ready, setReady] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [buttonExpanded, setButtonExpanded] = useState(false);
+  const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const posthog = usePostHog();
+
+  const streamingText = streamingId
+    ? messages.find((m) => m.id === streamingId)?.text ?? ""
+    : "";
+  const showThinking = streamingId !== null && streamingText.length === 0;
+
+  useEffect(() => {
+    if (!showThinking) return;
+    let i = 0;
+    setThinkingPhrase(THINKING_PHRASES[0]);
+    const interval = setInterval(() => {
+      i = (i + 1) % THINKING_PHRASES.length;
+      setThinkingPhrase(THINKING_PHRASES[i]);
+    }, 1400);
+    return () => clearInterval(interval);
+  }, [showThinking]);
 
   const pageContext = getCurrentPageContext();
   const suggestedQuestions = getSuggestedQuestions(pageContext);
@@ -208,12 +236,23 @@ export default function NodeChat() {
               <div className="node-chat-message node-chat-message-node node-chat-streaming">
                 <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                 <div className="node-chat-bubble">
+                  {showThinking ? (
+                    <div className="node-chat-thinking">
+                      <span className="node-chat-thinking-dots">
+                        <span />
+                        <span />
+                        <span />
+                      </span>
+                      <span className="node-chat-thinking-text">{thinkingPhrase}…</span>
+                    </div>
+                  ) : (
                   <div
                     className="node-chat-text node-chat-streaming-text"
                     dangerouslySetInnerHTML={{
-                      __html: `${formatMarkdown(messages.find((m) => m.id === streamingId)?.text ?? "")}<span class="node-chat-cursor"></span>`,
+                      __html: `${formatMarkdown(streamingText)}<span class="node-chat-cursor"></span>`,
                     }}
                   />
+                  )}
                 </div>
               </div>
             )}

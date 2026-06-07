@@ -1,5 +1,33 @@
 import { pipeline, cos_sim } from "@xenova/transformers";
 import type { FeatureExtractionPipeline } from "@xenova/transformers";
+import { posts } from "../data/posts";
+import { mediumPosts } from "../data/medium";
+import { notes } from "../data/notes";
+import { projects } from "../data/projects";
+
+function buildContentCatalog(): string {
+  const writing = [
+    ...posts.map((p) => ({ title: p.title, date: p.date })),
+    ...mediumPosts.map((p) => ({ title: p.title, date: p.date })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  const sortedNotes = [...notes].sort((a, b) => b.date.localeCompare(a.date));
+
+  const writingList = writing.map((p) => `- "${p.title}" (${p.date})`).join("\n");
+  const notesList = sortedNotes.map((n) => `- "${n.title}" (${n.date})`).join("\n");
+  const projectsList = projects.map((p) => `- "${p.title}": ${p.description}`).join("\n");
+
+  return `Content catalog (each list sorted newest first by date):
+
+Writing / blog posts:
+${writingList || "- (none yet)"}
+
+Notes:
+${notesList || "- (none yet)"}
+
+Projects:
+${projectsList || "- (none yet)"}`;
+}
 
 interface KnowledgeChunk {
   id: string;
@@ -111,7 +139,10 @@ Formatting rules:
 - For summaries: cover the main argument, key insight, and practical takeaway
 - Do not mention "the context says" or "according to the text" — just answer directly
 - Do not quote or cite specific sources, articles, or posts in your answer unless the user explicitly asks where information comes from
-- If the user asks to summarize, give a tight overview in 2-3 bullet points`;
+- If the user asks to summarize, give a tight overview in 2-3 bullet points
+- For questions about recent, latest, or a list of posts/notes/projects, use the content catalog below (it is sorted newest first) and list the relevant titles`;
+
+  systemPrompt += `\n\n${buildContentCatalog()}`;
 
   if (pageContext) {
     systemPrompt += `\n\nThe user is currently reading a ${pageContext.type} titled "${pageContext.title}". Here is its content:\n${pageContext.content}`;
