@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { usePostHog } from "@posthog/react";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions } from "../lib/pageContext";
@@ -30,6 +31,7 @@ export default function NodeChat() {
   const [ready, setReady] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const posthog = usePostHog();
 
   const pageContext = getCurrentPageContext();
   const suggestedQuestions = getSuggestedQuestions(pageContext);
@@ -61,6 +63,12 @@ export default function NodeChat() {
 
   const sendQuestion = useCallback(async (question: string) => {
     if (streamingId) return;
+
+    posthog?.capture("node_chat_question_sent", {
+      question,
+      page_title: pageContext?.title,
+      page_type: pageContext?.type,
+    });
 
     setInput("");
     setMessages((prev) => [...prev, createMessage("user", question)]);
@@ -96,6 +104,10 @@ export default function NodeChat() {
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
+      posthog?.capture("node_chat_error", {
+        error: msg,
+        question,
+      });
       setMessages((prev) =>
         prev.map((m) =>
           m.id === streamMsg.id
@@ -106,7 +118,7 @@ export default function NodeChat() {
     } finally {
       setStreamingId(null);
     }
-  }, [streamingId, ready, doInit, pageContext]);
+  }, [streamingId, ready, doInit, pageContext, posthog]);
 
   const handleSend = useCallback(() => {
     if (!input.trim()) return;
@@ -126,8 +138,10 @@ export default function NodeChat() {
         type="button"
         className="node-chat-button"
         onClick={() => {
-          setOpen((prev) => !prev);
-          if (!ready && !loading && !loadError) {
+          const nextOpen = !open;
+          setOpen(nextOpen);
+          posthog?.capture(nextOpen ? "node_chat_opened" : "node_chat_closed");
+          if (nextOpen && !ready && !loading && !loadError) {
             doInit();
           }
         }}
@@ -232,7 +246,13 @@ export default function NodeChat() {
                   key={q}
                   type="button"
                   className="node-chat-suggestion"
-                  onClick={() => sendQuestion(q)}
+                  onClick={() => {
+                    posthog?.capture("node_chat_suggested_clicked", {
+                      suggestion: q,
+                      page_title: pageContext?.title,
+                    });
+                    sendQuestion(q);
+                  }}
                   disabled={!ready}
                 >
                   {q}
