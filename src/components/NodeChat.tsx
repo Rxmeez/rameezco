@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
-import { getCurrentPageContext, getSuggestedQuestions } from "../lib/pageContext";
+import { getCurrentPageContext, getSuggestedQuestions, getContentLinks, getSourceUrl, linkifyContent } from "../lib/pageContext";
 import { formatMarkdown } from "../lib/markdown";
 
 interface Message {
@@ -45,6 +46,24 @@ export default function NodeChat() {
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const posthog = usePostHog();
+  const navigate = useNavigate();
+  const contentLinks = getContentLinks();
+
+  const handleMessageClick = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      const target = (e.target as HTMLElement).closest("a.node-chat-link");
+      if (!target) return;
+      const href = target.getAttribute("href");
+      if (href?.startsWith("/")) {
+        e.preventDefault();
+        posthog?.capture("node_chat_link_clicked", { href });
+        navigate(href);
+        setOpen(false);
+        setButtonExpanded(false);
+      }
+    },
+    [navigate, posthog],
+  );
 
   const streamingText = streamingId
     ? messages.find((m) => m.id === streamingId)?.text ?? ""
@@ -203,7 +222,7 @@ export default function NodeChat() {
             </button>
           </div>
 
-          <div className="node-chat-messages" ref={scrollRef}>
+           <div className="node-chat-messages" ref={scrollRef} onClick={handleMessageClick} onKeyDown={() => {}} role="presentation">
             {messages
               .filter((msg) => msg.id !== streamingId)
               .map((msg) => (
@@ -218,15 +237,25 @@ export default function NodeChat() {
                     {msg.role === "node" ? (
                       <div
                         className="node-chat-text"
-                        dangerouslySetInnerHTML={{ __html: formatMarkdown(msg.text) }}
+                        dangerouslySetInnerHTML={{
+                          __html: linkifyContent(formatMarkdown(msg.text), contentLinks),
+                        }}
                       />
                     ) : (
                       <div className="node-chat-text">{msg.text}</div>
                     )}
                     {msg.sources && msg.sources.length > 0 && (
-                      <div className="node-chat-sources">
-                        From: {msg.sources.join(", ")}
-                      </div>
+                      <div
+                        className="node-chat-sources"
+                        dangerouslySetInnerHTML={{
+                          __html: `From: ${msg.sources.map((src) => {
+                            const url = getSourceUrl(src);
+                            return url
+                              ? `<a class="node-chat-link" href="${url}">${src}</a>`
+                              : src;
+                          }).join(", ")}`,
+                        }}
+                      />
                     )}
                   </div>
                 </div>

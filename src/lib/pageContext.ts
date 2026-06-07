@@ -1,6 +1,59 @@
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
+import { projects } from "../data/projects";
+
+export interface ContentLink {
+  title: string;
+  url: string;
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function escapeRegExp(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function getContentLinks(): ContentLink[] {
+  const links: ContentLink[] = [
+    ...posts.map((p) => ({ title: p.title, url: `/writing/${p.slug}` })),
+    ...mediumPosts.map((p) => ({ title: p.title, url: `/writing/${p.slug}` })),
+    ...notes.map((n) => ({ title: n.title, url: `/notes/${n.slug}` })),
+    ...projects.map((p) => ({ title: p.title, url: "/projects" })),
+  ];
+  // Longest titles first so substrings don't shadow longer matches.
+  return links.sort((a, b) => b.title.length - a.title.length);
+}
+
+const SOURCE_URL_INDEX = new Map<string, string>(
+  getContentLinks().map((l) => [l.title, l.url]),
+);
+
+export function getSourceUrl(title: string): string | undefined {
+  return SOURCE_URL_INDEX.get(title);
+}
+
+export function linkifyContent(html: string, links: ContentLink[]): string {
+  let result = html;
+  for (const { title, url } of links) {
+    const escapedTitle = escapeHtml(title);
+    // Match the title only when not already inside an <a> tag (lookbehind on open tag, lookahead on close tag).
+    const pattern = new RegExp(
+      `(?<!<a[^>]*>)(?<![\\w"/>])${escapeRegExp(escapedTitle)}(?![^<]*</a>)`,
+      "g",
+    );
+    result = result.replace(
+      pattern,
+      `<a class="node-chat-link" href="${url}">${escapedTitle}</a>`,
+    );
+  }
+  return result;
+}
 
 export interface PageContext {
   type: "post" | "note" | "project" | "none";

@@ -2589,6 +2589,19 @@ pre:hover .code-copy-btn,
   font-family: var(--font-mono);
 }
 
+.node-chat-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  transition: text-decoration-color 0.15s ease, color 0.15s ease;
+}
+
+.node-chat-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent);
+}
+
 .node-chat-typing {
   display: flex;
   gap: 3px;
