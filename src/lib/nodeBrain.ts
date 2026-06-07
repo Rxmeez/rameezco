@@ -75,6 +75,7 @@ export async function initEmbedder() {
 export async function askNode(
   question: string,
   onToken?: (token: string) => void,
+  pageContext?: { title: string; content: string; type: string } | null,
 ): Promise<{ answer: string; sources: string[] }> {
   if (!knowledgeBase || !embedder) {
     throw new Error("Node is not ready yet. Please wait for the embedding model to load.");
@@ -101,10 +102,13 @@ export async function askNode(
   const context = topChunks.map((c) => c.text).join("\n\n");
   const sources = [...new Set(topChunks.map((c) => c.source).filter(Boolean))];
 
-  const systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context. Be concise, friendly, and honest. If the context doesn't contain the answer, say so.
+  let systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context. Be concise, friendly, and honest. If the context doesn't contain the answer, say so.`;
 
-Context:
-${context}`;
+  if (pageContext) {
+    systemPrompt += `\n\nThe user is currently reading a ${pageContext.type} titled "${pageContext.title}". Here is its content:\n${pageContext.content}`;
+  }
+
+  systemPrompt += `\n\nContext:\n${context}`;
 
   const useStreaming = typeof onToken === "function";
 

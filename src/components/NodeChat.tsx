@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
+import { getCurrentPageContext, getSuggestedQuestions } from "../lib/pageContext";
 
 interface Message {
   id: string;
@@ -29,6 +30,9 @@ export default function NodeChat() {
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const pageContext = getCurrentPageContext();
+  const suggestedQuestions = getSuggestedQuestions(pageContext);
+
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -54,10 +58,9 @@ export default function NodeChat() {
     }
   }, [ready, loading]);
 
-  const handleSend = useCallback(async () => {
-    if (!input.trim() || streamingId) return;
+  const sendQuestion = useCallback(async (question: string) => {
+    if (streamingId) return;
 
-    const question = input.trim();
     setInput("");
     setMessages((prev) => [...prev, createMessage("user", question)]);
 
@@ -69,15 +72,19 @@ export default function NodeChat() {
     try {
       if (!ready) await doInit();
 
-      const { answer, sources } = await askNode(question, (token) => {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg.id === streamMsg.id
-              ? { ...msg, text: msg.text + token }
-              : msg,
-          ),
-        );
-      });
+      const { answer, sources } = await askNode(
+        question,
+        (token) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === streamMsg.id
+                ? { ...msg, text: msg.text + token }
+                : msg,
+            ),
+          );
+        },
+        pageContext,
+      );
 
       setMessages((prev) =>
         prev.map((msg) =>
@@ -98,7 +105,12 @@ export default function NodeChat() {
     } finally {
       setStreamingId(null);
     }
-  }, [input, streamingId, ready, doInit]);
+  }, [streamingId, ready, doInit, pageContext]);
+
+  const handleSend = useCallback(() => {
+    if (!input.trim()) return;
+    sendQuestion(input.trim());
+  }, [input, sendQuestion]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -202,6 +214,22 @@ export default function NodeChat() {
               </div>
             )}
           </div>
+
+          {suggestedQuestions.length > 0 && !streamingId && (
+            <div className="node-chat-suggestions">
+              {suggestedQuestions.map((q) => (
+                <button
+                  key={q}
+                  type="button"
+                  className="node-chat-suggestion"
+                  onClick={() => sendQuestion(q)}
+                  disabled={!ready}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+          )}
 
           <div className="node-chat-input-wrap">
             <input

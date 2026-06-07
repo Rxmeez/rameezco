@@ -2727,6 +2727,37 @@ pre:hover .code-copy-btn,
   opacity: 0.85;
 }
 
+.node-chat-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.6rem var(--spacing-md);
+  border-top: 1px solid var(--border);
+}
+
+.node-chat-suggestion {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.node-chat-suggestion:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.node-chat-suggestion:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 @media (max-width: 520px) {
   .node-chat-panel {
     right: 0.5rem;
