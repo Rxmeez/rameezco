@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import Search from "./Search";
+import NodeGuide from "./NodeGuide";
 
 export default function MainLayout() {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -27,6 +28,7 @@ export default function MainLayout() {
       </main>
       <Footer />
       <Search isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+      <NodeGuide />
     </>
   );
 }

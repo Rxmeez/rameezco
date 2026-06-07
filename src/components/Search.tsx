@@ -138,7 +138,18 @@ export default function Search({ isOpen, onClose }: Props) {
         )}
 
         {indexReady && query.trim() && results.length === 0 && (
-          <div className="search-empty">No results for "{query}"</div>
+          <div className="search-empty">
+            <img
+              src="/mascot-thinking.svg"
+              alt=""
+              width={48}
+              height={48}
+              className="mascot-animated-thinking"
+              aria-hidden="true"
+              style={{ marginBottom: "0.5rem" }}
+            />
+            <div>No results for "{query}"</div>
+          </div>
         )}
 
         {results.length > 0 && (

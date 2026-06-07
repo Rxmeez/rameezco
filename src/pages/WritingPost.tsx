@@ -11,6 +11,7 @@ import { buildFullGraph } from "../lib/graph";
 import { readingTimeMinutes } from "../lib/readingTime";
 import { SITE } from "../data/site";
 import { blogPostingJsonLd } from "../lib/jsonLd";
+import { triggerNodeGuide } from "../components/NodeGuide";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -70,11 +71,32 @@ export default function WritingPost() {
           navigator.clipboard.writeText(code.textContent ?? "").then(() => {
             btn.textContent = "Copied!";
             setTimeout(() => { btn.textContent = "Copy"; }, 2000);
+            triggerNodeGuide("Copied to clipboard!", "surprised", "none", 2500);
           });
         });
         pre.appendChild(btn);
       }
     }
+  }, [article]);
+
+  useEffect(() => {
+    const nav = document.querySelector(".post-nav");
+    if (!nav) return;
+    let triggered = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting && !triggered) {
+            triggered = true;
+            triggerNodeGuide("You made it to the end!", "default", "celebrate", 4000);
+            observer.disconnect();
+          }
+        }
+      },
+      { threshold: 0.5 },
+    );
+    observer.observe(nav);
+    return () => observer.disconnect();
   }, [article]);
 
   if (!article) {
