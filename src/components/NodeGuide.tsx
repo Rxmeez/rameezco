@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface GuideState {
-  visible: boolean;
+  showing: boolean;
+  fadingOut: boolean;
   variant: "default" | "surprised" | "thinking";
   message: string;
   animation: "none" | "wave" | "celebrate";
@@ -28,22 +29,57 @@ export function triggerNodeGuide(
 
 export default function NodeGuide() {
   const [state, setState] = useState<GuideState>({
-    visible: false,
+    showing: false,
+    fadingOut: false,
     variant: "default",
     message: "",
     animation: "none",
   });
+  const [hovered, setHovered] = useState(false);
+  const [cursorRotation, setCursorRotation] = useState(0);
+  const guideRef = useRef<HTMLOutputElement>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const prefersReducedMotion = useRef(false);
+  const exitTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rafRef = useRef<number>(0);
 
   useEffect(() => {
-    prefersReducedMotion.current = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    let ticking = false;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!ticking) {
+        rafRef.current = requestAnimationFrame(() => {
+          const rect = guideRef.current?.getBoundingClientRect();
+          if (rect) {
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            const dx = e.clientX - cx;
+            const dy = e.clientY - cy;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const rot = dist < 220 ? (dx / 220) * 10 : 0;
+            setCursorRotation(rot);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      cancelAnimationFrame(rafRef.current);
+    };
   }, []);
 
-  const hide = useCallback(() => {
-    setState((s) => ({ ...s, visible: false }));
+  const doHide = useCallback(() => {
+    setState((s) => ({ ...s, fadingOut: true }));
+    exitTimerRef.current = setTimeout(() => {
+      setState({
+        showing: false,
+        fadingOut: false,
+        variant: "default",
+        message: "",
+        animation: "none",
+      });
+    }, 250);
   }, []);
 
   useEffect(() => {
@@ -55,22 +91,25 @@ export default function NodeGuide() {
         duration: number;
       };
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
       setState({
-        visible: true,
+        showing: true,
+        fadingOut: false,
         variant: detail.variant,
         message: detail.message,
         animation: detail.animation,
       });
       timerRef.current = setTimeout(() => {
-        hide();
+        doHide();
       }, detail.duration);
     }
     window.addEventListener("node-guide:show", handleShow);
     return () => {
       window.removeEventListener("node-guide:show", handleShow);
       if (timerRef.current) clearTimeout(timerRef.current);
+      if (exitTimerRef.current) clearTimeout(exitTimerRef.current);
     };
-  }, [hide]);
+  }, [doHide]);
 
   useEffect(() => {
     const waved = sessionStorage.getItem("node-waved");
@@ -82,20 +121,42 @@ export default function NodeGuide() {
     return () => clearTimeout(t);
   }, []);
 
-  if (!state.visible) return null;
+  if (!state.showing && !state.fadingOut) return null;
 
-  const animationClass =
-    state.animation === "wave"
+  const animClass = state.fadingOut
+    ? "node-guide-exit"
+    : state.animation === "wave"
       ? "node-guide-wave"
       : state.animation === "celebrate"
         ? "node-guide-celebrate"
-        : "";
+        : "node-guide-enter";
+
+  const idleClass =
+    !state.fadingOut && state.animation === "none" ? "node-guide-idle" : "";
+  const hoverClass = hovered ? "node-guide-hover" : "";
+
+  const imgStyle: React.CSSProperties = {
+    transform: `rotate(${cursorRotation}deg)`,
+  };
 
   return (
     <output
-      className={`node-guide ${animationClass}`}
+      ref={guideRef}
+      className={`node-guide ${animClass} ${idleClass} ${hoverClass}`}
       aria-live="polite"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
+      {state.animation === "celebrate" && !state.fadingOut && (
+        <div className="node-guide-particles" aria-hidden="true">
+          <span className="node-guide-particle" />
+          <span className="node-guide-particle" />
+          <span className="node-guide-particle" />
+          <span className="node-guide-particle" />
+          <span className="node-guide-particle" />
+          <span className="node-guide-particle" />
+        </div>
+      )}
       <div className="node-guide-bubble">
         <span className="node-guide-text">{state.message}</span>
         <span className="node-guide-tail" aria-hidden="true" />
@@ -106,6 +167,7 @@ export default function NodeGuide() {
         width={48}
         height={48}
         className={`node-guide-img mascot-animated-${state.variant}`}
+        style={imgStyle}
         aria-hidden="true"
       />
     </output>
