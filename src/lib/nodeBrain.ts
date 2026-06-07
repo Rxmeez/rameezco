@@ -115,6 +115,7 @@ ${context}`;
       Authorization: `Bearer ${apiKey}`,
       "HTTP-Referer": "https://rameez.co",
       "X-Title": "Rameez.co - Ask Node",
+      Accept: "text/event-stream",
     },
     body: JSON.stringify({
       model: "openrouter/free",
@@ -147,6 +148,25 @@ ${context}`;
   const decoder = new TextDecoder();
   let buffer = "";
   let answer = "";
+  let tokenCount = 0;
+
+  function tryParseSseLine(line: string) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("data: ")) return;
+
+    const dataStr = trimmed.slice(6);
+    if (dataStr === "[DONE]") return;
+
+    try {
+      const data = JSON.parse(dataStr);
+      const delta = data.choices?.[0]?.delta?.content;
+      if (typeof delta === "string" && delta) {
+        tokenCount++;
+        answer += delta;
+        onToken?.(delta);
+      }
+    } catch {}
+  }
 
   while (true) {
     const { done, value } = await reader.read();
@@ -157,21 +177,23 @@ ${context}`;
     buffer = lines.pop() || "";
 
     for (const line of lines) {
-      const trimmed = line.trim();
-      if (!trimmed.startsWith("data: ")) continue;
-
-      const dataStr = trimmed.slice(6);
-      if (dataStr === "[DONE]") continue;
-
-      try {
-        const data = JSON.parse(dataStr);
-        const delta = data.choices?.[0]?.delta?.content;
-        if (typeof delta === "string" && delta) {
-          answer += delta;
-          onToken(delta);
-        }
-      } catch {}
+      tryParseSseLine(line);
     }
+  }
+
+  for (const line of buffer.split("\n")) {
+    tryParseSseLine(line);
+  }
+
+  if (tokenCount === 0 && buffer) {
+    try {
+      const data = JSON.parse(buffer);
+      const content = data.choices?.[0]?.message?.content?.trim() ?? "";
+      if (content) {
+        answer = content;
+        onToken?.(content);
+      }
+    } catch {}
   }
 
   return { answer: answer.trim(), sources };
