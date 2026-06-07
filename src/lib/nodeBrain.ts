@@ -1,5 +1,5 @@
 import { pipeline, cos_sim } from "@xenova/transformers";
-import type { FeatureExtractionPipeline, TextGenerationPipeline } from "@xenova/transformers";
+import type { FeatureExtractionPipeline } from "@xenova/transformers";
 
 interface KnowledgeChunk {
   id: string;
@@ -18,13 +18,7 @@ interface KnowledgeBase {
 
 let knowledgeBase: KnowledgeBase | null = null;
 let embedder: FeatureExtractionPipeline | null = null;
-let generator: TextGenerationPipeline | null = null;
-let loadProgress = 0;
 let loadError: string | null = null;
-
-export function getLoadProgress() {
-  return loadProgress;
-}
 
 export function getLoadError() {
   return loadError;
@@ -32,7 +26,6 @@ export function getLoadError() {
 
 export function resetLoadError() {
   loadError = null;
-  loadProgress = 0;
 }
 
 function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
@@ -61,12 +54,9 @@ export async function initKnowledgeBase() {
   knowledgeBase = await response.json();
 }
 
-export async function initModels(onProgress?: (progress: number) => void) {
-  if (embedder && generator) return;
+export async function initEmbedder() {
+  if (embedder) return;
   loadError = null;
-
-  loadProgress = 0.1;
-  onProgress?.(loadProgress);
 
   try {
     embedder = await withTimeout(
@@ -76,30 +66,20 @@ export async function initModels(onProgress?: (progress: number) => void) {
       30000,
       "Loading embedding model",
     );
-
-    loadProgress = 0.5;
-    onProgress?.(loadProgress);
-
-    generator = await withTimeout(
-      pipeline("text-generation", "Xenova/tinyllama-chat-v1.0", {
-        quantized: true,
-      }),
-      120000,
-      "Loading language model",
-    );
-
-    loadProgress = 1.0;
-    onProgress?.(loadProgress);
   } catch (err) {
     loadError = err instanceof Error ? err.message : String(err);
-    loadProgress = 0;
     throw err;
   }
 }
 
 export async function askNode(question: string): Promise<{ answer: string; sources: string[] }> {
-  if (!knowledgeBase || !embedder || !generator) {
-    throw new Error("Node is not ready yet. Please wait for the model to load.");
+  if (!knowledgeBase || !embedder) {
+    throw new Error("Node is not ready yet. Please wait for the embedding model to load.");
+  }
+
+  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (!apiKey) {
+    throw new Error("OpenRouter API key is missing. Please add VITE_OPENROUTER_API_KEY to your environment.");
   }
 
   const qOutput = await embedder(question, {
@@ -118,25 +98,37 @@ export async function askNode(question: string): Promise<{ answer: string; sourc
   const context = topChunks.map((c) => c.text).join("\n\n");
   const sources = [...new Set(topChunks.map((c) => c.source).filter(Boolean))];
 
-  const prompt = `You are Node, ${knowledgeBase.chunks[0]?.source || "a digital assistant"}. You help answer questions about the website owner's work, projects, and writing. Use the provided context to answer. Be concise, friendly, and honest. If you don't know, say so.
+  const systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context. Be concise, friendly, and honest. If the context doesn't contain the answer, say so.
 
 Context:
-${context}
+${context}`;
 
-Question: ${question}
-Answer:`;
-
-  const result = await generator(prompt, {
-    max_new_tokens: 200,
-    temperature: 0.7,
-    do_sample: true,
-    top_k: 50,
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${apiKey}`,
+      "HTTP-Referer": "https://rameez.co",
+      "X-Title": "Rameez.co - Ask Node",
+    },
+    body: JSON.stringify({
+      model: "openrouter/free",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: question },
+      ],
+      temperature: 0.7,
+      max_tokens: 300,
+    }),
   });
 
-  const firstResult = Array.isArray(result) ? result[0] : result;
-  const rawText = "generated_text" in firstResult ? firstResult.generated_text : "";
-  const generatedText = typeof rawText === "string" ? rawText : "";
-  const answer = generatedText.replace(prompt, "").trim();
+  if (!response.ok) {
+    const errorText = await response.text().catch(() => "Unknown error");
+    throw new Error(`OpenRouter API error ${response.status}: ${errorText}`);
+  }
+
+  const data = await response.json();
+  const answer = data.choices?.[0]?.message?.content?.trim() ?? "I'm not sure about that one.";
 
   return { answer, sources };
 }

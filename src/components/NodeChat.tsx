@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MascotDefaultSvg } from "./MascotSvg";
-import { initKnowledgeBase, initModels, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
+import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
 
 interface Message {
   id: string;
@@ -19,7 +19,6 @@ function createMessage(role: Message["role"], text: string, sources?: string[]):
 export default function NodeChat() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     createMessage("node", "Hey! I'm Node. Ask me anything about Rameez's work, projects, or writing."),
@@ -43,7 +42,7 @@ export default function NodeChat() {
 
     try {
       await initKnowledgeBase();
-      await initModels((p) => setLoadProgress(p));
+      await initEmbedder();
       setReady(true);
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
@@ -155,17 +154,11 @@ export default function NodeChat() {
 
             {loading && !ready && !loadError && (
               <div className="node-chat-loading">
-                <div className="node-chat-loading-bar">
-                  <div
-                    className="node-chat-loading-fill"
-                    style={{ width: `${loadProgress * 100}%` }}
-                  />
-                </div>
                 <div className="node-chat-loading-text">
-                  Loading Node's brain... {Math.round(loadProgress * 100)}%
+                  Loading Node's brain...
                 </div>
                 <div className="node-chat-loading-hint">
-                  This may take up to 2 minutes on first visit. Models are cached afterward.
+                  This may take a few seconds on first visit.
                 </div>
               </div>
             )}
@@ -191,7 +184,7 @@ export default function NodeChat() {
             <input
               type="text"
               className="node-chat-input"
-              placeholder={ready ? "Ask me anything..." : loadError ? "Reload failed — click Retry" : "Loading models..."}
+              placeholder={ready ? "Ask me anything..." : loadError ? "Reload failed — click Retry" : "Loading..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
