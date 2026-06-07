@@ -2472,7 +2472,8 @@ pre:hover .code-copy-btn,
   transform-origin: right center;
 }
 
-.node-chat-button:hover {
+.node-chat-button:hover,
+.node-chat-button-expanded {
   transform: translateX(0) rotate(0deg);
   box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.18);
 }
@@ -2818,15 +2819,20 @@ pre:hover .code-copy-btn,
   }
   .node-chat-button {
     bottom: 5rem;
-    right: 1rem;
-    transform: translateX(0) rotate(0deg);
-    border-radius: 24px;
+    right: 0;
+    transform: translateX(55%) rotate(-3deg);
+    border-radius: 24px 0 0 24px;
     border: var(--border-width) solid var(--accent);
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    border-right: none;
+    box-shadow: -3px 3px 14px rgba(0, 0, 0, 0.12);
   }
   .node-chat-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    transform: translateX(55%) rotate(-3deg);
+    box-shadow: -3px 3px 14px rgba(0, 0, 0, 0.12);
+  }
+  .node-chat-button-expanded {
+    transform: translateX(0) rotate(0deg);
+    box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.18);
   }
   .node-chat-button-label {
     display: none;

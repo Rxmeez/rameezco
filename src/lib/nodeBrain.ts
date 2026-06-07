@@ -110,6 +110,7 @@ Formatting rules:
 - Keep answers concise (2-4 sentences max for summaries)
 - For summaries: cover the main argument, key insight, and practical takeaway
 - Do not mention "the context says" or "according to the text" — just answer directly
+- Do not quote or cite specific sources, articles, or posts in your answer unless the user explicitly asks where information comes from
 - If the user asks to summarize, give a tight overview in 2-3 bullet points`;
 
   if (pageContext) {

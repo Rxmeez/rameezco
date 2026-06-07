@@ -30,6 +30,7 @@ export default function NodeChat() {
   const [input, setInput] = useState("");
   const [ready, setReady] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
+  const [buttonExpanded, setButtonExpanded] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const posthog = usePostHog();
 
@@ -136,10 +137,16 @@ export default function NodeChat() {
     <>
       <button
         type="button"
-        className="node-chat-button"
+        className={`node-chat-button ${buttonExpanded ? "node-chat-button-expanded" : ""}`}
         onClick={() => {
+          const isMobile = window.innerWidth <= 520;
+          if (isMobile && !buttonExpanded && !open) {
+            setButtonExpanded(true);
+            return;
+          }
           const nextOpen = !open;
           setOpen(nextOpen);
+          if (!nextOpen) setButtonExpanded(false);
           posthog?.capture(nextOpen ? "node_chat_opened" : "node_chat_closed");
           if (nextOpen && !ready && !loading && !loadError) {
             doInit();
