@@ -2615,6 +2615,29 @@ pre:hover .code-copy-btn,
   }
 }
 
+.node-chat-streaming-text {
+  white-space: pre-wrap;
+}
+
+.node-chat-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--accent);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: node-chat-cursor-blink 1s step-end infinite;
+}
+
+@keyframes node-chat-cursor-blink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
 .node-chat-loading {
   padding: var(--spacing-md);
   text-align: center;

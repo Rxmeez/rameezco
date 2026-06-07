@@ -7,6 +7,7 @@ interface Message {
   role: "user" | "node";
   text: string;
   sources?: string[];
+  streaming?: boolean;
 }
 
 let messageIdCounter = 0;
@@ -25,7 +26,7 @@ export default function NodeChat() {
   ]);
   const [input, setInput] = useState("");
   const [ready, setReady] = useState(false);
-  const [thinking, setThinking] = useState(false);
+  const [streamingId, setStreamingId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -54,29 +55,50 @@ export default function NodeChat() {
   }, [ready, loading]);
 
   const handleSend = useCallback(async () => {
-    if (!input.trim() || thinking) return;
+    if (!input.trim() || streamingId) return;
 
     const question = input.trim();
     setInput("");
     setMessages((prev) => [...prev, createMessage("user", question)]);
-    setThinking(true);
+
+    const streamMsg = createMessage("node", "", []);
+    streamMsg.streaming = true;
+    setMessages((prev) => [...prev, streamMsg]);
+    setStreamingId(streamMsg.id);
 
     try {
       if (!ready) await doInit();
 
-      const { answer, sources } = await askNode(question);
+      const { answer, sources } = await askNode(question, (token) => {
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === streamMsg.id
+              ? { ...msg, text: msg.text + token }
+              : msg,
+          ),
+        );
+      });
 
-      setMessages((prev) => [...prev, createMessage("node", answer || "I'm not sure about that one.", sources)]);
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === streamMsg.id
+            ? { ...msg, text: answer || "I'm not sure about that one.", sources, streaming: false }
+            : msg,
+        ),
+      );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      setMessages((prev) => [
-        ...prev,
-        createMessage("node", `Error: ${msg}`),
-      ]);
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === streamMsg.id
+            ? { ...m, text: `Error: ${msg}`, streaming: false }
+            : m,
+        ),
+      );
     } finally {
-      setThinking(false);
+      setStreamingId(null);
     }
-  }, [input, thinking, ready, doInit]);
+  }, [input, streamingId, ready, doInit]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -120,33 +142,34 @@ export default function NodeChat() {
           </div>
 
           <div className="node-chat-messages" ref={scrollRef}>
-            {messages.map((msg) => (
-              <div
-                key={msg.id}
-                className={`node-chat-message node-chat-message-${msg.role}`}
-              >
-                {msg.role === "node" && (
-                  <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
-                )}
-                <div className="node-chat-bubble">
-                  <div className="node-chat-text">{msg.text}</div>
-                  {msg.sources && msg.sources.length > 0 && (
-                    <div className="node-chat-sources">
-                      From: {msg.sources.join(", ")}
-                    </div>
+            {messages
+              .filter((msg) => msg.id !== streamingId)
+              .map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`node-chat-message node-chat-message-${msg.role}`}
+                >
+                  {msg.role === "node" && (
+                    <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                   )}
+                  <div className="node-chat-bubble">
+                    <div className="node-chat-text">{msg.text}</div>
+                    {msg.sources && msg.sources.length > 0 && (
+                      <div className="node-chat-sources">
+                        From: {msg.sources.join(", ")}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
 
-            {thinking && (
-              <div className="node-chat-message node-chat-message-node">
+            {streamingId && (
+              <div className="node-chat-message node-chat-message-node node-chat-streaming">
                 <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                 <div className="node-chat-bubble">
-                  <div className="node-chat-typing">
-                    <span className="node-chat-dot" />
-                    <span className="node-chat-dot" />
-                    <span className="node-chat-dot" />
+                  <div className="node-chat-text node-chat-streaming-text">
+                    {messages.find((m) => m.id === streamingId)?.text}
+                    <span className="node-chat-cursor" />
                   </div>
                 </div>
               </div>
@@ -188,13 +211,13 @@ export default function NodeChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={!ready || thinking}
+              disabled={!ready || !!streamingId}
             />
             <button
               type="button"
               className="node-chat-send"
               onClick={handleSend}
-              disabled={!ready || !input.trim() || thinking}
+              disabled={!ready || !input.trim() || !!streamingId}
             >
               →
             </button>
