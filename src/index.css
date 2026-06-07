@@ -1400,7 +1400,7 @@ a, .graph-btn, .theme-select-trigger {
 }
 .mascot-img {
   color: var(--fg);
-  filter: none;
+  filter: drop-shadow(0 0 1px var(--fg));
 }
 .mascot-text {
   border-left: var(--border-width) solid var(--border);
@@ -1532,6 +1532,7 @@ a, .graph-btn, .theme-select-trigger {
 }
 
 .node-guide-img {
+  color: var(--fg);
   filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.12));
   transition: filter 0.2s ease;
 }

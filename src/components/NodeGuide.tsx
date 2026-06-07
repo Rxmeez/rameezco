@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { MascotDefaultSvg, MascotSurprisedSvg, MascotThinkingSvg } from "./MascotSvg";
 
 interface GuideState {
   showing: boolean;
@@ -8,10 +9,10 @@ interface GuideState {
   animation: "none" | "wave" | "celebrate";
 }
 
-const svgMap = {
-  default: "/mascot.svg",
-  surprised: "/mascot-surprised.svg",
-  thinking: "/mascot-thinking.svg",
+const SvgMap = {
+  default: MascotDefaultSvg,
+  surprised: MascotSurprisedSvg,
+  thinking: MascotThinkingSvg,
 };
 
 export function triggerNodeGuide(
@@ -161,15 +162,10 @@ export default function NodeGuide() {
         <span className="node-guide-text">{state.message}</span>
         <span className="node-guide-tail" aria-hidden="true" />
       </div>
-      <img
-        src={svgMap[state.variant]}
-        alt=""
-        width={48}
-        height={48}
-        className={`node-guide-img mascot-animated-${state.variant}`}
-        style={imgStyle}
-        aria-hidden="true"
-      />
+      {(() => {
+        const Svg = SvgMap[state.variant];
+        return <Svg className={`node-guide-img mascot-animated-${state.variant}`} style={imgStyle} aria-hidden="true" />;
+      })()}
     </output>
   );
 }

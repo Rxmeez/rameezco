@@ -4,6 +4,7 @@ import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
 import { projects } from "../data/projects";
+import { MascotThinkingSvg } from "./MascotSvg";
 import { stripHtml } from "../lib/readingTime";
 
 interface SearchItem {
@@ -139,14 +140,12 @@ export default function Search({ isOpen, onClose }: Props) {
 
         {indexReady && query.trim() && results.length === 0 && (
           <div className="search-empty">
-            <img
-              src="/mascot-thinking.svg"
-              alt=""
+            <MascotThinkingSvg
               width={48}
               height={48}
               className="mascot-animated-thinking"
-              aria-hidden="true"
               style={{ marginBottom: "0.5rem" }}
+              aria-hidden="true"
             />
             <div>No results for "{query}"</div>
           </div>
