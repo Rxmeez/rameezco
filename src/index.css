@@ -1454,13 +1454,16 @@ a, .graph-btn, .theme-select-trigger {
   background: var(--accent-muted);
   font-family: var(--font-mono);
   font-size: 0.9rem;
-  color: var(--muted);
+  color: var(--fg);
 }
 .mascot-aside .mascot-img {
   flex-shrink: 0;
+  color: var(--fg);
+  filter: drop-shadow(0 0 1px var(--fg));
 }
 .mascot-aside-text {
   line-height: 1.5;
+  color: var(--muted);
 }
 
 /* ── Node Guide ── */
