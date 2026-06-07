@@ -20,42 +20,84 @@ let knowledgeBase: KnowledgeBase | null = null;
 let embedder: FeatureExtractionPipeline | null = null;
 let generator: TextGenerationPipeline | null = null;
 let loadProgress = 0;
+let loadError: string | null = null;
 
 export function getLoadProgress() {
   return loadProgress;
 }
 
+export function getLoadError() {
+  return loadError;
+}
+
+export function resetLoadError() {
+  loadError = null;
+  loadProgress = 0;
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      reject(new Error(`${label} timed out after ${ms / 1000}s. Check your connection.`));
+    }, ms);
+    promise
+      .then((val) => {
+        clearTimeout(timer);
+        resolve(val);
+      })
+      .catch((err) => {
+        clearTimeout(timer);
+        reject(err);
+      });
+  });
+}
+
 export async function initKnowledgeBase() {
   if (knowledgeBase) return;
   const response = await fetch("/knowledge-base.json");
+  if (!response.ok) {
+    throw new Error(`Failed to load knowledge base: ${response.status}`);
+  }
   knowledgeBase = await response.json();
 }
 
 export async function initModels(onProgress?: (progress: number) => void) {
   if (embedder && generator) return;
+  loadError = null;
 
   loadProgress = 0.1;
   onProgress?.(loadProgress);
 
-  embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2", {
-    quantized: true,
-  });
+  try {
+    embedder = await withTimeout(
+      pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2", {
+        quantized: true,
+      }),
+      30000,
+      "Loading embedding model",
+    );
 
-  loadProgress = 0.5;
-  onProgress?.(loadProgress);
+    loadProgress = 0.5;
+    onProgress?.(loadProgress);
 
-  generator = await pipeline("text-generation", "Xenova/tinyllama-chat-v1.0", {
-    quantized: true,
-  });
+    generator = await withTimeout(
+      pipeline("text-generation", "Xenova/tinyllama-chat-v1.0", {
+        quantized: true,
+      }),
+      120000,
+      "Loading language model",
+    );
 
-  loadProgress = 1.0;
-  onProgress?.(loadProgress);
+    loadProgress = 1.0;
+    onProgress?.(loadProgress);
+  } catch (err) {
+    loadError = err instanceof Error ? err.message : String(err);
+    loadProgress = 0;
+    throw err;
+  }
 }
 
-export async function askNode(
-  question: string,
-  onToken?: (token: string) => void,
-): Promise<{ answer: string; sources: string[] }> {
+export async function askNode(question: string): Promise<{ answer: string; sources: string[] }> {
   if (!knowledgeBase || !embedder || !generator) {
     throw new Error("Node is not ready yet. Please wait for the model to load.");
   }

@@ -2686,6 +2686,40 @@ pre:hover .code-copy-btn,
   cursor: not-allowed;
 }
 
+.node-chat-loading-hint {
+  font-size: 0.7rem;
+  color: var(--muted);
+  margin-top: 0.3rem;
+}
+
+.node-chat-error {
+  padding: var(--spacing-md);
+  text-align: center;
+}
+
+.node-chat-error-text {
+  font-size: 0.8rem;
+  color: var(--accent);
+  margin-bottom: var(--spacing-sm);
+  font-family: var(--font-mono);
+}
+
+.node-chat-retry {
+  background: var(--accent);
+  border: none;
+  color: var(--bg);
+  padding: 0.4rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 0.15s ease;
+}
+
+.node-chat-retry:hover {
+  opacity: 0.85;
+}
+
 @media (max-width: 520px) {
   .node-chat-panel {
     right: 0.5rem;

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MascotDefaultSvg } from "./MascotSvg";
-import { initKnowledgeBase, initModels, askNode } from "../lib/nodeBrain";
+import { initKnowledgeBase, initModels, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
 
 interface Message {
   id: string;
@@ -20,6 +20,7 @@ export default function NodeChat() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     createMessage("node", "Hey! I'm Node. Ask me anything about Rameez's work, projects, or writing."),
   ]);
@@ -34,16 +35,20 @@ export default function NodeChat() {
     }
   });
 
-  const init = useCallback(async () => {
+  const doInit = useCallback(async () => {
     if (ready || loading) return;
     setLoading(true);
+    setLoadError(null);
+    resetLoadError();
 
     try {
       await initKnowledgeBase();
       await initModels((p) => setLoadProgress(p));
       setReady(true);
     } catch (err) {
-      console.error("Failed to initialize Node:", err);
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error("Failed to initialize Node:", msg);
+      setLoadError(msg);
     } finally {
       setLoading(false);
     }
@@ -58,33 +63,21 @@ export default function NodeChat() {
     setThinking(true);
 
     try {
-      if (!ready) await init();
+      if (!ready) await doInit();
 
-      let answer = "";
-      const { answer: fullAnswer, sources } = await askNode(question, (token) => {
-        answer += token;
-        setMessages((prev) => {
-          const last = prev[prev.length - 1];
-          if (last && last.role === "node" && last.text === answer.slice(0, -token.length)) {
-            return [...prev.slice(0, -1), createMessage("node", answer, sources)];
-          }
-          return [...prev, createMessage("node", answer, sources)];
-        });
-      });
+      const { answer, sources } = await askNode(question);
 
-      setMessages((prev) => {
-        const filtered = prev.filter((m, i) => !(m.role === "node" && i === prev.length - 1 && m.text === ""));
-        return [...filtered, createMessage("node", fullAnswer || answer, sources)];
-      });
+      setMessages((prev) => [...prev, createMessage("node", answer || "I'm not sure about that one.", sources)]);
     } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
       setMessages((prev) => [
         ...prev,
-        createMessage("node", "Sorry, my circuits got tangled. Try asking again?"),
+        createMessage("node", `Error: ${msg}`),
       ]);
     } finally {
       setThinking(false);
     }
-  }, [input, thinking, ready, init]);
+  }, [input, thinking, ready, doInit]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -100,8 +93,8 @@ export default function NodeChat() {
         className="node-chat-button"
         onClick={() => {
           setOpen((prev) => !prev);
-          if (!ready && !loading) {
-            init();
+          if (!ready && !loading && !loadError) {
+            doInit();
           }
         }}
         aria-label="Chat with Node"
@@ -128,7 +121,7 @@ export default function NodeChat() {
           </div>
 
           <div className="node-chat-messages" ref={scrollRef}>
-            {messages.map((msg, i) => (
+            {messages.map((msg) => (
               <div
                 key={msg.id}
                 className={`node-chat-message node-chat-message-${msg.role}`}
@@ -160,7 +153,7 @@ export default function NodeChat() {
               </div>
             )}
 
-            {loading && !ready && (
+            {loading && !ready && !loadError && (
               <div className="node-chat-loading">
                 <div className="node-chat-loading-bar">
                   <div
@@ -171,6 +164,25 @@ export default function NodeChat() {
                 <div className="node-chat-loading-text">
                   Loading Node's brain... {Math.round(loadProgress * 100)}%
                 </div>
+                <div className="node-chat-loading-hint">
+                  This may take up to 2 minutes on first visit. Models are cached afterward.
+                </div>
+              </div>
+            )}
+
+            {loadError && (
+              <div className="node-chat-error">
+                <div className="node-chat-error-text">{loadError}</div>
+                <button
+                  type="button"
+                  className="node-chat-retry"
+                  onClick={() => {
+                    setLoadError(null);
+                    doInit();
+                  }}
+                >
+                  Retry
+                </button>
               </div>
             )}
           </div>
@@ -179,7 +191,7 @@ export default function NodeChat() {
             <input
               type="text"
               className="node-chat-input"
-              placeholder={ready ? "Ask me anything..." : "Loading..."}
+              placeholder={ready ? "Ask me anything..." : loadError ? "Reload failed — click Retry" : "Loading models..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
