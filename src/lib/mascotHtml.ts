@@ -20,8 +20,8 @@ function buildSvg(imgTag: string, svgInner: string): string {
   const height = extractAttr(imgTag, "height") ?? "48";
   const cls = (extractAttr(imgTag, "class") ?? "").trim();
   const style = extractAttr(imgTag, "style");
-  const styleAttr = style ? ` style="${style}"` : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${width}" height="${height}" class="${cls}"${styleAttr}>${svgInner}</svg>`;
+  const inlineStyle = style ? `${style};` : "";
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${width}" height="${height}" class="${cls}" style="${inlineStyle}color:var(--fg)">${svgInner}</svg>`;
 }
 
 export function replaceMascotImages(html: string): string {
