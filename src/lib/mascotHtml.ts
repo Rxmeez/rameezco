@@ -11,7 +11,7 @@ const svgMap: Record<string, string> = {
 };
 
 function extractAttr(tag: string, attr: string): string | undefined {
-  const m = tag.match(new RegExp(`${attr}=["']?([^"'\s>]+)["']?`));
+  const m = tag.match(new RegExp(`${attr}=["']([^"']*)["']`));
   return m?.[1];
 }
 
@@ -21,7 +21,7 @@ function buildSvg(imgTag: string, svgInner: string): string {
   const cls = (extractAttr(imgTag, "class") ?? "").trim();
   const style = extractAttr(imgTag, "style");
   const inlineStyle = style ? `${style};` : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${width}" height="${height}" class="${cls}" style="${inlineStyle}color:var(--fg)">${svgInner}</svg>`;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="${width}" height="${height}" class="${cls}" style="${inlineStyle}display:inline-block">${svgInner}</svg>`;
 }
 
 export function replaceMascotImages(html: string): string {
