@@ -109,9 +109,9 @@ export async function askNode(
     throw new Error("Node is not ready yet. Please wait for the embedding model to load.");
   }
 
-  const apiKey = import.meta.env.VITE_OPENROUTER_API_KEY;
-  if (!apiKey) {
-    throw new Error("OpenRouter API key is missing. Please add VITE_OPENROUTER_API_KEY to your environment.");
+  const proxyUrl = import.meta.env.VITE_NODE_PROXY_URL;
+  if (!proxyUrl) {
+    throw new Error("VITE_NODE_PROXY_URL is not set. Deploy the Cloudflare Worker and add its URL to your environment.");
   }
 
   const qOutput = await embedder(question, {
@@ -152,14 +152,10 @@ Formatting rules:
 
   const useStreaming = typeof onToken === "function";
 
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+  const response = await fetch(proxyUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${apiKey}`,
-      "HTTP-Referer": "https://rameez.co",
-      "X-Title": "Rameez.co - Ask Node",
-      Accept: "text/event-stream",
     },
     body: JSON.stringify({
       model: "openrouter/free",
