@@ -17,13 +17,24 @@ interface KnowledgeChunk {
 
 function stripHtml(html: string): string {
   return html
-    .replace(/<pre[^>]*>[\s\S]*?<\/pre>/g, "")
+    .replace(/<div[^>]*class="mascot-aside"[^>]*>[\s\S]*?<\/div>/g, "")
+    .replace(/<pre[^>]*>([\s\S]*?)<\/pre>/g, (_match, inner) => {
+      const code = inner
+        .replace(/<[^>]+>/g, "")
+        .replace(/&lt;/g, "<")
+        .replace(/&gt;/g, ">")
+        .replace(/&amp;/g, "&");
+      return `\n${code}\n`;
+    })
     .replace(/<[^>]+>/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
     .replace(/\s+/g, " ")
     .trim();
 }
 
-function chunkText(text: string, maxLength = 300): string[] {
+function chunkText(text: string, maxLength = 700): string[] {
   const sentences = text.split(/(?<=[.!?])\s+/);
   const chunks: string[] = [];
   let current = "";
@@ -47,8 +58,15 @@ async function buildKnowledgeBase() {
   chunks.push({
     id: "site-info",
     type: "site",
-    source: "About",
+    source: "About Rameez",
     text: `${SITE.author} is a ${SITE.role}. ${SITE.description}`,
+  });
+
+  chunks.push({
+    id: "about-rameez",
+    type: "site",
+    source: "About Rameez",
+    text: `Rameez Khan is a software engineer who writes about data engineering, Go, SQL, and developer tooling. His technical writing covers SQL window functions in BigQuery (FIRST_VALUE and LAST_VALUE frame clause behaviour), dbt unit testing for macros using dbt 1.8 native unit tests, Goose database schema migration tool for Go services, and Go error handling patterns including sentinel errors, error wrapping with fmt.Errorf, and custom error types. His projects include ox-db (a TypeScript database query tool with a clean UI for writing and executing SQL across multiple database types) and bragdoc (a second brain tool for tracking professional accomplishments — designed for performance reviews, interviews, and 1:1s). He has a machine learning background including a self-driving car project using CNNs and behavioral cloning. He is active on GitHub as rxmeez and publishes on Medium as @rxmeez. His interests span backend systems, data pipelines, and tools that make developers more effective.`,
   });
 
   for (const post of posts) {

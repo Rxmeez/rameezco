@@ -45,6 +45,8 @@ export default function NodeChat() {
   const [buttonExpanded, setButtonExpanded] = useState(false);
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef(messages);
+  useEffect(() => { messagesRef.current = messages; }, [messages]);
   const posthog = usePostHog();
   const navigate = useNavigate();
   const contentLinks = getContentLinks();
@@ -129,6 +131,10 @@ export default function NodeChat() {
     try {
       if (!ready) await doInit();
 
+      const history = messagesRef.current
+        .slice(1)
+        .filter((m) => !m.streaming && m.text);
+
       const { answer, sources } = await askNode(
         question,
         (token) => {
@@ -141,6 +147,7 @@ export default function NodeChat() {
           );
         },
         pageContext,
+        history,
       );
 
       setMessages((prev) =>
@@ -314,7 +321,7 @@ export default function NodeChat() {
             )}
           </div>
 
-          {suggestedQuestions.length > 0 && !streamingId && (
+          {suggestedQuestions.length > 0 && !streamingId && !input.trim() && (
             <div className="node-chat-suggestions">
               {suggestedQuestions.map((q) => (
                 <button
@@ -328,7 +335,7 @@ export default function NodeChat() {
                     });
                     sendQuestion(q);
                   }}
-                  disabled={!ready}
+                  disabled={!!streamingId}
                 >
                   {q}
                 </button>
@@ -340,17 +347,17 @@ export default function NodeChat() {
             <input
               type="text"
               className="node-chat-input"
-              placeholder={ready ? "Ask me anything..." : loadError ? "Reload failed — click Retry" : "Loading..."}
+              placeholder={streamingId ? "Node is thinking..." : loadError ? "Reload failed — click Retry" : "Ask me anything..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              disabled={!ready || !!streamingId}
+              disabled={!!streamingId}
             />
             <button
               type="button"
               className="node-chat-send"
               onClick={handleSend}
-              disabled={!ready || !input.trim() || !!streamingId}
+              disabled={!input.trim() || !!streamingId}
             >
               →
             </button>

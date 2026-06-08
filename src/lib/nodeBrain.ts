@@ -104,6 +104,7 @@ export async function askNode(
   question: string,
   onToken?: (token: string) => void,
   pageContext?: { title: string; content: string; type: string } | null,
+  conversationHistory?: { role: "user" | "node"; text: string }[],
 ): Promise<{ answer: string; sources: string[] }> {
   if (!knowledgeBase || !embedder) {
     throw new Error("Node is not ready yet. Please wait for the embedding model to load.");
@@ -126,9 +127,10 @@ export async function askNode(
   }));
 
   scored.sort((a, b) => b.score - a.score);
-  const topChunks = scored.slice(0, 3);
+  const topChunks = scored.slice(0, 5);
+  const bestScore = topChunks[0]?.score ?? 0;
   const context = topChunks.map((c) => c.text).join("\n\n");
-  const sources = [...new Set(topChunks.map((c) => c.source).filter(Boolean))];
+  const sources = [...new Set(topChunks.filter((c) => c.score >= 0.2).map((c) => c.source).filter(Boolean))];
 
   let systemPrompt = `You are Node, a helpful assistant embedded in Rameez Khan's personal website. You answer questions about Rameez's work, projects, writing, and background using ONLY the provided context.
 
@@ -144,6 +146,10 @@ Formatting rules:
 
   systemPrompt += `\n\n${buildContentCatalog()}`;
 
+  if (bestScore < 0.2) {
+    systemPrompt += "\n\nNote: The retrieved context may not directly answer this question. If you cannot answer confidently from the context, say so briefly rather than speculating.";
+  }
+
   if (pageContext) {
     systemPrompt += `\n\nThe user is currently reading a ${pageContext.type} titled "${pageContext.title}". Here is its content:\n${pageContext.content}`;
   }
@@ -152,19 +158,24 @@ Formatting rules:
 
   const useStreaming = typeof onToken === "function";
 
+  const historyMessages = (conversationHistory ?? [])
+    .slice(-8)
+    .map((m) => ({ role: m.role === "node" ? ("assistant" as const) : ("user" as const), content: m.text }));
+
   const response = await fetch(proxyUrl, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      model: "openrouter/free",
+      model: "meta-llama/llama-3.1-8b-instruct:free",
       messages: [
         { role: "system", content: systemPrompt },
+        ...historyMessages,
         { role: "user", content: question },
       ],
-      temperature: 0.7,
-      max_tokens: 300,
+      temperature: 0.3,
+      max_tokens: 500,
       stream: useStreaming,
     }),
   });
