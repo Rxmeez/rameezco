@@ -1,5 +1,8 @@
-import { pipeline, cos_sim } from "@xenova/transformers";
+import { pipeline, cos_sim, env } from "@xenova/transformers";
 import type { FeatureExtractionPipeline } from "@xenova/transformers";
+
+// Point onnxruntime-web to CDN — Vite doesn't copy WASM files into the build output
+env.backends.onnx.wasm.wasmPaths = "https://cdn.jsdelivr.net/npm/onnxruntime-web@1.14.0/dist/";
 import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";

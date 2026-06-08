@@ -2,7 +2,7 @@ interface Env {
   OPENROUTER_API_KEY: string;
 }
 
-const ALLOWED_ORIGINS = ["https://rameez.co", "http://localhost:5173", "http://localhost:4173"];
+const ALLOWED_ORIGINS = ["https://rameez.co", "https://rameez-co.pages.dev", "http://localhost:5173", "http://localhost:4173"];
 
 function corsHeaders(origin: string) {
   return {
