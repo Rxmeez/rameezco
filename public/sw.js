@@ -1,4 +1,4 @@
-const CACHE_NAME = "rameez-co-v1";
+const CACHE_NAME = "rameez-co-v2";
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",
@@ -29,6 +29,10 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("fetch", (event) => {
   if (event.request.method !== "GET") return;
+
+  // Never cache the knowledge base — it's large and rebuilt on every deploy
+  const url = new URL(event.request.url);
+  if (url.pathname === "/knowledge-base.json") return;
 
   event.respondWith(
     caches.match(event.request).then((cached) => {
