@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import { MascotDefaultSvg } from "./MascotSvg";
-import { initKnowledgeBase, initEmbedder, askNode, getLoadError, resetLoadError } from "../lib/nodeBrain";
+import { askNode } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions, getContentLinks, getSourceUrl, linkifyContent } from "../lib/pageContext";
 import { formatMarkdown } from "../lib/markdown";
 
@@ -17,8 +17,7 @@ interface Message {
 let messageIdCounter = 0;
 
 const THINKING_PHRASES = [
-  "Indexing knowledge base",
-  "Computing embeddings",
+  "Searching knowledge base",
   "Running vector search",
   "Ranking relevant chunks",
   "Querying the model",
@@ -34,13 +33,10 @@ function createMessage(role: Message["role"], text: string, sources?: string[]):
 
 export default function NodeChat() {
   const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([
     createMessage("node", "Hey! I'm Node. Ask me anything about Rameez's work, projects, or writing."),
   ]);
   const [input, setInput] = useState("");
-  const [ready, setReady] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
   const [buttonExpanded, setButtonExpanded] = useState(false);
   const [thinkingPhrase, setThinkingPhrase] = useState(THINKING_PHRASES[0]);
@@ -92,25 +88,6 @@ export default function NodeChat() {
     }
   });
 
-  const doInit = useCallback(async () => {
-    if (ready || loading) return;
-    setLoading(true);
-    setLoadError(null);
-    resetLoadError();
-
-    try {
-      await initKnowledgeBase();
-      await initEmbedder();
-      setReady(true);
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      console.error("Failed to initialize Node:", msg);
-      setLoadError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }, [ready, loading]);
-
   const sendQuestion = useCallback(async (question: string) => {
     if (streamingId) return;
 
@@ -129,8 +106,6 @@ export default function NodeChat() {
     setStreamingId(streamMsg.id);
 
     try {
-      if (!ready) await doInit();
-
       const history = messagesRef.current
         .slice(1)
         .filter((m) => !m.streaming && m.text);
@@ -159,10 +134,7 @@ export default function NodeChat() {
       );
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
-      posthog?.capture("node_chat_error", {
-        error: msg,
-        question,
-      });
+      posthog?.capture("node_chat_error", { error: msg, question });
       setMessages((prev) =>
         prev.map((m) =>
           m.id === streamMsg.id
@@ -173,7 +145,7 @@ export default function NodeChat() {
     } finally {
       setStreamingId(null);
     }
-  }, [streamingId, ready, doInit, pageContext, posthog]);
+  }, [streamingId, pageContext, posthog]);
 
   const handleSend = useCallback(() => {
     if (!input.trim()) return;
@@ -202,9 +174,6 @@ export default function NodeChat() {
           setOpen(nextOpen);
           if (!nextOpen) setButtonExpanded(false);
           posthog?.capture(nextOpen ? "node_chat_opened" : "node_chat_closed");
-          if (nextOpen && !ready && !loading && !loadError) {
-            doInit();
-          }
         }}
         aria-label="Chat with Node"
       >
@@ -229,7 +198,7 @@ export default function NodeChat() {
             </button>
           </div>
 
-           <div className="node-chat-messages" ref={scrollRef} onClick={handleMessageClick} onKeyDown={() => {}} role="presentation">
+          <div className="node-chat-messages" ref={scrollRef} onClick={handleMessageClick} onKeyDown={() => {}} role="presentation">
             {messages
               .filter((msg) => msg.id !== streamingId)
               .map((msg) => (
@@ -282,41 +251,14 @@ export default function NodeChat() {
                       <span className="node-chat-thinking-text">{thinkingPhrase}…</span>
                     </div>
                   ) : (
-                  <div
-                    className="node-chat-text node-chat-streaming-text"
-                    dangerouslySetInnerHTML={{
-                      __html: `${formatMarkdown(streamingText)}<span class="node-chat-cursor"></span>`,
-                    }}
-                  />
+                    <div
+                      className="node-chat-text node-chat-streaming-text"
+                      dangerouslySetInnerHTML={{
+                        __html: `${formatMarkdown(streamingText)}<span class="node-chat-cursor"></span>`,
+                      }}
+                    />
                   )}
                 </div>
-              </div>
-            )}
-
-            {loading && !ready && !loadError && (
-              <div className="node-chat-loading">
-                <div className="node-chat-loading-text">
-                  Loading Node's brain...
-                </div>
-                <div className="node-chat-loading-hint">
-                  This may take a few seconds on first visit.
-                </div>
-              </div>
-            )}
-
-            {loadError && (
-              <div className="node-chat-error">
-                <div className="node-chat-error-text">{loadError}</div>
-                <button
-                  type="button"
-                  className="node-chat-retry"
-                  onClick={() => {
-                    setLoadError(null);
-                    doInit();
-                  }}
-                >
-                  Retry
-                </button>
               </div>
             )}
           </div>
@@ -347,7 +289,7 @@ export default function NodeChat() {
             <input
               type="text"
               className="node-chat-input"
-              placeholder={streamingId ? "Node is thinking..." : loadError ? "Reload failed — click Retry" : "Ask me anything..."}
+              placeholder={streamingId ? "Node is thinking..." : "Ask me anything..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}

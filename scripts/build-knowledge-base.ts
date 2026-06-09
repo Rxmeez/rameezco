@@ -1,4 +1,3 @@
-import { pipeline } from "@xenova/transformers";
 import { posts } from "../src/data/posts";
 import { mediumPosts } from "../src/data/medium";
 import { notes } from "../src/data/notes";
@@ -12,7 +11,7 @@ interface KnowledgeChunk {
   source: string;
   sourceUrl?: string;
   text: string;
-  embedding?: number[];
+  embedding: number[];
 }
 
 function stripHtml(html: string): string {
@@ -52,17 +51,51 @@ function chunkText(text: string, maxLength = 700): string[] {
   return chunks.length > 0 ? chunks : [text.slice(0, maxLength)];
 }
 
-async function buildKnowledgeBase() {
-  const chunks: KnowledgeChunk[] = [];
+async function embedBatch(
+  texts: string[],
+  accountId: string,
+  apiToken: string,
+): Promise<number[][]> {
+  const response = await fetch(
+    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/baai/bge-small-en-v1.5`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${apiToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text: texts }),
+    },
+  );
 
-  chunks.push({
+  if (!response.ok) {
+    throw new Error(`CF AI API error ${response.status}: ${await response.text()}`);
+  }
+
+  const json = (await response.json()) as { result: { data: number[][] }; success: boolean };
+  if (!json.success) throw new Error("CF AI API returned success: false");
+  return json.result.data;
+}
+
+async function buildKnowledgeBase() {
+  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
+  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+
+  if (!accountId || !apiToken) {
+    console.log("No CF credentials found — skipping knowledge base regeneration.");
+    process.exit(0);
+  }
+
+  const partialChunks: Omit<KnowledgeChunk, "embedding">[] = [];
+
+  partialChunks.push({
     id: "site-info",
     type: "site",
     source: "About Rameez",
     text: `${SITE.author} is a ${SITE.role}. ${SITE.description}`,
   });
 
-  chunks.push({
+  partialChunks.push({
     id: "about-rameez",
     type: "site",
     source: "About Rameez",
@@ -73,7 +106,7 @@ async function buildKnowledgeBase() {
     const plain = stripHtml(post.content);
     const textChunks = chunkText(plain);
     for (let i = 0; i < textChunks.length; i++) {
-      chunks.push({
+      partialChunks.push({
         id: `post-${post.slug}-${i}`,
         type: "post",
         source: post.title,
@@ -87,7 +120,7 @@ async function buildKnowledgeBase() {
     const plain = stripHtml(post.content);
     const textChunks = chunkText(plain);
     for (let i = 0; i < textChunks.length; i++) {
-      chunks.push({
+      partialChunks.push({
         id: `medium-${post.slug}-${i}`,
         type: "medium",
         source: post.title,
@@ -101,7 +134,7 @@ async function buildKnowledgeBase() {
     const plain = stripHtml(note.content);
     const textChunks = chunkText(plain);
     for (let i = 0; i < textChunks.length; i++) {
-      chunks.push({
+      partialChunks.push({
         id: `note-${note.slug}-${i}`,
         type: "note",
         source: note.title,
@@ -112,7 +145,7 @@ async function buildKnowledgeBase() {
   }
 
   for (const project of projects) {
-    chunks.push({
+    partialChunks.push({
       id: `project-${project.title}`,
       type: "project",
       source: project.title,
@@ -121,29 +154,51 @@ async function buildKnowledgeBase() {
     });
   }
 
-  console.log(`Building knowledge base with ${chunks.length} chunks...`);
+  console.log(`Embedding ${partialChunks.length} chunks via Cloudflare AI...`);
 
-  const embedder = await pipeline("feature-extraction", "Xenova/all-MiniLM-L6-v2");
-
-  for (let i = 0; i < chunks.length; i++) {
-    const output = await embedder(chunks[i].text, {
-      pooling: "mean",
-      normalize: true,
-    });
-    chunks[i].embedding = Array.from(output.data as Float32Array);
-    if ((i + 1) % 10 === 0) {
-      console.log(`  Embedded ${i + 1}/${chunks.length} chunks...`);
-    }
+  // Embed in batches of 10
+  const BATCH_SIZE = 10;
+  const allEmbeddings: number[][] = [];
+  for (let i = 0; i < partialChunks.length; i += BATCH_SIZE) {
+    const batch = partialChunks.slice(i, i + BATCH_SIZE);
+    const embeddings = await embedBatch(
+      batch.map((c) => c.text),
+      accountId,
+      apiToken,
+    );
+    allEmbeddings.push(...embeddings);
+    console.log(`  Embedded ${Math.min(i + BATCH_SIZE, partialChunks.length)}/${partialChunks.length}`);
   }
 
+  const chunks: KnowledgeChunk[] = partialChunks.map((chunk, i) => ({
+    ...chunk,
+    embedding: allEmbeddings[i],
+  }));
+
+  // Build the content catalog for the Worker
+  const writing = [
+    ...posts.map((p) => ({ title: p.title, date: p.date })),
+    ...mediumPosts.map((p) => ({ title: p.title, date: p.date })),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+
+  const sortedNotes = [...notes]
+    .map((n) => ({ title: n.title, date: n.date }))
+    .sort((a, b) => b.date.localeCompare(a.date));
+
+  const catalog = {
+    writing,
+    notes: sortedNotes,
+    projects: projects.map((p) => ({ title: p.title, description: p.description })),
+  };
+
   const knowledgeBase = {
-    embeddingModel: "Xenova/all-MiniLM-L6-v2",
-    llmModel: "Xenova/tinyllama-chat-v1.0",
+    embeddingModel: "@cf/baai/bge-small-en-v1.5",
+    catalog,
     chunks,
   };
 
   writeFileSync("public/knowledge-base.json", JSON.stringify(knowledgeBase));
-  console.log("Knowledge base saved to public/knowledge-base.json");
+  console.log(`Knowledge base saved (${chunks.length} chunks, ${allEmbeddings[0]?.length ?? 0}-dim embeddings).`);
 }
 
 buildKnowledgeBase().catch((err) => {

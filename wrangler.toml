@@ -1,3 +1,6 @@
 name = "rameez-node-proxy"
 main = "worker/index.ts"
 compatibility_date = "2025-06-08"
+
+[ai]
+binding = "AI"

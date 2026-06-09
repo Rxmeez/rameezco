@@ -5,9 +5,6 @@ import rssPlugin from "./vite-rss-plugin";
 export default defineConfig({
   plugins: [react(), rssPlugin()],
   base: "/",
-  optimizeDeps: {
-    exclude: ["@xenova/transformers"],
-  },
   build: {
     rollupOptions: {
       output: {
