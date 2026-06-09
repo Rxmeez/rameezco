@@ -78,11 +78,18 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
 
 export async function initKnowledgeBase() {
   if (knowledgeBase) return;
-  const response = await fetch("/knowledge-base.json");
+  // ?v=2 busts any SW-cached stale HTML responses from before the file was deployed
+  const response = await fetch("/knowledge-base.json?v=2");
   if (!response.ok) {
-    throw new Error(`Failed to load knowledge base: ${response.status}`);
+    throw new Error(`Failed to load knowledge base: HTTP ${response.status}`);
   }
-  knowledgeBase = await response.json();
+  const text = await response.text();
+  try {
+    knowledgeBase = JSON.parse(text) as KnowledgeBase;
+  } catch {
+    const preview = text.slice(0, 120).replace(/\n/g, " ");
+    throw new Error(`knowledge-base.json returned non-JSON (content-type: ${response.headers.get("content-type") ?? "unknown"}). Got: ${preview}`);
+  }
 }
 
 export async function initEmbedder() {
