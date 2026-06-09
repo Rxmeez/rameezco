@@ -11,7 +11,6 @@ interface KnowledgeChunk {
   source: string;
   sourceUrl?: string;
   text: string;
-  embedding: number[];
 }
 
 function stripHtml(html: string): string {
@@ -51,51 +50,17 @@ function chunkText(text: string, maxLength = 700): string[] {
   return chunks.length > 0 ? chunks : [text.slice(0, maxLength)];
 }
 
-async function embedBatch(
-  texts: string[],
-  accountId: string,
-  apiToken: string,
-): Promise<number[][]> {
-  const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${accountId}/ai/run/@cf/baai/bge-small-en-v1.5`,
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ text: texts }),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`CF AI API error ${response.status}: ${await response.text()}`);
-  }
-
-  const json = (await response.json()) as { result: { data: number[][] }; success: boolean };
-  if (!json.success) throw new Error("CF AI API returned success: false");
-  return json.result.data;
-}
-
 async function buildKnowledgeBase() {
-  const accountId = process.env.CLOUDFLARE_ACCOUNT_ID;
-  const apiToken = process.env.CLOUDFLARE_API_TOKEN;
+  const chunks: KnowledgeChunk[] = [];
 
-  if (!accountId || !apiToken) {
-    console.log("No CF credentials found — skipping knowledge base regeneration.");
-    process.exit(0);
-  }
-
-  const partialChunks: Omit<KnowledgeChunk, "embedding">[] = [];
-
-  partialChunks.push({
+  chunks.push({
     id: "site-info",
     type: "site",
     source: "About Rameez",
     text: `${SITE.author} is a ${SITE.role}. ${SITE.description}`,
   });
 
-  partialChunks.push({
+  chunks.push({
     id: "about-rameez",
     type: "site",
     source: "About Rameez",
@@ -104,48 +69,45 @@ async function buildKnowledgeBase() {
 
   for (const post of posts) {
     const plain = stripHtml(post.content);
-    const textChunks = chunkText(plain);
-    for (let i = 0; i < textChunks.length; i++) {
-      partialChunks.push({
+    for (let i = 0; i < chunkText(plain).length; i++) {
+      chunks.push({
         id: `post-${post.slug}-${i}`,
         type: "post",
         source: post.title,
         sourceUrl: `/writing/${post.slug}`,
-        text: textChunks[i],
+        text: chunkText(plain)[i],
       });
     }
   }
 
   for (const post of mediumPosts) {
     const plain = stripHtml(post.content);
-    const textChunks = chunkText(plain);
-    for (let i = 0; i < textChunks.length; i++) {
-      partialChunks.push({
+    for (let i = 0; i < chunkText(plain).length; i++) {
+      chunks.push({
         id: `medium-${post.slug}-${i}`,
         type: "medium",
         source: post.title,
         sourceUrl: `/writing/${post.slug}`,
-        text: textChunks[i],
+        text: chunkText(plain)[i],
       });
     }
   }
 
   for (const note of notes) {
     const plain = stripHtml(note.content);
-    const textChunks = chunkText(plain);
-    for (let i = 0; i < textChunks.length; i++) {
-      partialChunks.push({
+    for (let i = 0; i < chunkText(plain).length; i++) {
+      chunks.push({
         id: `note-${note.slug}-${i}`,
         type: "note",
         source: note.title,
         sourceUrl: `/notes/${note.slug}`,
-        text: textChunks[i],
+        text: chunkText(plain)[i],
       });
     }
   }
 
   for (const project of projects) {
-    partialChunks.push({
+    chunks.push({
       id: `project-${project.title}`,
       type: "project",
       source: project.title,
@@ -154,51 +116,18 @@ async function buildKnowledgeBase() {
     });
   }
 
-  console.log(`Embedding ${partialChunks.length} chunks via Cloudflare AI...`);
-
-  // Embed in batches of 10
-  const BATCH_SIZE = 10;
-  const allEmbeddings: number[][] = [];
-  for (let i = 0; i < partialChunks.length; i += BATCH_SIZE) {
-    const batch = partialChunks.slice(i, i + BATCH_SIZE);
-    const embeddings = await embedBatch(
-      batch.map((c) => c.text),
-      accountId,
-      apiToken,
-    );
-    allEmbeddings.push(...embeddings);
-    console.log(`  Embedded ${Math.min(i + BATCH_SIZE, partialChunks.length)}/${partialChunks.length}`);
-  }
-
-  const chunks: KnowledgeChunk[] = partialChunks.map((chunk, i) => ({
-    ...chunk,
-    embedding: allEmbeddings[i],
-  }));
-
-  // Build the content catalog for the Worker
-  const writing = [
-    ...posts.map((p) => ({ title: p.title, date: p.date })),
-    ...mediumPosts.map((p) => ({ title: p.title, date: p.date })),
-  ].sort((a, b) => b.date.localeCompare(a.date));
-
-  const sortedNotes = [...notes]
-    .map((n) => ({ title: n.title, date: n.date }))
-    .sort((a, b) => b.date.localeCompare(a.date));
-
   const catalog = {
-    writing,
-    notes: sortedNotes,
+    writing: [...posts.map((p) => ({ title: p.title, date: p.date })),
+               ...mediumPosts.map((p) => ({ title: p.title, date: p.date }))]
+      .sort((a, b) => b.date.localeCompare(a.date)),
+    notes: [...notes]
+      .map((n) => ({ title: n.title, date: n.date }))
+      .sort((a, b) => b.date.localeCompare(a.date)),
     projects: projects.map((p) => ({ title: p.title, description: p.description })),
   };
 
-  const knowledgeBase = {
-    embeddingModel: "@cf/baai/bge-small-en-v1.5",
-    catalog,
-    chunks,
-  };
-
-  writeFileSync("public/knowledge-base.json", JSON.stringify(knowledgeBase));
-  console.log(`Knowledge base saved (${chunks.length} chunks, ${allEmbeddings[0]?.length ?? 0}-dim embeddings).`);
+  writeFileSync("public/knowledge-base.json", JSON.stringify({ catalog, chunks }));
+  console.log(`Knowledge base saved: ${chunks.length} chunks (embeddings generated at Worker runtime).`);
 }
 
 buildKnowledgeBase().catch((err) => {

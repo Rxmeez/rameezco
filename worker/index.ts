@@ -22,8 +22,11 @@ interface KnowledgeChunk {
   type: string;
   source: string;
   text: string;
-  embedding: number[];
 }
+
+// Chunk embeddings are generated once on first request and reused for the
+// lifetime of the Worker instance — avoids embedding 19 chunks every request
+let cachedChunkEmbeddings: number[][] | null = null;
 
 interface KnowledgeBase {
   catalog?: {
@@ -108,16 +111,22 @@ export default {
 
     const kb = kbData as unknown as KnowledgeBase;
 
-    // Embed the query using Cloudflare AI (same model used to embed chunks at build time)
-    const embResult = await env.AI.run("@cf/baai/bge-small-en-v1.5", {
-      text: [question],
-    });
-    const queryEmbedding = embResult.data[0];
+    // Embed query + all chunks in parallel (chunks are cached after first request)
+    const [queryResult, chunkResult] = await Promise.all([
+      env.AI.run("@cf/baai/bge-small-en-v1.5", { text: [question] }),
+      cachedChunkEmbeddings
+        ? Promise.resolve({ data: cachedChunkEmbeddings })
+        : env.AI.run("@cf/baai/bge-small-en-v1.5", {
+            text: kb.chunks.map((c) => c.text),
+          }),
+    ]);
+    const queryEmbedding = queryResult.data[0];
+    cachedChunkEmbeddings = chunkResult.data;
 
     // Cosine similarity retrieval
-    const scored = kb.chunks.map((chunk) => ({
+    const scored = kb.chunks.map((chunk, i) => ({
       ...chunk,
-      score: cosineSimilarity(queryEmbedding, chunk.embedding),
+      score: cosineSimilarity(queryEmbedding, cachedChunkEmbeddings![i]),
     }));
     scored.sort((a, b) => b.score - a.score);
     const topChunks = scored.slice(0, 5);
