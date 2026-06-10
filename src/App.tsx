@@ -15,6 +15,7 @@ import NotFound from "./pages/NotFound";
 import { allowsAnalytics } from "./lib/cookieConsent";
 
 const WritingGraph = lazy(() => import("./pages/WritingGraph"));
+const Play = lazy(() => import("./pages/Play"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -58,6 +59,11 @@ export default function App() {
           <Route path="now" element={<Now />} />
           <Route path="notes" element={<Notes />} />
           <Route path="notes/:slug" element={<NotesPost />} />
+          <Route path="play" element={
+            <Suspense fallback={<div className="graph-skeleton">Loading game...</div>}>
+              <Play />
+            </Suspense>
+          } />
           <Route path="cookies" element={<CookiePolicy />} />
           <Route path="*" element={<NotFound />} />
         </Route>

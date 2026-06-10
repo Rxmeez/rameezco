@@ -2975,3 +2975,384 @@ span.node-chat-source-chip {
     display: none;
   }
 }
+/* ============================================================
+   Terminal Typist (/play)
+   ============================================================ */
+
+.typist-page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.typist-window {
+  border: var(--border-width) solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.typist-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--code-bg);
+  border-bottom: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.typist-hud {
+  display: flex;
+  gap: 0.9rem;
+  white-space: nowrap;
+}
+
+.typist-hud strong {
+  color: var(--fg);
+}
+
+.typist-lives {
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.typist-field {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+}
+
+.typist-word {
+  position: absolute;
+  top: 0;
+  padding: 0.15rem 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--fg);
+  white-space: nowrap;
+  will-change: transform;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.typist-word-locked {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+
+.typist-word-typed {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.typist-word-dying {
+  pointer-events: none;
+}
+
+.typist-word-dying span {
+  display: inline-block;
+  animation: typist-crumble 0.8s ease-in forwards;
+}
+
+@keyframes typist-crumble {
+  to {
+    transform: translate(var(--tx, 0), var(--ty, 90px)) rotate(var(--rot, 45deg));
+    opacity: 0;
+  }
+}
+
+.typist-laser {
+  position: absolute;
+  height: 2px;
+  background: linear-gradient(90deg, currentColor, transparent 85%);
+  color: var(--accent);
+  transform-origin: 0 50%;
+  pointer-events: none;
+  animation: typist-laser-fade 0.2s linear forwards;
+}
+
+@keyframes typist-laser-fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.typist-node {
+  position: absolute;
+  right: 18px;
+  bottom: 64px;
+  color: var(--fg);
+}
+
+.typist-node-inner {
+  display: inline-block;
+  animation: typist-recoil 0.18s ease;
+}
+
+@keyframes typist-recoil {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(0.85) rotate(-8deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.typist-node-hurt {
+  animation: typist-hurt 0.5s ease;
+}
+
+@keyframes typist-hurt {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+.typist-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  pointer-events: none;
+}
+
+.typist-burst span {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  animation: typist-burst-fly 0.9s ease-out forwards;
+}
+
+@keyframes typist-burst-fly {
+  0% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx, 40px), var(--ty, -40px));
+    opacity: 0;
+  }
+}
+
+.typist-milestone-banner {
+  position: absolute;
+  top: 26%;
+  left: 50%;
+  font-family: var(--font-mono);
+  font-size: 1.7rem;
+  font-weight: 700;
+  pointer-events: none;
+  animation: typist-milestone-pop 2.2s ease forwards;
+}
+
+@keyframes typist-milestone-pop {
+  0% {
+    transform: translateX(-50%) scale(0.5);
+    opacity: 0;
+  }
+  15% {
+    transform: translateX(-50%) scale(1.15);
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-50%) scale(1) translateY(-14px);
+    opacity: 0;
+  }
+}
+
+.typist-floor {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 56px;
+  border-bottom: 1px dashed var(--border);
+}
+
+.typist-prompt {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  padding: 0.6rem 0.9rem;
+  border-top: var(--border-width) solid var(--border);
+  background: var(--code-bg);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+
+.typist-prompt-ps1 {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.typist-prompt-text {
+  color: var(--fg);
+  min-height: 1.2em;
+}
+
+.typist-prompt-error {
+  animation: typist-hurt 0.25s ease;
+}
+
+.typist-prompt-error .typist-prompt-ps1 {
+  color: #ef4444;
+}
+
+.typist-cursor {
+  width: 9px;
+  height: 1.1em;
+  background: var(--accent);
+  animation: node-chat-cursor-blink 1s step-end infinite;
+}
+
+.typist-hidden-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  border: none;
+  padding: 0;
+}
+
+.typist-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7rem;
+  padding: 1rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(2px);
+}
+
+.typist-overlay-title {
+  font-family: var(--font-mono);
+  font-size: 1.4rem;
+  margin: 0;
+}
+
+.typist-overlay-desc {
+  max-width: 380px;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.typist-start {
+  background: var(--accent);
+  border: none;
+  color: var(--bg);
+  padding: 0.5rem 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: opacity 0.15s ease;
+}
+
+.typist-start:hover {
+  opacity: 0.85;
+}
+
+.typist-overlay-hint {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin: 0;
+}
+
+.typist-overlay-link {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.typist-overlay-link:hover {
+  text-decoration: underline;
+}
+
+.typist-stats {
+  display: flex;
+  gap: 1.4rem;
+  margin: 0;
+  font-family: var(--font-mono);
+}
+
+.typist-stats div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.typist-stats dt {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.typist-stats dd {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+
+.typist-caption {
+  margin-top: 0.7rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.not-found-play {
+  margin-top: var(--spacing-md);
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+@media (max-width: 520px) {
+  .typist-field {
+    height: 340px;
+  }
+  .typist-word {
+    font-size: 0.85rem;
+  }
+  .typist-node {
+    right: 10px;
+  }
+  .typist-node svg {
+    width: 44px;
+    height: 44px;
+  }
+  .typist-stats {
+    gap: 0.9rem;
+  }
+}

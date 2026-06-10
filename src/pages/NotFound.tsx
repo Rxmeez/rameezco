@@ -21,6 +21,9 @@ export default function NotFound() {
         <Link to="/notes" className="not-found-link">Browse notes</Link>
         <Link to="/projects" className="not-found-link">View projects</Link>
       </nav>
+      <p className="not-found-play">
+        Or stick around — <Link to="/play" className="not-found-link">play Terminal Typist with Node →</Link>
+      </p>
     </div>
   );
 }

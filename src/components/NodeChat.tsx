@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { usePostHog } from "@posthog/react";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { askNode } from "../lib/nodeBrain";
@@ -47,6 +47,7 @@ export default function NodeChat() {
   useEffect(() => { messagesRef.current = messages; }, [messages]);
   const posthog = usePostHog();
   const navigate = useNavigate();
+  const location = useLocation();
   const contentLinks = getContentLinks();
 
   const handleMessageClick = useCallback(
@@ -178,6 +179,9 @@ export default function NodeChat() {
       handleSend();
     }
   };
+
+  // Node is busy starring in the game on /play — don't show two of him.
+  if (location.pathname === "/play") return null;
 
   return (
     <>

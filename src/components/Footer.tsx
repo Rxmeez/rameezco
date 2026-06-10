@@ -45,6 +45,8 @@ export default function Footer() {
               </a>
             )}
             <span className="footer-sep" />
+            <a className="footer-link" href="/play">Play</a>
+            <span className="footer-sep" />
             <a className="footer-link" href="/cookies">Cookies</a>
           </span>
         </div>
