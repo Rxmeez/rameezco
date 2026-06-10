@@ -2,12 +2,63 @@ import kbData from "../public/knowledge-base.json";
 
 interface Env {
   OPENROUTER_API_KEY: string;
+  VENICE_API_KEY?: string;
   AI: {
     run(
       model: string,
       params: { text: string[] },
     ): Promise<{ data: number[][] }>;
   };
+}
+
+const VENICE_FALLBACK_STATUSES = new Set([402, 429, 503]);
+
+async function callLLM(
+  messages: { role: string; content: string }[],
+  env: Env,
+): Promise<Response> {
+  // Try Venice.ai first if a key is configured
+  if (env.VENICE_API_KEY) {
+    const resp = await fetch("https://api.venice.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${env.VENICE_API_KEY}`,
+      },
+      body: JSON.stringify({
+        model: "deepseek-v4-flash",
+        messages,
+        temperature: 0.3,
+        max_tokens: 500,
+        stream: true,
+      }),
+    });
+    if (resp.ok || !VENICE_FALLBACK_STATUSES.has(resp.status)) return resp;
+    // Credits exhausted / rate-limited → fall through to OpenRouter
+  }
+
+  // OpenRouter fallback — free models with automatic provider fallback
+  return fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
+      "HTTP-Referer": "https://rameez.co",
+      "X-Title": "Rameez.co - Ask Node",
+    },
+    body: JSON.stringify({
+      models: [
+        "google/gemma-4-31b-it:free",
+        "meta-llama/llama-3.1-8b-instruct:free",
+        "mistralai/mistral-7b-instruct:free",
+      ],
+      route: "fallback",
+      messages,
+      temperature: 0.3,
+      max_tokens: 500,
+      stream: true,
+    }),
+  });
 }
 
 const ALLOWED_ORIGINS = [
@@ -172,28 +223,13 @@ Formatting rules:
         content: m.text,
       }));
 
-    const upstream = await fetch(
-      "https://openrouter.ai/api/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${env.OPENROUTER_API_KEY}`,
-          "HTTP-Referer": "https://rameez.co",
-          "X-Title": "Rameez.co - Ask Node",
-        },
-        body: JSON.stringify({
-          model: "google/gemma-4-31b-it:free",
-          messages: [
-            { role: "system", content: systemPrompt },
-            ...historyMessages,
-            { role: "user", content: question },
-          ],
-          temperature: 0.3,
-          max_tokens: 500,
-          stream: true,
-        }),
-      },
+    const upstream = await callLLM(
+      [
+        { role: "system", content: systemPrompt },
+        ...historyMessages,
+        { role: "user", content: question },
+      ],
+      env,
     );
 
     if (!upstream.ok) {
