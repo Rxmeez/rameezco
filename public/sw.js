@@ -1,4 +1,4 @@
-const CACHE_NAME = "rameez-co-v2";
+const CACHE_NAME = "rameez-co-v3";
 const PRECACHE_ASSETS = [
   "/",
   "/index.html",
