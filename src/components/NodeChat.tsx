@@ -12,6 +12,8 @@ interface Message {
   text: string;
   sources?: string[];
   streaming?: boolean;
+  error?: boolean;
+  retryFor?: string;
 }
 
 let messageIdCounter = 0;
@@ -49,7 +51,7 @@ export default function NodeChat() {
 
   const handleMessageClick = useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
-      const target = (e.target as HTMLElement).closest("a.node-chat-link");
+      const target = (e.target as HTMLElement).closest("a.node-chat-link, a.node-chat-source-chip");
       if (!target) return;
       const href = target.getAttribute("href");
       if (href?.startsWith("/")) {
@@ -80,7 +82,10 @@ export default function NodeChat() {
   }, [showThinking]);
 
   const pageContext = getCurrentPageContext();
-  const suggestedQuestions = getSuggestedQuestions(pageContext);
+  // Suggestions are an on-ramp, not a persistent menu — hide them once the
+  // user has asked something.
+  const hasUserMessages = messages.some((m) => m.role === "user");
+  const suggestedQuestions = hasUserMessages ? [] : getSuggestedQuestions(pageContext);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -88,7 +93,7 @@ export default function NodeChat() {
     }
   });
 
-  const sendQuestion = useCallback(async (question: string) => {
+  const sendQuestion = useCallback(async (question: string, opts?: { echoUser?: boolean }) => {
     if (streamingId) return;
 
     posthog?.capture("node_chat_question_sent", {
@@ -98,7 +103,9 @@ export default function NodeChat() {
     });
 
     setInput("");
-    setMessages((prev) => [...prev, createMessage("user", question)]);
+    if (opts?.echoUser !== false) {
+      setMessages((prev) => [...prev, createMessage("user", question)]);
+    }
 
     const streamMsg = createMessage("node", "", []);
     streamMsg.streaming = true;
@@ -108,7 +115,7 @@ export default function NodeChat() {
     try {
       const history = messagesRef.current
         .slice(1)
-        .filter((m) => !m.streaming && m.text);
+        .filter((m) => !m.streaming && !m.error && m.text);
 
       const { answer, sources } = await askNode(
         question,
@@ -138,7 +145,13 @@ export default function NodeChat() {
       setMessages((prev) =>
         prev.map((m) =>
           m.id === streamMsg.id
-            ? { ...m, text: `Error: ${msg}`, streaming: false }
+            ? {
+                ...m,
+                text: "I hit a snag answering that. Give it another try?",
+                streaming: false,
+                error: true,
+                retryFor: question,
+              }
             : m,
         ),
       );
@@ -146,6 +159,13 @@ export default function NodeChat() {
       setStreamingId(null);
     }
   }, [streamingId, pageContext, posthog]);
+
+  const handleRetry = useCallback((msg: Message) => {
+    if (!msg.retryFor || streamingId) return;
+    posthog?.capture("node_chat_retry_clicked", { question: msg.retryFor });
+    setMessages((prev) => prev.filter((m) => m.id !== msg.id));
+    sendQuestion(msg.retryFor, { echoUser: false });
+  }, [sendQuestion, streamingId, posthog]);
 
   const handleSend = useCallback(() => {
     if (!input.trim()) return;
@@ -186,7 +206,10 @@ export default function NodeChat() {
           <div className="node-chat-header">
             <div className="node-chat-title">
               <MascotDefaultSvg width={28} height={28} />
-              <span>Ask Node</span>
+              <div className="node-chat-title-text">
+                <span>Ask Node</span>
+                <span className="node-chat-subtitle">AI guide to this site · can make mistakes</span>
+              </div>
             </div>
             <button
               type="button"
@@ -209,8 +232,8 @@ export default function NodeChat() {
                   {msg.role === "node" && (
                     <MascotDefaultSvg width={28} height={28} className="node-chat-avatar" />
                   )}
-                  <div className="node-chat-bubble">
-                    {msg.role === "node" ? (
+                  <div className={`node-chat-bubble${msg.error ? " node-chat-bubble-error" : ""}`}>
+                    {msg.role === "node" && !msg.error ? (
                       <div
                         className="node-chat-text"
                         dangerouslySetInnerHTML={{
@@ -220,18 +243,32 @@ export default function NodeChat() {
                     ) : (
                       <div className="node-chat-text">{msg.text}</div>
                     )}
-                    {msg.sources && msg.sources.length > 0 && (
-                      <div
-                        className="node-chat-sources"
-                        dangerouslySetInnerHTML={{
-                          __html: `From: ${msg.sources.map((src) => {
-                            const url = getSourceUrl(src);
-                            return url
-                              ? `<a class="node-chat-link" href="${url}">${src}</a>`
-                              : src;
-                          }).join(", ")}`,
-                        }}
-                      />
+                    {msg.error && (
+                      <button
+                        type="button"
+                        className="node-chat-retry"
+                        onClick={() => handleRetry(msg)}
+                        disabled={!!streamingId}
+                      >
+                        Retry
+                      </button>
+                    )}
+                    {!msg.error && msg.sources && msg.sources.length > 0 && (
+                      <div className="node-chat-sources">
+                        <span className="node-chat-sources-label">Related</span>
+                        {msg.sources.map((src) => {
+                          const url = getSourceUrl(src);
+                          return url ? (
+                            <a key={src} className="node-chat-source-chip" href={url}>
+                              {src}
+                            </a>
+                          ) : (
+                            <span key={src} className="node-chat-source-chip">
+                              {src}
+                            </span>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
                 </div>

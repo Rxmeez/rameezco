@@ -2524,6 +2524,19 @@ pre:hover .code-copy-btn,
   color: var(--fg);
 }
 
+.node-chat-title-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
+
+.node-chat-subtitle {
+  font-size: 0.62rem;
+  font-weight: 400;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+
 .node-chat-close {
   background: none;
   border: none;
@@ -2583,10 +2596,44 @@ pre:hover .code-copy-btn,
 }
 
 .node-chat-sources {
-  font-size: 0.7rem;
-  color: var(--muted);
-  margin-top: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
+  padding-top: 0.45rem;
+  border-top: 1px dashed var(--border);
+}
+
+.node-chat-sources-label {
   font-family: var(--font-mono);
+  font-size: 0.62rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.node-chat-source-chip {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  padding: 0.12rem 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--accent);
+  text-decoration: none;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: border-color 0.15s ease;
+}
+
+a.node-chat-source-chip:hover {
+  border-color: var(--accent);
+}
+
+span.node-chat-source-chip {
+  color: var(--muted);
 }
 
 .node-chat-link {
@@ -2801,6 +2848,25 @@ pre:hover .code-copy-btn,
 
 .node-chat-retry:hover {
   opacity: 0.85;
+}
+
+.node-chat-bubble-error {
+  border-style: dashed;
+}
+
+.node-chat-bubble-error .node-chat-text {
+  color: var(--muted);
+}
+
+.node-chat-bubble-error .node-chat-retry {
+  margin-top: 0.4rem;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.7rem;
+}
+
+.node-chat-retry:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .node-chat-suggestions {

@@ -107,7 +107,13 @@ export function getCurrentPageContext(): PageContext | null {
 }
 
 export function getSuggestedQuestions(context: PageContext | null): string[] {
-  if (!context) return [];
+  if (!context) {
+    return [
+      "What is Rameez working on?",
+      "What has he written recently?",
+      "Tell me about his projects",
+    ];
+  }
 
   if (context.type === "post") {
     return [
