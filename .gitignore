@@ -6,5 +6,5 @@ dist/
 .playwright-mcp/
 *.png
 .env
-data/
+/data/
 worker/knowledge-base.json
