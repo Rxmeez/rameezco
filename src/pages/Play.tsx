@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import SeoMeta from "../components/SeoMeta";
 import { SITE } from "../data/site";
 import { MascotDefaultSvg, MascotSurprisedSvg } from "../components/MascotSvg";

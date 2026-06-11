@@ -7,3 +7,4 @@ dist/
 *.png
 .env
 data/
+worker/knowledge-base.json

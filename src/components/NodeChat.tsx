@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import { MascotDefaultSvg } from "./MascotSvg";
 import { askNode } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions, getContentLinks, getSourceUrl, linkifyContent } from "../lib/pageContext";

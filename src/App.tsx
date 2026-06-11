@@ -6,16 +6,18 @@ import CookieConsent from "./components/CookieConsent";
 import Home from "./pages/Home";
 import Projects from "./pages/Projects";
 import Writing from "./pages/Writing";
-import WritingPost from "./pages/WritingPost";
 import Now from "./pages/Now";
 import Notes from "./pages/Notes";
-import NotesPost from "./pages/NotesPost";
 import CookiePolicy from "./pages/CookiePolicy";
 import NotFound from "./pages/NotFound";
 import { allowsAnalytics } from "./lib/cookieConsent";
 
 const WritingGraph = lazy(() => import("./pages/WritingGraph"));
 const Play = lazy(() => import("./pages/Play"));
+// Post pages carry heavy deps (highlight.js, d3 via PostGraph) — keep them
+// out of the main bundle so list pages and the homepage stay light.
+const WritingPost = lazy(() => import("./pages/WritingPost"));
+const NotesPost = lazy(() => import("./pages/NotesPost"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -55,10 +57,18 @@ export default function App() {
               <WritingGraph />
             </Suspense>
           } />
-          <Route path="writing/:slug" element={<WritingPost />} />
+          <Route path="writing/:slug" element={
+            <Suspense fallback={<div className="graph-skeleton">Loading...</div>}>
+              <WritingPost />
+            </Suspense>
+          } />
           <Route path="now" element={<Now />} />
           <Route path="notes" element={<Notes />} />
-          <Route path="notes/:slug" element={<NotesPost />} />
+          <Route path="notes/:slug" element={
+            <Suspense fallback={<div className="graph-skeleton">Loading...</div>}>
+              <NotesPost />
+            </Suspense>
+          } />
           <Route path="play" element={
             <Suspense fallback={<div className="graph-skeleton">Loading game...</div>}>
               <Play />

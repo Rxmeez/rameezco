@@ -126,7 +126,7 @@ async function buildKnowledgeBase() {
     projects: projects.map((p) => ({ title: p.title, description: p.description })),
   };
 
-  writeFileSync("public/knowledge-base.json", JSON.stringify({ catalog, chunks }));
+  writeFileSync("worker/knowledge-base.json", JSON.stringify({ catalog, chunks }));
   console.log(`Knowledge base saved: ${chunks.length} chunks (embeddings generated at Worker runtime).`);
 }
 

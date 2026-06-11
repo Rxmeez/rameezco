@@ -12,15 +12,13 @@
     "check": "biome check src"
   },
   "dependencies": {
-    "@posthog/react": "^1.9.0",
+    "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "d3": "^7.9.0",
-    "force-graph": "^1.51.4",
-    "headroom-ai": "^0.22.4",
     "highlight.js": "^11.11.1",
     "posthog-js": "^1.374.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-force-graph-2d": "^1.29.1",
     "react-router-dom": "^7.6.0"
   },
   "devDependencies": {

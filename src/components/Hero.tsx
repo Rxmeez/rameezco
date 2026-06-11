@@ -1,4 +1,4 @@
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import { SITE } from "../data/site";
 
 export default function Hero() {

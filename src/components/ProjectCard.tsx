@@ -1,4 +1,4 @@
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import type { Project } from "../data/projects";
 
 interface Props {

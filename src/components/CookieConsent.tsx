@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import { getConsent, setConsent, allowsAnalytics, type ConsentLevel } from "../lib/cookieConsent";
-import { usePostHog } from "@posthog/react";
+import { getConsent, setConsent, type ConsentLevel } from "../lib/cookieConsent";
+import { scheduleAnalytics } from "../lib/analytics";
 
 export default function CookieConsent() {
   const [consent, setConsentState] = useState<ConsentLevel>("none");
   const [visible, setVisible] = useState(false);
-  const posthog = usePostHog();
 
   useEffect(() => {
     const current = getConsent();
@@ -27,8 +26,8 @@ export default function CookieConsent() {
     setConsent("all");
     setConsentState("all");
     setVisible(false);
-    // Opt into PostHog capturing if already initialized
-    posthog?.opt_in_capturing();
+    // Consent granted — start loading the analytics bundle now
+    scheduleAnalytics();
   }
 
   if (!visible || consent !== "none") return null;

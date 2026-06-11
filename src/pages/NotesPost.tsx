@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams, Link } from "react-router-dom";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import SeoMeta from "../components/SeoMeta";
 import Backlinks from "../components/Backlinks";
 import { notes } from "../data/notes";

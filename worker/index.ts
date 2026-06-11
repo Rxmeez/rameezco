@@ -1,4 +1,4 @@
-import kbData from "../public/knowledge-base.json";
+import kbData from "./knowledge-base.json";
 
 interface Env {
   OPENROUTER_API_KEY: string;

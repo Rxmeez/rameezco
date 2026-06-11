@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import type { BlogPost } from "../data/posts";
 import type { MediumPost } from "../data/medium";
 import { readingTimeMinutes } from "../lib/readingTime";

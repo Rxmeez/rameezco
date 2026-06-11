@@ -24,8 +24,8 @@
   --syntax-regexp: #d16969;
   --syntax-selector: #d7ba7d;
   --syntax-link: #569cd6;
-  --font-mono: "JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", monospace;
-  --font-body: "Inter", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", "Fira Code", "Cascadia Code", "SF Mono", monospace;
+  --font-body: "Inter Variable", "Inter", system-ui, -apple-system, sans-serif;
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;

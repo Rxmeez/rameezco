@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { usePostHog } from "@posthog/react";
+import { usePostHog } from "../lib/analytics";
 import Hero from "../components/Hero";
 import NowSection from "../components/NowSection";
 import SeoMeta from "../components/SeoMeta";
