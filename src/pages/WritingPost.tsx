@@ -14,6 +14,7 @@ import { blogPostingJsonLd } from "../lib/jsonLd";
 import { triggerNodeGuide } from "../components/NodeGuide";
 import { recordVisit } from "../lib/constellation";
 import { aiMeta } from "../data/aiMeta";
+import NotFound from "./NotFound";
 import { replaceMascotImages } from "../lib/mascotHtml";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
@@ -104,17 +105,7 @@ export default function WritingPost() {
   }, [article]);
 
   if (!article) {
-    return (
-      <div className="not-found">
-        <div className="not-found-bracket">[404]</div>
-        <h1 className="not-found-title">Post not found</h1>
-        <p className="not-found-desc">The article you're looking for doesn't exist.</p>
-        <nav className="not-found-nav">
-          <Link to="/writing" className="not-found-link">&larr; Browse writing</Link>
-          <Link to="/" className="not-found-link">Back to home</Link>
-        </nav>
-      </div>
-    );
+    return <NotFound />;
   }
 
   const content = replaceMascotImages(article.content ?? "");

@@ -12,6 +12,7 @@ import { triggerNodeGuide } from "../components/NodeGuide";
 import { replaceMascotImages } from "../lib/mascotHtml";
 import { recordVisit } from "../lib/constellation";
 import { aiMeta } from "../data/aiMeta";
+import NotFound from "./NotFound";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -94,17 +95,7 @@ export default function NotesPost() {
   }, [note]);
 
   if (!note) {
-    return (
-      <div className="not-found">
-        <div className="not-found-bracket">[404]</div>
-        <h1 className="not-found-title">Note not found</h1>
-        <p className="not-found-desc">The note you're looking for doesn't exist.</p>
-        <nav className="not-found-nav">
-          <Link to="/notes" className="not-found-link">&larr; Browse notes</Link>
-          <Link to="/" className="not-found-link">Back to home</Link>
-        </nav>
-      </div>
-    );
+    return <NotFound />;
   }
 
   return (
