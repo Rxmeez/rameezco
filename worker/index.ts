@@ -211,14 +211,28 @@ async function handleTaunt(score: number, wpm: number, env: Env, origin: string)
       },
     ],
     env,
-    { stream: false, temperature: 0.9, maxTokens: 60 },
+    // Reasoning models may burn tokens "thinking" before any visible output,
+    // so the budget needs headroom beyond the ~15 words we asked for.
+    { stream: false, temperature: 0.9, maxTokens: 300 },
   );
   if (!upstream.ok) return json({ taunt: null }, origin);
   const data = (await upstream.json().catch(() => null)) as {
-    choices?: { message?: { content?: string } }[];
+    choices?: { message?: { content?: string; reasoning_content?: string } }[];
   } | null;
-  const taunt = data?.choices?.[0]?.message?.content?.trim().replace(/^["']|["']$/g, "") ?? null;
-  return json({ taunt }, origin);
+  const message = data?.choices?.[0]?.message;
+  let taunt = message?.content ?? "";
+  if (!taunt.trim()) {
+    // Some reasoning models leave content empty and put text here instead;
+    // take its last line, which is usually the actual reply.
+    const lines = (message?.reasoning_content ?? "").trim().split("\n").filter(Boolean);
+    taunt = lines[lines.length - 1] ?? "";
+  }
+  taunt = taunt
+    .replace(/<think>[\s\S]*?<\/think>/g, "")
+    .trim()
+    .replace(/^["']|["']$/g, "")
+    .trim();
+  return json({ taunt: taunt || null }, origin);
 }
 
 export default {
