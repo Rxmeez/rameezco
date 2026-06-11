@@ -12,6 +12,8 @@ import { readingTimeMinutes } from "../lib/readingTime";
 import { SITE } from "../data/site";
 import { blogPostingJsonLd } from "../lib/jsonLd";
 import { triggerNodeGuide } from "../components/NodeGuide";
+import { recordVisit } from "../lib/constellation";
+import { aiMeta } from "../data/aiMeta";
 import { replaceMascotImages } from "../lib/mascotHtml";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
@@ -48,6 +50,7 @@ export default function WritingPost() {
     if (article) {
       document.title = `${article.title} — Rameez Khan`;
       posthog?.capture("writing_post_opened", { slug: article.slug, title: article.title, tags: article.tags ?? [] });
+      recordVisit("post", article.slug);
     }
   }, [article]);
 
@@ -157,6 +160,12 @@ export default function WritingPost() {
         </div>
       </header>
       <hr />
+      {aiMeta[article.slug]?.tldr && (
+        <aside className="post-tldr">
+          <span className="post-tldr-label">✨ tl;dr</span>
+          <p className="post-tldr-text">{aiMeta[article.slug].tldr}</p>
+        </aside>
+      )}
       <div
         ref={contentRef}
         className="post-content"

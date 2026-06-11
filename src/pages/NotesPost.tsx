@@ -10,6 +10,8 @@ import { SITE } from "../data/site";
 import { noteJsonLd } from "../lib/jsonLd";
 import { triggerNodeGuide } from "../components/NodeGuide";
 import { replaceMascotImages } from "../lib/mascotHtml";
+import { recordVisit } from "../lib/constellation";
+import { aiMeta } from "../data/aiMeta";
 import hljs from "highlight.js/lib/core";
 import sql from "highlight.js/lib/languages/sql";
 import go from "highlight.js/lib/languages/go";
@@ -38,6 +40,7 @@ export default function NotesPost() {
     if (note) {
       document.title = `${note.title} — Rameez Khan`;
       posthog?.capture("note_opened", { slug: note.slug, title: note.title, tags: note.tags });
+      recordVisit("note", note.slug);
     }
   }, [note]);
 
@@ -135,6 +138,12 @@ export default function NotesPost() {
         </div>
       </header>
       <hr />
+      {aiMeta[note.slug]?.tldr && (
+        <aside className="post-tldr">
+          <span className="post-tldr-label">✨ tl;dr</span>
+          <p className="post-tldr-text">{aiMeta[note.slug].tldr}</p>
+        </aside>
+      )}
       <div
         ref={contentRef}
         className="post-content"

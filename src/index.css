@@ -3356,3 +3356,145 @@ span.node-chat-source-chip {
     gap: 0.9rem;
   }
 }
+
+/* ============================================================
+   View transitions — soft crossfade between pages
+   ============================================================ */
+
+@media not (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root) {
+    animation: vt-fade-out 0.16s ease both;
+  }
+  ::view-transition-new(root) {
+    animation: vt-fade-in 0.22s ease both;
+  }
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* ============================================================
+   Batch 2: selection-ask, tl;dr, 404 guesses, taunt, search
+   ============================================================ */
+
+.selection-ask {
+  position: fixed;
+  z-index: 950;
+  transform: translate(-50%, -100%);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.7rem;
+  background: var(--bg);
+  border: var(--border-width) solid var(--accent);
+  border-radius: 999px;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+  animation: selection-ask-pop 0.15s ease;
+}
+
+.selection-ask:hover {
+  background: var(--accent-muted);
+}
+
+@keyframes selection-ask-pop {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -90%) scale(0.9);
+  }
+}
+
+.post-tldr {
+  display: flex;
+  align-items: baseline;
+  gap: 0.7rem;
+  margin: var(--spacing-md) 0;
+  padding: 0.7rem 0.9rem;
+  border: 1px dashed var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+  background: var(--accent-muted);
+}
+
+.post-tldr-label {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+}
+
+.post-tldr-text {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--fg);
+}
+
+.not-found-mascot {
+  margin-bottom: var(--spacing-sm);
+}
+
+.not-found-guesses {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin: var(--spacing-md) 0;
+}
+
+.not-found-guess-label {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.not-found-guess {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--accent);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  transition: border-color 0.15s ease;
+}
+
+.not-found-guess:hover {
+  border-color: var(--accent);
+}
+
+.typist-taunt {
+  margin: 0;
+  max-width: 360px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.search-section-label {
+  padding: 0.5rem var(--spacing-md) 0.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}

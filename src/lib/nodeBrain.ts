@@ -1,3 +1,43 @@
+export interface SearchResult {
+  title: string;
+  type: string;
+  score: number;
+}
+
+function proxyUrlOrThrow(): string {
+  const proxyUrl = import.meta.env.VITE_NODE_PROXY_URL;
+  if (!proxyUrl) {
+    throw new Error(
+      "VITE_NODE_PROXY_URL is not set. Deploy the Cloudflare Worker and add its URL to your environment.",
+    );
+  }
+  return proxyUrl;
+}
+
+// Semantic search over the site's knowledge base (worker mode=search)
+export async function searchNode(query: string): Promise<SearchResult[]> {
+  const response = await fetch(proxyUrlOrThrow(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "search", query }),
+  });
+  if (!response.ok) throw new Error(`Node search error ${response.status}`);
+  const data = (await response.json()) as { results?: SearchResult[] };
+  return data.results ?? [];
+}
+
+// One cheeky line from Node about a Terminal Typist result (worker mode=taunt)
+export async function tauntNode(score: number, wpm: number): Promise<string | null> {
+  const response = await fetch(proxyUrlOrThrow(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode: "taunt", score, wpm }),
+  });
+  if (!response.ok) return null;
+  const data = (await response.json()) as { taunt?: string | null };
+  return data.taunt ?? null;
+}
+
 export async function askNode(
   question: string,
   onToken?: (token: string) => void,

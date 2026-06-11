@@ -13,9 +13,16 @@ interface Env {
 
 const VENICE_FALLBACK_STATUSES = new Set([402, 429, 503]);
 
+interface LLMOptions {
+  stream?: boolean;
+  temperature?: number;
+  maxTokens?: number;
+}
+
 async function callLLM(
   messages: { role: string; content: string }[],
   env: Env,
+  { stream = true, temperature = 0.3, maxTokens = 500 }: LLMOptions = {},
 ): Promise<Response> {
   // Try Venice.ai first if a key is configured
   if (env.VENICE_API_KEY) {
@@ -28,9 +35,9 @@ async function callLLM(
       body: JSON.stringify({
         model: "deepseek-v4-flash",
         messages,
-        temperature: 0.3,
-        max_tokens: 500,
-        stream: true,
+        temperature,
+        max_tokens: maxTokens,
+        stream,
       }),
     });
     if (resp.ok || !VENICE_FALLBACK_STATUSES.has(resp.status)) return resp;
@@ -54,9 +61,9 @@ async function callLLM(
       ],
       route: "fallback",
       messages,
-      temperature: 0.3,
-      max_tokens: 500,
-      stream: true,
+      temperature,
+      max_tokens: maxTokens,
+      stream,
     }),
   });
 }
@@ -112,6 +119,30 @@ function cosineSimilarity(a: number[], b: number[]): number {
   return dot / (Math.sqrt(normA) * Math.sqrt(normB));
 }
 
+type ScoredChunk = KnowledgeChunk & { score: number };
+
+// Embed the query (chunk embeddings are cached per isolate) and return all
+// chunks scored by cosine similarity, best first.
+async function scoreChunks(query: string, env: Env, kb: KnowledgeBase): Promise<ScoredChunk[]> {
+  const [queryResult, chunkResult] = await Promise.all([
+    env.AI.run("@cf/baai/bge-small-en-v1.5", { text: [query] }),
+    cachedChunkEmbeddings
+      ? Promise.resolve({ data: cachedChunkEmbeddings })
+      : env.AI.run("@cf/baai/bge-small-en-v1.5", {
+          text: kb.chunks.map((c) => c.text),
+        }),
+  ]);
+  const queryEmbedding = queryResult.data[0];
+  cachedChunkEmbeddings = chunkResult.data;
+
+  const scored = kb.chunks.map((chunk, i) => ({
+    ...chunk,
+    score: cosineSimilarity(queryEmbedding, cachedChunkEmbeddings![i]),
+  }));
+  scored.sort((a, b) => b.score - a.score);
+  return scored;
+}
+
 function buildContentCatalog(kb: KnowledgeBase): string {
   const { writing, notes, projects } = kb.catalog ?? { writing: [], notes: [], projects: [] };
   const writingList = writing.map((p) => `- "${p.title}" (${p.date})`).join("\n");
@@ -140,6 +171,56 @@ function corsHeaders(origin: string) {
   };
 }
 
+function json(data: unknown, origin: string, status = 200): Response {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { "Content-Type": "application/json", ...corsHeaders(origin) },
+  });
+}
+
+// mode=search: semantic search over the knowledge base. Returns the best
+// matching source titles — used by the site search and the smart 404 page.
+async function handleSearch(query: string, env: Env, kb: KnowledgeBase, origin: string): Promise<Response> {
+  const scored = await scoreChunks(query, env, kb);
+  const bySource = new Map<string, { title: string; type: string; score: number }>();
+  for (const chunk of scored) {
+    if (!chunk.source || chunk.score < CONTEXT_MIN_SCORE) continue;
+    const existing = bySource.get(chunk.source);
+    if (!existing || chunk.score > existing.score) {
+      bySource.set(chunk.source, { title: chunk.source, type: chunk.type, score: chunk.score });
+    }
+  }
+  const results = [...bySource.values()]
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5);
+  return json({ results }, origin);
+}
+
+// mode=taunt: one cheeky line from Node about a Terminal Typist result.
+async function handleTaunt(score: number, wpm: number, env: Env, origin: string): Promise<Response> {
+  const upstream = await callLLM(
+    [
+      {
+        role: "system",
+        content:
+          "You are Node, the playful round mascot of rameez.co. The visitor just finished Terminal Typist, a typing game where words fall and Node lasers the ones they type. Reply with exactly ONE short, cheeky, good-natured line (max 15 words) reacting to their result. Tease gently if the score is low, act impressed if it's high (40+ words is good, 80+ is exceptional). No quotes around your reply, at most one emoji.",
+      },
+      {
+        role: "user",
+        content: `I destroyed ${score} words with a peak typing speed of ${wpm} wpm.`,
+      },
+    ],
+    env,
+    { stream: false, temperature: 0.9, maxTokens: 60 },
+  );
+  if (!upstream.ok) return json({ taunt: null }, origin);
+  const data = (await upstream.json().catch(() => null)) as {
+    choices?: { message?: { content?: string } }[];
+  } | null;
+  const taunt = data?.choices?.[0]?.message?.content?.trim().replace(/^["']|["']$/g, "") ?? null;
+  return json({ taunt }, origin);
+}
+
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const origin = request.headers.get("Origin") ?? "";
@@ -157,7 +238,11 @@ export default {
     }
 
     let body: {
-      question: string;
+      mode?: "chat" | "search" | "taunt";
+      question?: string;
+      query?: string;
+      score?: number;
+      wpm?: number;
       history?: { role: "user" | "node"; text: string }[];
       pageContext?: { title: string; content: string; type: string } | null;
     };
@@ -167,31 +252,27 @@ export default {
       return new Response("Bad Request: invalid JSON", { status: 400 });
     }
 
+    const kb = kbData as unknown as KnowledgeBase;
+
+    if (body.mode === "search") {
+      if (!body.query || typeof body.query !== "string") {
+        return new Response("Bad Request: query required", { status: 400 });
+      }
+      return handleSearch(body.query.slice(0, 200), env, kb, origin);
+    }
+
+    if (body.mode === "taunt") {
+      const score = Number(body.score) || 0;
+      const wpm = Number(body.wpm) || 0;
+      return handleTaunt(score, wpm, env, origin);
+    }
+
     const { question, history, pageContext } = body;
     if (!question || typeof question !== "string") {
       return new Response("Bad Request: question required", { status: 400 });
     }
 
-    const kb = kbData as unknown as KnowledgeBase;
-
-    // Embed query + all chunks in parallel (chunks are cached after first request)
-    const [queryResult, chunkResult] = await Promise.all([
-      env.AI.run("@cf/baai/bge-small-en-v1.5", { text: [question] }),
-      cachedChunkEmbeddings
-        ? Promise.resolve({ data: cachedChunkEmbeddings })
-        : env.AI.run("@cf/baai/bge-small-en-v1.5", {
-            text: kb.chunks.map((c) => c.text),
-          }),
-    ]);
-    const queryEmbedding = queryResult.data[0];
-    cachedChunkEmbeddings = chunkResult.data;
-
-    // Cosine similarity retrieval
-    const scored = kb.chunks.map((chunk, i) => ({
-      ...chunk,
-      score: cosineSimilarity(queryEmbedding, cachedChunkEmbeddings![i]),
-    }));
-    scored.sort((a, b) => b.score - a.score);
+    const scored = await scoreChunks(question, env, kb);
     const bestScore = scored[0]?.score ?? 0;
     const contextChunks = scored
       .slice(0, MAX_CONTEXT_CHUNKS)

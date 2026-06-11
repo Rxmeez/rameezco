@@ -13,7 +13,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
   return (
     <header className="header">
       <div className="header-inner">
-        <NavLink to="/" className="logo">
+        <NavLink to="/" className="logo" viewTransition>
           RK
         </NavLink>
         {onSearchClick && (
@@ -42,6 +42,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
             <NavLink
               key={item.href}
               to={item.href}
+              viewTransition
               className={({ isActive }) =>
                 `nav-link${isActive ? " active" : ""}`
               }

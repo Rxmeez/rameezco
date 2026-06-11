@@ -6,6 +6,7 @@ import { notes } from "../data/notes";
 import { projects } from "../data/projects";
 import { MascotThinkingSvg } from "./MascotSvg";
 import { stripHtml } from "../lib/readingTime";
+import { searchNode } from "../lib/nodeBrain";
 
 interface SearchItem {
   title: string;
@@ -111,6 +112,32 @@ export default function Search({ isOpen, onClose }: Props) {
       .slice(0, 8);
   }, [query, indexReady]);
 
+  // Semantic layer: after a typing pause, ask the worker to match by meaning.
+  // Surfaces content that keyword matching misses ("testing data pipelines"
+  // → the dbt posts). Results already found by keyword are dropped.
+  const [semantic, setSemantic] = useState<SearchItem[]>([]);
+  useEffect(() => {
+    setSemantic([]);
+    const q = query.trim();
+    if (!isOpen || q.length < 4) return;
+    const timer = setTimeout(() => {
+      searchNode(q)
+        .then((found) => {
+          const items = found
+            .map((r) => indexRef.current.find((item) => item.title === r.title))
+            .filter((item): item is SearchItem => Boolean(item))
+            .slice(0, 4);
+          setSemantic(items);
+        })
+        .catch(() => {});
+    }, 450);
+    return () => clearTimeout(timer);
+  }, [query, isOpen]);
+
+  const semanticExtra = semantic.filter(
+    (s) => !results.some((r) => r.path === s.path && r.title === s.title),
+  );
+
   if (!isOpen) return null;
 
   return (
@@ -138,7 +165,7 @@ export default function Search({ isOpen, onClose }: Props) {
           <div className="search-empty">Loading search index...</div>
         )}
 
-        {indexReady && query.trim() && results.length === 0 && (
+        {indexReady && query.trim() && results.length === 0 && semanticExtra.length === 0 && (
           <div className="search-empty">
             <MascotThinkingSvg
               width={48}
@@ -167,6 +194,27 @@ export default function Search({ isOpen, onClose }: Props) {
               </li>
             ))}
           </ul>
+        )}
+
+        {semanticExtra.length > 0 && (
+          <>
+            <div className="search-section-label">By meaning ✨</div>
+            <ul className="search-results">
+              {semanticExtra.map((item) => (
+                <li key={`sem-${item.type}-${item.path}`}>
+                  <Link to={item.path} className="search-result-link" onClick={onClose}>
+                    <span className={`search-result-type search-result-type-${item.type}`}>
+                      {item.type}
+                    </span>
+                    <div className="search-result-body">
+                      <div className="search-result-title">{item.title}</div>
+                      <div className="search-result-excerpt">{item.excerpt}</div>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
         )}
 
         <div className="search-footer">

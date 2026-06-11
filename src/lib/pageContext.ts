@@ -2,6 +2,7 @@ import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
 import { projects } from "../data/projects";
+import { aiMeta } from "../data/aiMeta";
 
 export interface ContentLink {
   title: string;
@@ -114,6 +115,10 @@ export function getSuggestedQuestions(context: PageContext | null): string[] {
       "Tell me about his projects",
     ];
   }
+
+  // Prefer AI-generated questions specific to this page's content
+  const generated = aiMeta[context.slug]?.questions;
+  if (generated && generated.length > 0) return generated;
 
   if (context.type === "post") {
     return [

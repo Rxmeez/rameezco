@@ -116,8 +116,15 @@ export default function NodeGuide() {
     const waved = sessionStorage.getItem("node-waved");
     if (waved) return;
     const t = setTimeout(() => {
-      triggerNodeGuide("Hey! I'm Node. Welcome!", "default", "wave", 4000);
+      const lastVisit = Number(localStorage.getItem("node-last-visit") ?? 0);
+      const daysAway = (Date.now() - lastVisit) / 86400000;
+      const greeting =
+        lastVisit && daysAway > 3
+          ? "Welcome back! The graph missed you."
+          : "Hey! I'm Node. Welcome!";
+      triggerNodeGuide(greeting, "default", "wave", 4000);
       sessionStorage.setItem("node-waved", "1");
+      localStorage.setItem("node-last-visit", String(Date.now()));
     }, 1200);
     return () => clearTimeout(t);
   }, []);

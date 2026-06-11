@@ -5,6 +5,7 @@ import SeoMeta from "../components/SeoMeta";
 import { SITE } from "../data/site";
 import { MascotDefaultSvg, MascotSurprisedSvg } from "../components/MascotSvg";
 import { buildWordPool, type WordBuckets } from "../lib/wordPool";
+import { tauntNode } from "../lib/nodeBrain";
 
 const START_FALL_WPM = 8;
 const MAX_FALL_WPM = 200;
@@ -104,6 +105,7 @@ export default function Play() {
   const [promptError, setPromptError] = useState(false);
   const [shotKey, setShotKey] = useState(0);
   const [best, setBest] = useState(() => Number(localStorage.getItem(BEST_KEY) ?? 0));
+  const [taunt, setTaunt] = useState<string | null>(null);
 
   const fieldRef = useRef<HTMLDivElement>(null);
   const nodeRef = useRef<HTMLDivElement>(null);
@@ -165,6 +167,14 @@ export default function Play() {
       peak_typing_wpm: peakTypeWpm.current,
       fall_wpm: fallWpm(finalScore),
     });
+
+    // Ask Node for a one-liner about the result; stay quiet if it fails
+    setTaunt(null);
+    tauntNode(finalScore, peakTypeWpm.current)
+      .then((line) => {
+        if (line && phaseRef.current === "over") setTaunt(line);
+      })
+      .catch(() => {});
   }, [posthog, setLock]);
 
   const loseLife = useCallback((word: FallingWord) => {
@@ -534,6 +544,7 @@ export default function Play() {
             <div className="typist-overlay">
               <MascotSurprisedSvg width={72} height={72} />
               <h1 className="typist-overlay-title">node panicked</h1>
+              {taunt && <p className="typist-taunt">“{taunt}”</p>}
               <dl className="typist-stats">
                 <div><dt>score</dt><dd>{score}</dd></div>
                 <div><dt>best</dt><dd>{best}</dd></div>

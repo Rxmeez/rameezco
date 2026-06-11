@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
+import { triggerNodeGuide } from "./NodeGuide";
 
 const THEMES = ["industrial", "paper", "neon", "mono", "sepia"];
+
+const THEME_REACTIONS: Record<string, string> = {
+  industrial: "Industrial. Built different.",
+  paper: "Paper mode — easy on the eyes.",
+  neon: "Ooh, neon! My dots are glowing.",
+  mono: "Mono. Strictly business.",
+  sepia: "Sepia — very vintage of you.",
+};
 
 export default function ThemeSelector() {
   const [open, setOpen] = useState(false);
@@ -14,10 +23,14 @@ export default function ThemeSelector() {
   }, []);
 
   function select(t: string) {
+    const changed = t !== theme;
     document.documentElement.setAttribute("data-theme", t);
     localStorage.setItem("theme", t);
     setTheme(t);
     setOpen(false);
+    if (changed && THEME_REACTIONS[t]) {
+      triggerNodeGuide(THEME_REACTIONS[t], "default", "none", 2800);
+    }
   }
 
   useEffect(() => {

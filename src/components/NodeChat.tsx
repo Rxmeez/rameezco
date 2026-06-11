@@ -5,6 +5,7 @@ import { MascotDefaultSvg } from "./MascotSvg";
 import { askNode } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions, getContentLinks, getSourceUrl, linkifyContent } from "../lib/pageContext";
 import { formatMarkdown } from "../lib/markdown";
+import { getVisited, totalNodes } from "../lib/constellation";
 
 interface Message {
   id: string;
@@ -161,6 +162,19 @@ export default function NodeChat() {
     }
   }, [streamingId, pageContext, posthog]);
 
+  // SelectionAsk (and anything else) can open the chat with a prepared
+  // question via a window event.
+  useEffect(() => {
+    const handleAsk = (e: Event) => {
+      const question = (e as CustomEvent).detail?.question;
+      if (typeof question !== "string" || !question) return;
+      setOpen(true);
+      sendQuestion(question);
+    };
+    window.addEventListener("node-chat:ask", handleAsk);
+    return () => window.removeEventListener("node-chat:ask", handleAsk);
+  }, [sendQuestion]);
+
   const handleRetry = useCallback((msg: Message) => {
     if (!msg.retryFor || streamingId) return;
     posthog?.capture("node_chat_retry_clicked", { question: msg.retryFor });
@@ -212,7 +226,11 @@ export default function NodeChat() {
               <MascotDefaultSvg width={28} height={28} />
               <div className="node-chat-title-text">
                 <span>Ask Node</span>
-                <span className="node-chat-subtitle">AI guide to this site · can make mistakes</span>
+                <span className="node-chat-subtitle">
+                  {getVisited().length > 0
+                    ? `AI guide · ${getVisited().length}/${totalNodes()} nodes explored`
+                    : "AI guide to this site · can make mistakes"}
+                </span>
               </div>
             </div>
             <button

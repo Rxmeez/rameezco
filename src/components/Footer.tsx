@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { SITE } from "../data/site";
 
 export default function Footer() {
@@ -45,9 +46,9 @@ export default function Footer() {
               </a>
             )}
             <span className="footer-sep" />
-            <a className="footer-link" href="/play">Play</a>
+            <Link className="footer-link" to="/play" viewTransition>Play</Link>
             <span className="footer-sep" />
-            <a className="footer-link" href="/cookies">Cookies</a>
+            <Link className="footer-link" to="/cookies" viewTransition>Cookies</Link>
           </span>
         </div>
       </div>

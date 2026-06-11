@@ -24,7 +24,7 @@ export default function PostCard({ post, style }: Props) {
         <span className="post-meta-read">{readingTimeMinutes(post.content)} min read</span>
       </div>
       <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`} onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>{post.title}</Link>
+        <Link to={`/writing/${post.slug}`} viewTransition onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>{post.title}</Link>
       </h3>
       <p className="post-excerpt">{post.excerpt}</p>
       <div className="post-card-tags">
@@ -48,7 +48,7 @@ export function MediumCard({ post, style }: MediumProps) {
         {post.publication && <span className="medium-pub">{post.publication}</span>}
       </div>
       <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`} onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>
+        <Link to={`/writing/${post.slug}`} viewTransition onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>
           {post.title}
         </Link>
       </h3>
