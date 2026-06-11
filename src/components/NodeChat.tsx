@@ -144,15 +144,18 @@ export default function NodeChat() {
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       posthog?.capture("node_chat_error", { error: msg, question });
+      const rateLimited = msg.includes("429");
       setMessages((prev) =>
         prev.map((m) =>
           m.id === streamMsg.id
             ? {
                 ...m,
-                text: "I hit a snag answering that. Give it another try?",
+                text: rateLimited
+                  ? "Whoa, that's a lot of questions! Give me a minute to catch my breath."
+                  : "I hit a snag answering that. Give it another try?",
                 streaming: false,
                 error: true,
-                retryFor: question,
+                retryFor: rateLimited ? undefined : question,
               }
             : m,
         ),
@@ -265,7 +268,7 @@ export default function NodeChat() {
                     ) : (
                       <div className="node-chat-text">{msg.text}</div>
                     )}
-                    {msg.error && (
+                    {msg.error && msg.retryFor && (
                       <button
                         type="button"
                         className="node-chat-retry"
@@ -348,6 +351,7 @@ export default function NodeChat() {
             <input
               type="text"
               className="node-chat-input"
+              maxLength={500}
               placeholder={streamingId ? "Node is thinking..." : "Ask me anything..."}
               value={input}
               onChange={(e) => setInput(e.target.value)}

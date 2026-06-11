@@ -4,3 +4,15 @@ compatibility_date = "2025-06-08"
 
 [ai]
 binding = "AI"
+
+# Per-IP rate limits. LLM-backed modes (chat, taunt) share the tight bucket;
+# embedding-only search gets a looser one.
+[[ratelimits]]
+name = "CHAT_LIMITER"
+namespace_id = "1001"
+simple = { limit = 8, period = 60 }
+
+[[ratelimits]]
+name = "SEARCH_LIMITER"
+namespace_id = "1002"
+simple = { limit = 30, period = 60 }
