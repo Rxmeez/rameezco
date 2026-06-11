@@ -33,6 +33,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          # v3's bundled wrangler (3.90) silently drops [[ratelimits]]
+          wranglerVersion: "4.100.0"
           command: deploy
 
       - name: Deploy Site
@@ -40,4 +42,5 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: "4.100.0"
           command: pages deploy dist --project-name=rameez-co
