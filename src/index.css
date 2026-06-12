@@ -3587,9 +3587,10 @@ span.node-chat-source-chip {
 .cv-role-head {
   display: flex;
   align-items: baseline;
-  justify-content: space-between;
-  gap: 1rem;
+  justify-content: center;
+  gap: 0.6rem;
   flex-wrap: wrap;
+  text-align: center;
 }
 
 .cv-role-title {
