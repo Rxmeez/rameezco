@@ -48,6 +48,11 @@ export default function CookiePolicy() {
               <td>PostHog — anonymous page views, clicks, and scroll depth to understand which content resonates. No third-party ad tracking.</td>
               <td>Session + 1 year</td>
             </tr>
+            <tr>
+              <td><strong>Node's memory</strong></td>
+              <td>Lets the site mascot greet returning visitors — remembers the name you give him (optional), your last visit, recently read posts, recent chat questions, and your game high score. Stored only in your browser, never sent anywhere, and erased if you switch to essentials only.</td>
+              <td>LocalStorage, no expiry</td>
+            </tr>
           </tbody>
         </table>
       </section>
@@ -67,7 +72,7 @@ export default function CookiePolicy() {
       <section className="cookie-policy-section">
         <h2>Your choices</h2>
         <p><strong>Essentials only:</strong> The site works normally — theme switching, navigation, and the knowledge graph all function. Analytics are disabled.</p>
-        <p><strong>Accept all:</strong> Everything above plus anonymous analytics that help me understand what content to write more of.</p>
+        <p><strong>Accept all:</strong> Everything above plus anonymous analytics that help me understand what content to write more of, and a local-only memory so Node recognises you when you return.</p>
       </section>
 
       <section className="cookie-policy-section">

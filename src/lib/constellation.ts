@@ -2,6 +2,7 @@ import { posts } from "../data/posts";
 import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
 import { triggerNodeGuide } from "../components/NodeGuide";
+import { rememberRead } from "./nodeMemory";
 
 // Node's constellation: every post or note the visitor reads becomes a dot
 // Node has "collected". Stored locally — no accounts, no server.
@@ -26,7 +27,19 @@ export function getVisited(): string[] {
   }
 }
 
+function titleFor(kind: "post" | "note", slug: string): string | undefined {
+  if (kind === "note") return notes.find((n) => n.slug === slug)?.title;
+  return (
+    posts.find((p) => p.slug === slug)?.title ??
+    mediumPosts.find((p) => p.slug === slug)?.title
+  );
+}
+
 export function recordVisit(kind: "post" | "note", slug: string) {
+  // Before the dedup check — re-reads should still refresh Node's memory
+  const title = titleFor(kind, slug);
+  if (title) rememberRead(kind, slug, title);
+
   const id = `${kind}:${slug}`;
   const visited = getVisited();
   if (visited.includes(id)) return;

@@ -6,6 +6,7 @@ import { askNode } from "../lib/nodeBrain";
 import { getCurrentPageContext, getSuggestedQuestions, getContentLinks, getSourceUrl, linkifyContent } from "../lib/pageContext";
 import { formatMarkdown } from "../lib/markdown";
 import { getVisited, totalNodes } from "../lib/constellation";
+import { rememberChat } from "../lib/nodeMemory";
 
 interface Message {
   id: string;
@@ -103,6 +104,7 @@ export default function NodeChat() {
       page_title: pageContext?.title,
       page_type: pageContext?.type,
     });
+    rememberChat(question);
 
     setInput("");
     if (opts?.echoUser !== false) {

@@ -6,6 +6,7 @@ import { SITE } from "../data/site";
 import { MascotDefaultSvg, MascotSurprisedSvg } from "../components/MascotSvg";
 import { buildWordPool, type WordBuckets } from "../lib/wordPool";
 import { tauntNode } from "../lib/nodeBrain";
+import { rememberGame } from "../lib/nodeMemory";
 
 const START_FALL_WPM = 8;
 const MAX_FALL_WPM = 200;
@@ -167,6 +168,7 @@ export default function Play() {
       peak_typing_wpm: peakTypeWpm.current,
       fall_wpm: fallWpm(finalScore),
     });
+    rememberGame(finalScore);
 
     // Ask Node for a one-liner about the result; stay quiet if it fails
     setTaunt(null);
