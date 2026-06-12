@@ -90,19 +90,16 @@ export default function Cv() {
         {cv.roles.map((role) => (
           <div key={`${role.company}-${role.title}-${role.period}`} className="cv-role">
             <div className="cv-role-head">
-              <h3 className="cv-role-title">
-                {role.title}{" "}
-                <span className="cv-role-company">
-                  ·{" "}
-                  {role.companyUrl ? (
-                    <a href={role.companyUrl} target="_blank" rel="noopener noreferrer">
-                      {role.company}
-                    </a>
-                  ) : (
-                    role.company
-                  )}
-                </span>
-              </h3>
+              <h3 className="cv-role-title">{role.title}</h3>
+              <span className="cv-role-company">
+                {role.companyUrl ? (
+                  <a href={role.companyUrl} target="_blank" rel="noopener noreferrer">
+                    {role.company}
+                  </a>
+                ) : (
+                  role.company
+                )}
+              </span>
               <span className="cv-role-period">{role.period}</span>
             </div>
             <ul className="cv-role-highlights">

@@ -3584,13 +3584,27 @@ span.node-chat-source-chip {
   break-inside: avoid;
 }
 
+/* title | company | dates — equal flexible side columns pin every company
+   name onto the page's centre axis, whatever the title length */
 .cv-role-head {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: baseline;
-  justify-content: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.3rem;
+}
+
+.cv-role-head .cv-role-title {
+  text-align: left;
+  margin: 0;
+}
+
+.cv-role-head .cv-role-company {
   text-align: center;
+}
+
+.cv-role-head .cv-role-period {
+  text-align: right;
 }
 
 .cv-role-title {
@@ -3790,7 +3804,11 @@ span.node-chat-source-chip {
   }
 
   .cv-role {
-    margin-bottom: 0.45rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .cv-role-head {
+    margin-bottom: 0.1rem;
   }
 
   .cv-role-title {
@@ -3865,6 +3883,22 @@ span.node-chat-source-chip {
     position: static;
     display: inline-flex;
     margin-bottom: 0.9rem;
+  }
+  .cv-role-head {
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1rem;
+  }
+  .cv-role-head .cv-role-title {
+    grid-column: 1;
+  }
+  .cv-role-head .cv-role-company {
+    grid-column: 1;
+    grid-row: 2;
+    text-align: left;
+  }
+  .cv-role-head .cv-role-period {
+    grid-column: 2;
+    grid-row: 1;
   }
 }
 
