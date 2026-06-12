@@ -63,8 +63,20 @@ export default function Cv() {
       <script type="application/ld+json">{cvJsonLd()}</script>
 
       <header className="cv-header">
-        <h1 className="cv-name">{cv.name}</h1>
-        <p className="cv-headline">{cv.headline}</p>
+        <div className="cv-header-top">
+          <div>
+            <h1 className="cv-name">{cv.name}</h1>
+            <p className="cv-headline">{cv.headline}</p>
+          </div>
+          <a
+            className="cv-action cv-action-primary"
+            href="/cv.pdf"
+            download="Rameez-Khan-CV.pdf"
+            onClick={() => posthog?.capture("cv_pdf_downloaded")}
+          >
+            ↓ Download PDF
+          </a>
+        </div>
         <p className="cv-contact">
           <span>{cv.location}</span>
           <span className="cv-contact-sep" aria-hidden="true">·</span>
@@ -75,26 +87,6 @@ export default function Cv() {
           <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">github/Rxmeez</a>
         </p>
         <p className="cv-summary"><Bold text={cv.summary} /></p>
-        <div className="cv-actions">
-          <a
-            className="cv-action cv-action-primary"
-            href="/cv.pdf"
-            download="Rameez-Khan-CV.pdf"
-            onClick={() => posthog?.capture("cv_pdf_downloaded")}
-          >
-            ↓ Download PDF
-          </a>
-          <button
-            type="button"
-            className="cv-action cv-action-ghost"
-            onClick={() => {
-              posthog?.capture("cv_print_clicked");
-              window.print();
-            }}
-          >
-            ⎙ Print
-          </button>
-        </div>
       </header>
 
       <section className="cv-section">

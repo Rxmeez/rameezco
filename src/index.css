@@ -3684,7 +3684,7 @@ span.node-chat-source-chip {
   .scroll-progress,
   .selection-ask,
   .skip-link,
-  .cv-actions,
+  .cv-action,
   .cv-print-hint {
     display: none !important;
   }
@@ -3835,10 +3835,12 @@ span.node-chat-source-chip {
   color: var(--fg);
 }
 
-.cv-actions {
+.cv-header-top {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.9rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .cv-action {
@@ -3862,15 +3864,4 @@ span.node-chat-source-chip {
 
 .cv-action-primary:hover {
   opacity: 0.85;
-}
-
-.cv-action-ghost {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--fg);
-}
-
-.cv-action-ghost:hover {
-  border-color: var(--accent);
-  color: var(--accent);
 }
