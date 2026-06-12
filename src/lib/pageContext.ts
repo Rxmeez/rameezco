@@ -3,6 +3,7 @@ import { mediumPosts } from "../data/medium";
 import { notes } from "../data/notes";
 import { projects } from "../data/projects";
 import { aiMeta } from "../data/aiMeta";
+import { cvPlainText } from "../data/cv";
 
 export interface ContentLink {
   title: string;
@@ -31,9 +32,12 @@ export function getContentLinks(): ContentLink[] {
   return links.sort((a, b) => b.title.length - a.title.length);
 }
 
-const SOURCE_URL_INDEX = new Map<string, string>(
-  getContentLinks().map((l) => [l.title, l.url]),
-);
+const SOURCE_URL_INDEX = new Map<string, string>([
+  ...getContentLinks().map((l): [string, string] => [l.title, l.url]),
+  // Not in getContentLinks: "CV" is too short to safely auto-linkify in
+  // prose, but source chips citing it should link to the page.
+  ["CV", "/cv"],
+]);
 
 export function getSourceUrl(title: string): string | undefined {
   return SOURCE_URL_INDEX.get(title);
@@ -57,7 +61,7 @@ export function linkifyContent(html: string, links: ContentLink[]): string {
 }
 
 export interface PageContext {
-  type: "post" | "note" | "project" | "none";
+  type: "post" | "note" | "project" | "cv" | "none";
   title: string;
   content: string;
   slug: string;
@@ -73,6 +77,15 @@ function stripHtml(html: string): string {
 
 export function getCurrentPageContext(): PageContext | null {
   const path = window.location.pathname;
+
+  if (path === "/cv") {
+    return {
+      type: "cv",
+      title: "Rameez Khan — CV",
+      content: cvPlainText(),
+      slug: "cv",
+    };
+  }
 
   const writingMatch = path.match(/^\/writing\/([^/]+)$/);
   if (writingMatch) {
@@ -113,6 +126,14 @@ export function getSuggestedQuestions(context: PageContext | null): string[] {
       "What is Rameez working on?",
       "What has he written recently?",
       "Tell me about his projects",
+    ];
+  }
+
+  if (context.type === "cv") {
+    return [
+      "Summarize his experience",
+      "What's his experience with GCP?",
+      "Has he led or mentored people?",
     ];
   }
 

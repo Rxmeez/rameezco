@@ -18,6 +18,8 @@ const Play = lazy(() => import("./pages/Play"));
 // out of the main bundle so list pages and the homepage stay light.
 const WritingPost = lazy(() => import("./pages/WritingPost"));
 const NotesPost = lazy(() => import("./pages/NotesPost"));
+// Unlisted — shared directly and reachable via Node's source chips, not the nav
+const Cv = lazy(() => import("./pages/Cv"));
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -72,6 +74,11 @@ export default function App() {
           <Route path="play" element={
             <Suspense fallback={<div className="graph-skeleton">Loading game...</div>}>
               <Play />
+            </Suspense>
+          } />
+          <Route path="cv" element={
+            <Suspense fallback={<div className="graph-skeleton">Loading...</div>}>
+              <Cv />
             </Suspense>
           } />
           <Route path="cookies" element={<CookiePolicy />} />

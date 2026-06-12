@@ -3498,3 +3498,232 @@ span.node-chat-source-chip {
   letter-spacing: 0.06em;
   color: var(--muted);
 }
+
+/* ============================================================
+   CV page (/cv) — screen + print
+   ============================================================ */
+
+.cv-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--spacing-md) 0 var(--spacing-lg);
+}
+
+.cv-header {
+  margin-bottom: var(--spacing-lg);
+}
+
+.cv-name {
+  font-family: var(--font-mono);
+  font-size: 1.9rem;
+  margin: 0 0 0.2rem;
+}
+
+.cv-headline {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--accent);
+  margin: 0 0 0.6rem;
+}
+
+.cv-contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+}
+
+.cv-contact a {
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.cv-contact a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.cv-contact-sep {
+  color: var(--border);
+}
+
+.cv-summary {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--fg);
+  margin: 0;
+}
+
+.cv-section {
+  margin-bottom: var(--spacing-lg);
+}
+
+.cv-section-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  border-bottom: var(--border-width) solid var(--border);
+  padding-bottom: 0.35rem;
+  margin: 0 0 var(--spacing-md);
+}
+
+.cv-role {
+  margin-bottom: var(--spacing-md);
+  break-inside: avoid;
+}
+
+.cv-role-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.cv-role-title {
+  font-size: 1rem;
+  font-weight: 650;
+  margin: 0 0 0.3rem;
+}
+
+.cv-role-company {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.cv-role-period {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.cv-role-highlights {
+  margin: 0.2rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.cv-role-highlights li {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  margin-bottom: 0.35rem;
+}
+
+.cv-flat-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.cv-flat-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  font-size: 0.9rem;
+  padding: 0.3rem 0;
+}
+
+.cv-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cv-tag {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.18rem 0.55rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--fg);
+}
+
+.cv-tag-lang {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.cv-print-hint {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+
+.cv-print-hint kbd {
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  padding: 0.05rem 0.3rem;
+  font-size: 0.68rem;
+}
+
+@media print {
+  .header,
+  .footer,
+  .node-chat-button,
+  .node-chat-panel,
+  .node-guide,
+  .cookie-banner,
+  .scroll-progress,
+  .selection-ask,
+  .skip-link,
+  .cv-print-hint {
+    display: none !important;
+  }
+
+  :root,
+  html[data-theme] {
+    --bg: #ffffff;
+    --fg: #111111;
+    --muted: #444444;
+    --accent: #111111;
+    --accent-muted: #ffffff;
+    --border: #999999;
+  }
+
+  body {
+    background: #ffffff;
+    color: #111111;
+    font-size: 11px;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .cv-page {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .cv-name {
+    font-size: 1.5rem;
+  }
+
+  .cv-section {
+    margin-bottom: 0.9rem;
+  }
+
+  .cv-role {
+    margin-bottom: 0.7rem;
+  }
+
+  .cv-contact a {
+    border-bottom: none;
+    text-decoration: none;
+    color: #111111;
+  }
+
+  .cv-tag {
+    border-color: #999999;
+    color: #111111;
+  }
+}

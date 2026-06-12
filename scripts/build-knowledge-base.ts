@@ -3,11 +3,12 @@ import { mediumPosts } from "../src/data/medium";
 import { notes } from "../src/data/notes";
 import { projects } from "../src/data/projects";
 import { SITE } from "../src/data/site";
+import { cv } from "../src/data/cv";
 import { writeFileSync } from "node:fs";
 
 interface KnowledgeChunk {
   id: string;
-  type: "post" | "medium" | "note" | "project" | "site" | "now";
+  type: "post" | "medium" | "note" | "project" | "site" | "now" | "cv";
   source: string;
   sourceUrl?: string;
   text: string;
@@ -113,6 +114,26 @@ async function buildKnowledgeBase() {
       source: project.title,
       sourceUrl: "/projects",
       text: `${project.title}: ${project.description}. Tags: ${project.tags.join(", ")}.`,
+    });
+  }
+
+  // CV: one chunk per role plus a profile chunk, so questions about specific
+  // experience retrieve precisely and Node can cite "CV" → /cv
+  chunks.push({
+    id: "cv-profile",
+    type: "cv",
+    source: "CV",
+    sourceUrl: "/cv",
+    text: `${cv.name} is a ${cv.headline} based in ${cv.location}. ${cv.summary} Certifications: ${cv.certifications.map((c) => `${c.title} (${c.year})`).join("; ")}. Education: ${cv.education.map((e) => `${e.degree}, ${e.institution}, ${e.period}`).join("; ")}. Programming languages: ${cv.languages.join(", ")}. Technologies: ${cv.technologies.join(", ")}.`,
+  });
+
+  for (const role of cv.roles) {
+    chunks.push({
+      id: `cv-${role.company}-${role.title}`.toLowerCase().replace(/\s+/g, "-"),
+      type: "cv",
+      source: "CV",
+      sourceUrl: "/cv",
+      text: `From Rameez's CV — ${role.title} at ${role.company} (${role.period}): ${role.highlights.join(" ")}`,
     });
   }
 

@@ -1,0 +1,35 @@
+# Rameez Khan — rameez.co
+
+> Personal site of Rameez Khan, a Senior Data Engineer based in London, UK.
+> The site has writing, notes, projects, a knowledge graph, an AI assistant
+> ("Node"), and a typing game.
+
+Rameez Khan is a Senior Data Engineer at RVU (Aug 2023–present), where he
+builds data ingestion pipelines with Argo Workflows and Terraform, built a
+TypeScript/RxJS/Kubernetes transformation pipeline that cut product publish
+time from hours to seconds, and mentors engineers. Previously: Data Engineer
+at RVU (2021–2023, dbt modularisation, 50% GCP cost reduction, Dagster→Argo
+migration), Data Engineer and Data Analyst at Mobkoi (2018–2021, serverless
+GCP pipelines, BigQuery warehouse with dbt), and Industrial Engineer at
+Schneider Electric (2015–2017).
+
+Certifications: Google Cloud Professional Data Engineer (2022), Google Cloud
+Professional Cloud Architect (2020).
+Education: BEng (Hons) Chemical and Nuclear Engineering, University of Leeds.
+Languages: Python, SQL, JavaScript/TypeScript, Go.
+Technologies: GCP, BigQuery, dbt, Terraform, Kubernetes, Argo, Dagster,
+Airflow, AWS, Postgres, MySQL, Prometheus, Monte Carlo.
+
+## Key pages
+
+- [CV](https://rameez.co/cv): full curriculum vitae, print-friendly
+- [Writing](https://rameez.co/writing): articles on data engineering, SQL, Go
+- [Notes](https://rameez.co/notes): quick-reference engineering notes
+- [Projects](https://rameez.co/projects): side projects
+- [Now](https://rameez.co/now): what he's working on currently
+
+## Contact
+
+- Email: rameez.rk94@gmail.com
+- GitHub: https://github.com/rxmeez
+- LinkedIn: https://linkedin.com/in/rxmeez
