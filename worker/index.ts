@@ -23,12 +23,30 @@ const MAX_QUESTION_CHARS = 600;
 const MAX_HISTORY_MESSAGE_CHARS = 1200;
 const MAX_PAGE_CONTEXT_CHARS = 8000;
 
+// The platform rate-limit binding is intentionally permissive and eventually
+// consistent — a burst from one isolate can slip through before its counters
+// propagate. This strict in-isolate sliding window catches exactly that case;
+// the platform binding still covers sustained abuse across isolates/restarts.
+const localBuckets = new Map<string, number[]>();
+
+function localRateLimited(key: string, limit: number, periodMs = 60000): boolean {
+  const now = Date.now();
+  const hits = (localBuckets.get(key) ?? []).filter((t) => now - t < periodMs);
+  hits.push(now);
+  if (localBuckets.size > 10000) localBuckets.clear();
+  localBuckets.set(key, hits);
+  return hits.length > limit;
+}
+
 async function exceedsRateLimit(
   limiter: RateLimiter | undefined,
   request: Request,
+  bucket: string,
+  limit: number,
 ): Promise<boolean> {
-  if (!limiter) return false; // local dev without the binding
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
+  if (localRateLimited(`${bucket}:${ip}`, limit)) return true;
+  if (!limiter) return false; // local dev without the binding
   const { success } = await limiter.limit({ key: ip });
   return !success;
 }
@@ -294,14 +312,14 @@ export default {
       if (!body.query || typeof body.query !== "string") {
         return new Response("Bad Request: query required", { status: 400 });
       }
-      if (await exceedsRateLimit(env.SEARCH_LIMITER, request)) {
+      if (await exceedsRateLimit(env.SEARCH_LIMITER, request, "search", 30)) {
         return json({ error: "rate_limited" }, origin, 429);
       }
       return handleSearch(body.query.slice(0, 200), env, kb, origin);
     }
 
     if (body.mode === "taunt") {
-      if (await exceedsRateLimit(env.CHAT_LIMITER, request)) {
+      if (await exceedsRateLimit(env.CHAT_LIMITER, request, "chat", 8)) {
         return json({ taunt: null }, origin, 429);
       }
       const score = Math.min(Math.max(Number(body.score) || 0, 0), 9999);
@@ -320,7 +338,7 @@ export default {
         400,
       );
     }
-    if (await exceedsRateLimit(env.CHAT_LIMITER, request)) {
+    if (await exceedsRateLimit(env.CHAT_LIMITER, request, "chat", 8)) {
       return json({ error: "rate_limited" }, origin, 429);
     }
 
