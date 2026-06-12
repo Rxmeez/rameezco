@@ -3665,9 +3665,12 @@ span.node-chat-source-chip {
   font-size: 0.68rem;
 }
 
+/* Zero @page margin: Chrome only draws its own header/footer (url, title,
+   "1 of 1") inside the page margin, so removing it removes them. The real
+   margins move into .cv-page padding instead. */
 @page {
   size: A4;
-  margin: 10mm 13mm;
+  margin: 0;
 }
 
 @media print {
@@ -3688,30 +3691,33 @@ span.node-chat-source-chip {
   html[data-theme] {
     --bg: #ffffff;
     --fg: #111111;
-    --muted: #444444;
-    --accent: #111111;
+    --muted: #555555;
+    /* Brand orange, darkened for legibility on paper */
+    --accent: #c84a12;
     --accent-muted: #ffffff;
-    --border: #999999;
+    --border: #bbbbbb;
   }
 
   body {
     background: #ffffff;
     color: #111111;
     font-size: 10px;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 
   .main-content {
     padding: 0;
   }
 
-  /* Compact single-page layout */
+  /* Compact single-page layout; padding stands in for the @page margin */
   .cv-page {
     max-width: 100%;
-    padding: 0;
+    padding: 10mm 13mm;
   }
 
   .cv-header {
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.45rem;
   }
 
   .cv-name {
@@ -3742,13 +3748,24 @@ span.node-chat-source-chip {
   }
 
   .cv-section {
-    margin-bottom: 0.55rem;
+    margin-bottom: 0.45rem;
   }
 
   .cv-section-title {
     font-size: 0.68rem;
     padding-bottom: 0.15rem;
     margin-bottom: 0.4rem;
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  .cv-headline,
+  .cv-role-company {
+    color: var(--accent);
+  }
+
+  .cv-role-highlights strong {
+    color: #000000;
   }
 
   .cv-role {
@@ -3771,13 +3788,13 @@ span.node-chat-source-chip {
 
   .cv-role-highlights li {
     font-size: 0.74rem;
-    line-height: 1.38;
-    margin-bottom: 0.12rem;
+    line-height: 1.33;
+    margin-bottom: 0.08rem;
   }
 
   .cv-flat-list li {
     font-size: 0.76rem;
-    padding: 0.12rem 0;
+    padding: 0.08rem 0;
   }
 
   /* Chips become a compact inline list — pills waste vertical space on paper */
@@ -3806,5 +3823,12 @@ span.node-chat-source-chip {
 
   .cv-tag-lang {
     font-weight: 700;
+    color: var(--accent);
   }
+}
+
+.cv-role-highlights strong,
+.cv-summary strong {
+  font-weight: 680;
+  color: var(--fg);
 }

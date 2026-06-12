@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import SeoMeta from "../components/SeoMeta";
 import { triggerNodeGuide } from "../components/NodeGuide";
 import { usePostHog } from "../lib/analytics";
-import { cv } from "../data/cv";
+import { cv, stripBoldMarkers } from "../data/cv";
 import { SITE } from "../data/site";
 
 function cvJsonLd(): string {
@@ -23,6 +23,17 @@ function cvJsonLd(): string {
     })),
     sameAs: [SITE.socials.github, SITE.socials.linkedin].filter(Boolean),
   });
+}
+
+// Renders **marked** spans from the CV data as <strong>
+function Bold({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("**").map((part, i) =>
+        i % 2 === 1 ? <strong key={`b-${part.slice(0, 24)}`}>{part}</strong> : part,
+      )}
+    </>
+  );
 }
 
 export default function Cv() {
@@ -46,7 +57,7 @@ export default function Cv() {
     <article className="cv-page">
       <SeoMeta
         title={`CV — ${cv.name}`}
-        description={cv.summary}
+        description={stripBoldMarkers(cv.summary)}
         url={`${SITE.url}/cv`}
       />
       <script type="application/ld+json">{cvJsonLd()}</script>
@@ -63,7 +74,7 @@ export default function Cv() {
           <span className="cv-contact-sep" aria-hidden="true">·</span>
           <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">github/Rxmeez</a>
         </p>
-        <p className="cv-summary">{cv.summary}</p>
+        <p className="cv-summary"><Bold text={cv.summary} /></p>
       </header>
 
       <section className="cv-section">
@@ -78,7 +89,7 @@ export default function Cv() {
             </div>
             <ul className="cv-role-highlights">
               {role.highlights.map((h) => (
-                <li key={h.slice(0, 40)}>{h}</li>
+                <li key={h.slice(0, 40)}><Bold text={h} /></li>
               ))}
             </ul>
           </div>

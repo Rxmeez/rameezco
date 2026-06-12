@@ -3,7 +3,7 @@ import { mediumPosts } from "../src/data/medium";
 import { notes } from "../src/data/notes";
 import { projects } from "../src/data/projects";
 import { SITE } from "../src/data/site";
-import { cv } from "../src/data/cv";
+import { cv, stripBoldMarkers } from "../src/data/cv";
 import { writeFileSync } from "node:fs";
 
 interface KnowledgeChunk {
@@ -124,7 +124,9 @@ async function buildKnowledgeBase() {
     type: "cv",
     source: "CV",
     sourceUrl: "/cv",
-    text: `${cv.name} is a ${cv.headline} based in ${cv.location}. ${cv.summary} Certifications: ${cv.certifications.map((c) => `${c.title} (${c.year})`).join("; ")}. Education: ${cv.education.map((e) => `${e.degree}, ${e.institution}, ${e.period}`).join("; ")}. Programming languages: ${cv.languages.join(", ")}. Technologies: ${cv.technologies.join(", ")}.`,
+    text: stripBoldMarkers(
+      `${cv.name} is a ${cv.headline} based in ${cv.location}. ${cv.summary} Certifications: ${cv.certifications.map((c) => `${c.title} (${c.year})`).join("; ")}. Education: ${cv.education.map((e) => `${e.degree}, ${e.institution}, ${e.period}`).join("; ")}. Programming languages: ${cv.languages.join(", ")}. Technologies: ${cv.technologies.join(", ")}.`,
+    ),
   });
 
   for (const role of cv.roles) {
@@ -133,7 +135,9 @@ async function buildKnowledgeBase() {
       type: "cv",
       source: "CV",
       sourceUrl: "/cv",
-      text: `From Rameez's CV — ${role.title} at ${role.company} (${role.period}): ${role.highlights.join(" ")}`,
+      text: stripBoldMarkers(
+        `From Rameez's CV — ${role.title} at ${role.company} (${role.period}): ${role.highlights.join(" ")}`,
+      ),
     });
   }
 
