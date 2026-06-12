@@ -63,20 +63,16 @@ export default function Cv() {
       <script type="application/ld+json">{cvJsonLd()}</script>
 
       <header className="cv-header">
-        <div className="cv-header-top">
-          <div>
-            <h1 className="cv-name">{cv.name}</h1>
-            <p className="cv-headline">{cv.headline}</p>
-          </div>
-          <a
-            className="cv-action cv-action-primary"
-            href="/cv.pdf"
-            download="Rameez-Khan-CV.pdf"
-            onClick={() => posthog?.capture("cv_pdf_downloaded")}
-          >
-            ↓ Download PDF
-          </a>
-        </div>
+        <a
+          className="cv-action cv-action-primary cv-download"
+          href="/cv.pdf"
+          download="Rameez-Khan-CV.pdf"
+          onClick={() => posthog?.capture("cv_pdf_downloaded")}
+        >
+          ↓ Download PDF
+        </a>
+        <h1 className="cv-name">{cv.name}</h1>
+        <p className="cv-headline">{cv.headline}</p>
         <p className="cv-contact">
           <span>{cv.location}</span>
           <span className="cv-contact-sep" aria-hidden="true">·</span>
@@ -95,7 +91,17 @@ export default function Cv() {
           <div key={`${role.company}-${role.title}-${role.period}`} className="cv-role">
             <div className="cv-role-head">
               <h3 className="cv-role-title">
-                {role.title} <span className="cv-role-company">· {role.company}</span>
+                {role.title}{" "}
+                <span className="cv-role-company">
+                  ·{" "}
+                  {role.companyUrl ? (
+                    <a href={role.companyUrl} target="_blank" rel="noopener noreferrer">
+                      {role.company}
+                    </a>
+                  ) : (
+                    role.company
+                  )}
+                </span>
               </h3>
               <span className="cv-role-period">{role.period}</span>
             </div>

@@ -5,6 +5,7 @@
 export interface CvRole {
   title: string;
   company: string;
+  companyUrl?: string;
   period: string;
   highlights: string[];
 }
@@ -33,6 +34,7 @@ export const cv = {
     {
       title: "Senior Data Engineer",
       company: "RVU",
+      companyUrl: "https://www.rvu.co.uk",
       period: "Aug 2023 – Present",
       highlights: [
         "Leveraged **Argo Workflows** to orchestrate ETL processes, constructing **scalable data ingestion pipelines** that integrated diverse data sources into the data lake. Implemented ingestion from APIs, databases, and file systems, while utilising **Terraform** for infrastructure management.",
@@ -44,6 +46,7 @@ export const cv = {
     {
       title: "Data Engineer",
       company: "RVU",
+      companyUrl: "https://www.rvu.co.uk",
       period: "Aug 2021 – Jul 2023",
       highlights: [
         "Modularised data architecture by transforming RVU's monolithic **dbt** project into domain-specific dbt projects using **Great Expectations** and **Monte Carlo**, improving data contract reliability and monitoring efficiency.",
@@ -54,6 +57,7 @@ export const cv = {
     {
       title: "Data Engineer",
       company: "Mobkoi",
+      companyUrl: "https://www.mobkoi.com",
       period: "2020 – 2021",
       highlights: [
         "**Cut costs 10x** by using **serverless** architecture on Google Cloud to move log-level data from Google Cloud Storage to BigQuery, with monitoring and alerting.",
@@ -64,6 +68,7 @@ export const cv = {
     {
       title: "Data Analyst",
       company: "Mobkoi",
+      companyUrl: "https://www.mobkoi.com",
       period: "2018 – 2019",
       highlights: [
         "Optimised internal reporting, reducing report generation **from an hour to under 5 minutes** using **Python**, Jupyter Notebooks, and APIs, enabling deeper campaign analysis.",
@@ -73,6 +78,7 @@ export const cv = {
     {
       title: "Industrial Engineer",
       company: "Schneider Electric",
+      companyUrl: "https://www.se.com",
       period: "2015 – 2017",
       highlights: [
         "Enhanced productivity by developing a **real-time KPI monitoring system** and centralised database for the Leeds site.",
