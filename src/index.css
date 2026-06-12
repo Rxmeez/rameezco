@@ -3665,6 +3665,11 @@ span.node-chat-source-chip {
   font-size: 0.68rem;
 }
 
+@page {
+  size: A4;
+  margin: 10mm 13mm;
+}
+
 @media print {
   .header,
   .footer,
@@ -3692,28 +3697,37 @@ span.node-chat-source-chip {
   body {
     background: #ffffff;
     color: #111111;
-    font-size: 11px;
+    font-size: 10px;
   }
 
   .main-content {
     padding: 0;
   }
 
+  /* Compact single-page layout */
   .cv-page {
     max-width: 100%;
     padding: 0;
   }
 
+  .cv-header {
+    margin-bottom: 0.55rem;
+  }
+
   .cv-name {
-    font-size: 1.5rem;
+    font-size: 1.35rem;
+    margin-bottom: 0.1rem;
   }
 
-  .cv-section {
-    margin-bottom: 0.9rem;
+  .cv-headline {
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
   }
 
-  .cv-role {
-    margin-bottom: 0.7rem;
+  .cv-contact {
+    font-size: 0.68rem;
+    gap: 0.35rem;
+    margin-bottom: 0.4rem;
   }
 
   .cv-contact a {
@@ -3722,8 +3736,75 @@ span.node-chat-source-chip {
     color: #111111;
   }
 
+  .cv-summary {
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+
+  .cv-section {
+    margin-bottom: 0.55rem;
+  }
+
+  .cv-section-title {
+    font-size: 0.68rem;
+    padding-bottom: 0.15rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .cv-role {
+    margin-bottom: 0.45rem;
+  }
+
+  .cv-role-title {
+    font-size: 0.82rem;
+    margin-bottom: 0.1rem;
+  }
+
+  .cv-role-period {
+    font-size: 0.64rem;
+  }
+
+  .cv-role-highlights {
+    padding-left: 0.95rem;
+    margin-top: 0.05rem;
+  }
+
+  .cv-role-highlights li {
+    font-size: 0.74rem;
+    line-height: 1.38;
+    margin-bottom: 0.12rem;
+  }
+
+  .cv-flat-list li {
+    font-size: 0.76rem;
+    padding: 0.12rem 0;
+  }
+
+  /* Chips become a compact inline list — pills waste vertical space on paper */
+  .cv-tags {
+    display: block;
+    font-size: 0.74rem;
+    line-height: 1.5;
+  }
+
   .cv-tag {
-    border-color: #999999;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    font-size: inherit;
     color: #111111;
+  }
+
+  .cv-tag::after {
+    content: " · ";
+    color: #999999;
+  }
+
+  .cv-tag:last-child::after {
+    content: "";
+  }
+
+  .cv-tag-lang {
+    font-weight: 700;
   }
 }
