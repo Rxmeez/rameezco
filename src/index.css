@@ -1567,45 +1567,6 @@ a, .graph-btn, .theme-select-trigger {
   line-height: 1.4;
 }
 
-.node-guide-name-form {
-  display: flex;
-  gap: 0.35rem;
-  margin-top: 0.5rem;
-}
-
-.node-guide-name-input {
-  flex: 1;
-  min-width: 0;
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--fg);
-  background: var(--bg);
-  border: var(--border-width) solid var(--border);
-  border-radius: 4px;
-  padding: 0.3rem 0.45rem;
-}
-
-.node-guide-name-input:focus {
-  outline: none;
-  border-color: var(--accent);
-}
-
-.node-guide-name-submit {
-  font-family: var(--font-mono);
-  font-size: 0.8rem;
-  color: var(--accent);
-  background: var(--bg);
-  border: var(--border-width) solid var(--border);
-  border-radius: 4px;
-  padding: 0.3rem 0.55rem;
-  cursor: pointer;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-.node-guide-name-submit:hover {
-  border-color: var(--accent);
-}
-
 .node-guide-tail {
   position: absolute;
   bottom: -7px;

@@ -50,7 +50,7 @@ export default function CookiePolicy() {
             </tr>
             <tr>
               <td><strong>Node's memory</strong></td>
-              <td>Lets the site mascot greet returning visitors — remembers the name you give him (optional), your last visit, recently read posts, recent chat questions, and your game high score. Stored only in your browser, never sent anywhere, and erased if you switch to essentials only.</td>
+              <td>Lets the site mascot greet returning visitors — remembers your last visit, recently read posts, recent chat questions, and your game high score. Stored only in your browser, never sent anywhere, and erased if you switch to essentials only.</td>
               <td>LocalStorage, no expiry</td>
             </tr>
           </tbody>

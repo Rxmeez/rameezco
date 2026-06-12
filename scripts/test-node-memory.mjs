@@ -115,63 +115,7 @@ try {
   } else {
     fail(`unexpected first-visit greeting: ${hello}`);
   }
-
-  // --- Scenario 6: accept all → Node asks for a name → polite name stored ---
-  await p3.click(".cookie-btn-primary");
-  await p3.waitForSelector(".node-guide-name-input", { timeout: 5000 });
-  pass("name prompt appeared after accepting all cookies");
-  await p3.fill(".node-guide-name-input", "Rameez");
-  await p3.press(".node-guide-name-input", "Enter");
-  await p3.waitForFunction(
-    () => document.querySelector(".node-guide-text")?.textContent?.includes("Nice to meet you"),
-    { timeout: 5000 },
-  );
-  const niceReply = await p3.textContent(".node-guide-text");
-  pass(`polite name accepted: ${niceReply}`);
-  let mem3 = JSON.parse(await p3.evaluate(() => localStorage.getItem("node-memory")));
-  if (mem3.name === "Rameez" && mem3.nameAsked) {
-    pass("name stored in memory");
-  } else {
-    fail(`name not stored: ${JSON.stringify(mem3)}`);
-  }
-
-  // --- Scenario 7: returning greeting includes the name ---
-  await p3.evaluate(() => {
-    const m = JSON.parse(localStorage.getItem("node-memory"));
-    m.lastVisit = Date.now() - 86400000;
-    localStorage.setItem("node-memory", JSON.stringify(m));
-    sessionStorage.removeItem("node-waved");
-  });
-  await p3.goto(`http://localhost:${PORT}/`);
-  await p3.waitForSelector(".node-guide-text", { timeout: 5000 });
-  const named = await p3.textContent(".node-guide-text");
-  if (named.includes("Welcome back, Rameez!")) {
-    pass(`returning greeting uses name: ${named}`);
-  } else {
-    fail(`name missing from greeting: ${named}`);
-  }
   await ctx3.close();
-
-  // --- Scenario 8: rude name → techie nickname instead ---
-  const ctx4 = await browser.newContext();
-  const p4 = await ctx4.newPage();
-  await p4.goto(`http://localhost:${PORT}/`);
-  await p4.click(".cookie-btn-primary");
-  await p4.waitForSelector(".node-guide-name-input", { timeout: 5000 });
-  await p4.fill(".node-guide-name-input", "Sh1tHead");
-  await p4.press(".node-guide-name-input", "Enter");
-  await p4.waitForFunction(
-    () => document.querySelector(".node-guide-text")?.textContent?.includes("keep it friendly"),
-    { timeout: 5000 },
-  );
-  const rudeReply = await p4.textContent(".node-guide-text");
-  const mem4 = JSON.parse(await p4.evaluate(() => localStorage.getItem("node-memory")));
-  if (!/sh1t|shit/i.test(mem4.name)) {
-    pass(`rude name replaced with nickname "${mem4.name}": ${rudeReply}`);
-  } else {
-    fail(`rude name stored verbatim: ${mem4.name}`);
-  }
-  await ctx4.close();
 
   await browser.close();
 } finally {
