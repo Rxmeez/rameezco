@@ -1511,9 +1511,11 @@ a, .graph-btn, .theme-select-trigger {
 }
 
 /* ── Node Guide ── */
+/* Anchored to the middle of the right edge so the bubble never overlaps the
+   Ask Node chat button parked in the bottom-right corner */
 .node-guide {
   position: fixed;
-  bottom: 1.5rem;
+  top: 50%;
   right: 1.5rem;
   z-index: 900;
   display: flex;
@@ -1522,7 +1524,7 @@ a, .graph-btn, .theme-select-trigger {
   gap: 0.5rem;
   pointer-events: auto;
   opacity: 0;
-  transform: translateY(8px) scale(0.96);
+  transform: translateY(calc(-50% + 8px)) scale(0.96);
   transition: opacity 0.25s ease-out, transform 0.25s ease-out;
 }
 
@@ -1530,12 +1532,12 @@ a, .graph-btn, .theme-select-trigger {
 .node-guide-wave,
 .node-guide-celebrate {
   opacity: 1;
-  transform: translateY(0) scale(1);
+  transform: translateY(-50%) scale(1);
 }
 
 .node-guide-exit {
   opacity: 0;
-  transform: translateY(6px) scale(0.96);
+  transform: translateY(calc(-50% + 6px)) scale(0.96);
   transition: opacity 0.22s ease-in, transform 0.22s ease-in;
 }
 
@@ -1763,8 +1765,7 @@ a, .graph-btn, .theme-select-trigger {
 
 @media (max-width: 520px) {
   .node-guide {
-    bottom: 1rem;
-    right: 1rem;
+    right: 0.75rem;
   }
   .node-guide-bubble {
     max-width: 180px;
@@ -3683,6 +3684,7 @@ span.node-chat-source-chip {
   .scroll-progress,
   .selection-ask,
   .skip-link,
+  .cv-actions,
   .cv-print-hint {
     display: none !important;
   }
@@ -3831,4 +3833,44 @@ span.node-chat-source-chip {
 .cv-summary strong {
   font-weight: 680;
   color: var(--fg);
+}
+
+.cv-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.9rem;
+}
+
+.cv-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  padding: 0.4rem 0.85rem;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.cv-action-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+}
+
+.cv-action-primary:hover {
+  opacity: 0.85;
+}
+
+.cv-action-ghost {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--fg);
+}
+
+.cv-action-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }

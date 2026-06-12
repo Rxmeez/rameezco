@@ -41,14 +41,14 @@ export default function Cv() {
 
   useEffect(() => {
     posthog?.capture("cv_viewed");
-    const isMac = /Mac|iPhone|iPad/.test(navigator.userAgent);
+    // Touch devices have no ⌘P — point them at the Download button instead
+    const touch = window.matchMedia("(pointer: coarse)").matches;
+    const isMac = /Mac/.test(navigator.userAgent);
+    const tip = touch
+      ? "Tap “Download PDF” to keep a copy — or ask me anything about the CV!"
+      : `Tip: ${isMac ? "⌘P" : "Ctrl+P"} saves this as a PDF — or ask me anything about the CV!`;
     const t = setTimeout(() => {
-      triggerNodeGuide(
-        `Tip: ${isMac ? "⌘P" : "Ctrl+P"} saves this as a PDF — or ask me anything about the CV!`,
-        "default",
-        "wave",
-        7000,
-      );
+      triggerNodeGuide(tip, "default", "wave", 7000);
     }, 1500);
     return () => clearTimeout(t);
   }, [posthog]);
@@ -75,6 +75,26 @@ export default function Cv() {
           <a href={SITE.socials.github} target="_blank" rel="noopener noreferrer">github/Rxmeez</a>
         </p>
         <p className="cv-summary"><Bold text={cv.summary} /></p>
+        <div className="cv-actions">
+          <a
+            className="cv-action cv-action-primary"
+            href="/cv.pdf"
+            download="Rameez-Khan-CV.pdf"
+            onClick={() => posthog?.capture("cv_pdf_downloaded")}
+          >
+            ↓ Download PDF
+          </a>
+          <button
+            type="button"
+            className="cv-action cv-action-ghost"
+            onClick={() => {
+              posthog?.capture("cv_print_clicked");
+              window.print();
+            }}
+          >
+            ⎙ Print
+          </button>
+        </div>
       </header>
 
       <section className="cv-section">
