@@ -114,8 +114,9 @@ export default function NodeGuide() {
   }, [doHide]);
 
   useEffect(() => {
-    const waved = sessionStorage.getItem("node-waved");
-    if (waved) return;
+    // Greet at most once per day — refreshes and reopened tabs stay quiet
+    const today = new Date().toDateString();
+    if (localStorage.getItem("node-waved-day") === today) return;
     const t = setTimeout(() => {
       // Consent-gated memory first ("last time you were reading…"),
       // generic greeting otherwise
@@ -128,7 +129,7 @@ export default function NodeGuide() {
           ? "Welcome back! The graph missed you."
           : "Hey! I'm Node. Welcome!");
       triggerNodeGuide(greeting, "default", "wave", remembered ? 6500 : 4000);
-      sessionStorage.setItem("node-waved", "1");
+      localStorage.setItem("node-waved-day", today);
       localStorage.setItem("node-last-visit", String(Date.now()));
     }, 1200);
     return () => clearTimeout(t);

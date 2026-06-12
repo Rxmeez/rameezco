@@ -50,7 +50,7 @@ try {
     const m = JSON.parse(localStorage.getItem("node-memory"));
     m.lastVisit = Date.now() - 2 * 86400000; // 2 days ago
     localStorage.setItem("node-memory", JSON.stringify(m));
-    sessionStorage.removeItem("node-waved");
+    localStorage.removeItem("node-waved-day");
   });
   await p1.goto(`http://localhost:${PORT}/`);
   await p1.waitForSelector(".node-guide-text", { timeout: 5000 });
@@ -92,7 +92,7 @@ try {
     return true;
   });
   if (purged) {
-    await p2.evaluate(() => sessionStorage.removeItem("node-waved"));
+    await p2.evaluate(() => localStorage.removeItem("node-waved-day"));
     await p2.goto(`http://localhost:${PORT}/`);
     await p2.waitForSelector(".node-guide-text", { timeout: 5000 });
     const after = await p2.evaluate(() => localStorage.getItem("node-memory"));
@@ -115,6 +115,29 @@ try {
   } else {
     fail(`unexpected first-visit greeting: ${hello}`);
   }
+
+  // --- Scenario 6: refresh + reopened tab → no repeat greeting same day ---
+  await p3.reload();
+  await p3.waitForTimeout(2500); // past the 1.2s greeting delay
+  const onReload = await p3.evaluate(() => document.querySelector(".node-guide-text")?.textContent ?? null);
+  const p3b = await ctx3.newPage(); // fresh tab, same browser profile
+  await p3b.goto(`http://localhost:${PORT}/`);
+  await p3b.waitForTimeout(2500);
+  const onNewTab = await p3b.evaluate(() => document.querySelector(".node-guide-text")?.textContent ?? null);
+  if (onReload === null && onNewTab === null) {
+    pass("no repeat greeting on refresh or reopened tab (same day)");
+  } else {
+    fail(`greeting repeated — reload: ${onReload}, new tab: ${onNewTab}`);
+  }
+
+  // --- Scenario 7: next day → greets again ---
+  await p3b.evaluate(() => {
+    localStorage.setItem("node-waved-day", new Date(Date.now() - 86400000).toDateString());
+  });
+  await p3b.reload();
+  await p3b.waitForSelector(".node-guide-text", { timeout: 5000 });
+  const nextDay = await p3b.textContent(".node-guide-text");
+  pass(`greets again the next day: ${nextDay}`);
   await ctx3.close();
 
   await browser.close();
