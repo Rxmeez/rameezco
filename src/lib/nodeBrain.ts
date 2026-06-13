@@ -26,12 +26,16 @@ export async function searchNode(query: string): Promise<SearchResult[]> {
   return data.results ?? [];
 }
 
-// One cheeky line from Node about a Terminal Typist result (worker mode=taunt)
-export async function tauntNode(score: number, wpm: number): Promise<string | null> {
+// One cheeky line from Node about a game result (worker mode=taunt)
+export async function tauntNode(
+  score: number,
+  wpm: number,
+  game: "typist" | "walk" | "walk-shipped" = "typist",
+): Promise<string | null> {
   const response = await fetch(proxyUrlOrThrow(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ mode: "taunt", score, wpm }),
+    body: JSON.stringify({ mode: "taunt", score, wpm, game }),
   });
   if (!response.ok) return null;
   const data = (await response.json()) as { taunt?: string | null };

@@ -8,3 +8,4 @@ dist/
 .env
 /data/
 worker/knowledge-base.json
+.serena/

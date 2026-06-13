@@ -237,18 +237,39 @@ async function handleSearch(query: string, env: Env, kb: KnowledgeBase, origin: 
 }
 
 // mode=taunt: one cheeky line from Node about a Terminal Typist result.
-async function handleTaunt(score: number, wpm: number, env: Env, origin: string): Promise<Response> {
+type TauntGame = "typist" | "walk" | "walk-shipped";
+
+const TAUNT_STYLE =
+  "Reply with exactly ONE short, cheeky, good-natured line (max 15 words). No quotes around your reply, at most one emoji.";
+
+function tauntMessages(game: TauntGame, score: number, wpm: number) {
+  if (game === "walk" || game === "walk-shipped") {
+    return {
+      system: `You are Node, the playful round mascot of rameez.co. The visitor just played Walk to Prod, a QWOP-style ragdoll game where Node — who normally has no legs — must physically walk a deploy from localhost to production: 100m, past the ci flag at 20m and staging at 50m. Falling over means a rollback. Under 5m is hilarious, 20m+ is decent, 50m+ is impressive, and reaching prod is legendary. ${TAUNT_STYLE}`,
+      user:
+        game === "walk-shipped"
+          ? "I walked the full 100m and deployed to production!"
+          : `I made it ${score}m before faceplanting.`,
+    };
+  }
+  return {
+    system: `You are Node, the playful round mascot of rameez.co. The visitor just finished Terminal Typist, a typing game where words fall and Node lasers the ones they type. Tease gently if the score is low, act impressed if it's high (40+ words is good, 80+ is exceptional). ${TAUNT_STYLE}`,
+    user: `I destroyed ${score} words with a peak typing speed of ${wpm} wpm.`,
+  };
+}
+
+async function handleTaunt(
+  score: number,
+  wpm: number,
+  game: TauntGame,
+  env: Env,
+  origin: string,
+): Promise<Response> {
+  const prompt = tauntMessages(game, score, wpm);
   const upstream = await callLLM(
     [
-      {
-        role: "system",
-        content:
-          "You are Node, the playful round mascot of rameez.co. The visitor just finished Terminal Typist, a typing game where words fall and Node lasers the ones they type. Reply with exactly ONE short, cheeky, good-natured line (max 15 words) reacting to their result. Tease gently if the score is low, act impressed if it's high (40+ words is good, 80+ is exceptional). No quotes around your reply, at most one emoji.",
-      },
-      {
-        role: "user",
-        content: `I destroyed ${score} words with a peak typing speed of ${wpm} wpm.`,
-      },
+      { role: "system", content: prompt.system },
+      { role: "user", content: prompt.user },
     ],
     env,
     // Reasoning models may burn tokens "thinking" before any visible output,
@@ -297,6 +318,7 @@ export default {
       query?: string;
       score?: number;
       wpm?: number;
+      game?: string;
       history?: { role: "user" | "node"; text: string }[];
       pageContext?: { title: string; content: string; type: string } | null;
     };
@@ -324,7 +346,9 @@ export default {
       }
       const score = Math.min(Math.max(Number(body.score) || 0, 0), 9999);
       const wpm = Math.min(Math.max(Number(body.wpm) || 0, 0), 9999);
-      return handleTaunt(score, wpm, env, origin);
+      const game: TauntGame =
+        body.game === "walk" || body.game === "walk-shipped" ? body.game : "typist";
+      return handleTaunt(score, wpm, game, env, origin);
     }
 
     const { question, history, pageContext } = body;

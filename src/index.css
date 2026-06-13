@@ -3339,6 +3339,100 @@ span.node-chat-source-chip {
   color: var(--muted);
 }
 
+/* /play game tabs */
+.play-page {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.play-tabs {
+  display: flex;
+  gap: 0.4rem;
+  max-width: 860px;
+  margin: var(--spacing-md) auto 0;
+}
+
+.play-tab {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--muted);
+  background: transparent;
+  border: var(--border-width) solid var(--border);
+  border-bottom: none;
+  border-radius: 6px 6px 0 0;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  transition: color 0.15s ease, background 0.15s ease;
+}
+
+.play-tab:hover {
+  color: var(--fg);
+}
+
+.play-tab-active {
+  color: var(--accent);
+  background: var(--code-bg);
+}
+
+.play-tabs + * .typist-page,
+.play-page .typist-page {
+  padding-top: 0;
+}
+
+/* Walk to Prod */
+.walk-field {
+  position: relative;
+  height: 420px;
+  overflow: hidden;
+}
+
+.walk-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.walk-touch {
+  position: absolute;
+  inset: auto 0 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.walk-touch-btn {
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--fg);
+  background: color-mix(in srgb, var(--code-bg) 75%, transparent);
+  border: var(--border-width) solid var(--border);
+  padding: 0.9rem 0 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.1rem;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.walk-touch-btn small {
+  font-size: 0.6rem;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.walk-touch-held {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+@media (max-width: 520px) {
+  .walk-field {
+    height: 360px;
+  }
+}
+
 @media (max-width: 520px) {
   .typist-field {
     height: 340px;
