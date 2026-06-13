@@ -502,27 +502,36 @@ export default function WalkToProd() {
             </div>
           )}
 
-          {touch && phase === "playing" && (
-            <div className="walk-touch" aria-hidden="true">
-              {(["q", "w", "o", "p"] as const).map((k) => (
-                <button
-                  key={k}
-                  type="button"
-                  className={`walk-touch-btn${heldKeys.includes(k) ? " walk-touch-held" : ""}`}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    holdKey(k, true);
-                  }}
-                  onPointerUp={() => holdKey(k, false)}
-                  onPointerLeave={() => holdKey(k, false)}
-                >
-                  {k.toUpperCase()}
-                  <small>{k === "q" || k === "w" ? "hip" : "knee"}</small>
-                </button>
-              ))}
-            </div>
-          )}
         </div>
+
+        {touch && (
+          <div className="walk-pads" aria-hidden="true">
+            {([["q", "w"], ["o", "p"]] as const).map((group, gi) => (
+              <div className="walk-pad-group" key={gi}>
+                <span className="walk-pad-label">{gi === 0 ? "hips" : "knees"}</span>
+                <div className="walk-pad-row">
+                  {group.map((k) => (
+                    <button
+                      key={k}
+                      type="button"
+                      className={`walk-touch-btn${heldKeys.includes(k) ? " walk-touch-held" : ""}`}
+                      onPointerDown={(e) => {
+                        e.preventDefault();
+                        holdKey(k, true);
+                      }}
+                      onPointerUp={() => holdKey(k, false)}
+                      onPointerCancel={() => holdKey(k, false)}
+                      onPointerLeave={() => holdKey(k, false)}
+                      onContextMenu={(e) => e.preventDefault()}
+                    >
+                      {k.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="typist-prompt">
           <span className="typist-prompt-ps1">$</span>

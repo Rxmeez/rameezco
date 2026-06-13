@@ -86,6 +86,8 @@ export default function NodeGuide() {
 
   useEffect(() => {
     function handleShow(e: Event) {
+      // The games own the screen — never pop the mascot guide over /play
+      if (window.location.pathname.startsWith("/play")) return;
       const detail = (e as CustomEvent).detail as {
         message: string;
         variant: GuideState["variant"];
@@ -118,6 +120,9 @@ export default function NodeGuide() {
     const today = new Date().toDateString();
     if (localStorage.getItem("node-waved-day") === today) return;
     const t = setTimeout(() => {
+      // Skip the greeting on /play so it doesn't intrude on a game; the
+      // day-stamp stays unset, so Node greets on the next page instead.
+      if (window.location.pathname.startsWith("/play")) return;
       // Consent-gated memory first ("last time you were reading…"),
       // generic greeting otherwise
       const remembered = getReturningGreeting();

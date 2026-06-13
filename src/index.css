@@ -3392,44 +3392,65 @@ span.node-chat-source-chip {
   display: block;
 }
 
-.walk-touch {
-  position: absolute;
-  inset: auto 0 0 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+/* Touch controls: a dedicated strip below the canvas (never overlaying the
+   ragdoll), split into a left "hips" cluster and a right "knees" cluster so
+   each thumb owns two adjacent keys — the standard QWOP mobile ergonomic. */
+.walk-pads {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-top: var(--border-width) solid var(--border);
+  background: var(--code-bg);
+  touch-action: none;
 }
 
-.walk-touch-btn {
-  font-family: var(--font-mono);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--fg);
-  background: color-mix(in srgb, var(--code-bg) 75%, transparent);
-  border: var(--border-width) solid var(--border);
-  padding: 0.9rem 0 1rem;
+.walk-pad-group {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.1rem;
+  gap: 0.25rem;
+}
+
+.walk-pad-label {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.walk-pad-row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.walk-touch-btn {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--fg);
+  background: var(--bg);
+  border: var(--border-width) solid var(--border);
+  border-radius: 8px;
+  padding: 0.85rem 0;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
-}
-
-.walk-touch-btn small {
-  font-size: 0.6rem;
-  font-weight: 400;
-  color: var(--muted);
+  -webkit-tap-highlight-color: transparent;
 }
 
 .walk-touch-held {
   background: var(--accent-muted);
   color: var(--accent);
+  border-color: var(--accent);
 }
 
 @media (max-width: 520px) {
   .walk-field {
-    height: 360px;
+    height: 320px;
   }
 }
 
