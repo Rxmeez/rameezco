@@ -431,6 +431,25 @@ th {
   font-size: 1rem;
 }
 
+/* Nav separator (mobile: horizontal rule, desktop: vertical tick) */
+.nav-sep {
+  display: block;
+  width: 100%;
+  height: var(--border-width);
+  background: var(--border);
+  margin: var(--spacing-sm) 0;
+}
+
+/* Icon-only nav link (e.g. Graph) */
+.nav-link-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.nav-link-icon svg { flex-shrink: 0; }
+/* Show label text in mobile panel */
+.nav-icon-label { font-size: 1.25rem; }
+
 .footer {
   border-top: var(--border-width) solid var(--border);
   margin-top: var(--spacing-2xl);
@@ -2711,6 +2730,28 @@ pre:hover .code-copy-btn,
     width: auto;
     padding: 0.15rem 0.5rem;
     font-size: 0.85rem;
+  }
+  /* Desktop: separator becomes a vertical tick */
+  .nav-sep {
+    display: block;
+    width: var(--border-width);
+    height: 14px;
+    background: var(--border);
+    margin: 0;
+    opacity: 0.5;
+    align-self: center;
+  }
+  /* Desktop: icon-only — hide the text label */
+  .nav-icon-label {
+    display: none;
+  }
+  /* Desktop: icon link is a compact square */
+  .nav-link-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.35rem;
+    width: auto;
   }
   .footer-inner {
     padding: var(--spacing-lg) var(--spacing-md);
