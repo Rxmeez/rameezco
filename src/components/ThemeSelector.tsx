@@ -63,12 +63,15 @@ export default function ThemeSelector() {
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Select theme"
+        title="Theme"
         onClick={() => setOpen(!open)}
       >
-        <span className="theme-select-label">theme</span>
-        <span className="theme-select-chevron" aria-hidden="true">
-          {open ? "▲" : "▼"}
-        </span>
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <line x1="2" y1="4" x2="14" y2="4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <line x1="2" y1="12" x2="14" y2="12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          <circle cx="5" cy="4" r="2" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/>
+          <circle cx="11" cy="12" r="2" fill="var(--bg)" stroke="currentColor" strokeWidth="1.5"/>
+        </svg>
       </button>
       {open && (
         <div className="theme-select-dropdown">

@@ -20,6 +20,15 @@ function GraphIcon() {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+      <circle cx="6.5" cy="6.5" r="4" stroke="currentColor" strokeWidth="1.5"/>
+      <line x1="9.7" y1="9.7" x2="14" y2="14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 export default function Header({ onSearchClick }: HeaderProps) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -41,7 +50,7 @@ export default function Header({ onSearchClick }: HeaderProps) {
             aria-label="Search"
             title="Search"
           >
-            <span className="search-toggle-icon">&#8981;</span>
+            <SearchIcon />
           </button>
         )}
 
@@ -98,8 +107,8 @@ export default function Header({ onSearchClick }: HeaderProps) {
               aria-label="Search"
               title="Search (Ctrl+K)"
             >
-              <span className="search-trigger-icon">/</span>
-              <span className="search-trigger-text">Search</span>
+              <SearchIcon />
+              <span className="search-trigger-text nav-icon-label">Search</span>
             </button>
           )}
         </nav>
