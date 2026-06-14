@@ -2356,6 +2356,232 @@ pre:hover .code-copy-btn,
 }
 .medium-src-link:hover { background: var(--accent); color: var(--bg); }
 
+/* ── Writing & Notes — shared feed terminal chrome ── */
+.writing-page .feed-term { --feed-color: var(--writing-color); }
+.notes-page .feed-term { --feed-color: var(--notes-color); }
+
+.feed-head { margin-bottom: var(--spacing-lg); }
+.feed-title {
+  margin-bottom: var(--spacing-xs);
+  opacity: 0;
+  animation: fade-in 400ms 100ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.feed-term {
+  border: var(--border-width) solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  opacity: 0;
+  animation: fade-in 400ms 300ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.feed-term-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.3rem 1rem;
+  padding: 0.5rem 0.9rem;
+  background: var(--code-bg);
+  border-bottom: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.feed-term-id { opacity: 0.8; }
+.feed-term-count { color: var(--feed-color); font-variant-numeric: tabular-nums; }
+
+.feed-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  padding: 0.6rem 0.9rem;
+  border-bottom: var(--border-width) solid var(--border);
+  background: color-mix(in srgb, var(--feed-color) 4%, var(--bg));
+}
+.feed-filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  border: var(--border-width) solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  transition: background 150ms ease, color 150ms ease, border-color 150ms ease;
+}
+.feed-filter-btn:hover {
+  background: color-mix(in srgb, var(--feed-color) 15%, transparent);
+  color: var(--feed-color);
+  border-color: color-mix(in srgb, var(--feed-color) 50%, var(--border));
+}
+.feed-filter-btn.active {
+  background: var(--feed-color);
+  color: var(--bg);
+  border-color: var(--feed-color);
+}
+
+.feed-entries { list-style: none; margin: 0; padding: 0; }
+
+.feed-term-foot {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 0.9rem;
+  background: var(--code-bg);
+  border-top: var(--border-width) solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--muted);
+  overflow: hidden;
+}
+.feed-prompt { color: var(--feed-color); font-weight: 700; }
+.feed-term-cmd { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.feed-cursor {
+  width: 8px;
+  height: 1rem;
+  background: var(--feed-color);
+  flex-shrink: 0;
+  animation: now-blink 1.1s steps(1) infinite;
+}
+
+/* Writing — spacious git-log entries */
+.write-entry {
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-bottom: var(--border-width) solid var(--border);
+  opacity: 0;
+  transform: translateY(6px);
+  animation: now-row-in 420ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 80ms + 450ms);
+}
+.write-entry:last-child { border-bottom: none; }
+.write-entry:hover { background: color-mix(in srgb, var(--writing-color) 4%, transparent); }
+
+.write-entry-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+.write-meta-sep { opacity: 0.4; }
+.write-medium-badge {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--writing-color);
+  border: var(--border-width) solid color-mix(in srgb, var(--writing-color) 50%, var(--border));
+  padding: 0.05rem 0.35rem;
+}
+.write-medium-pub { color: var(--muted); font-size: 0.72rem; }
+
+.write-entry-title {
+  font-size: 1.05rem;
+  margin-bottom: 0.35rem;
+}
+.write-entry-title a {
+  border-bottom: none;
+  transition: color 150ms ease;
+}
+.write-entry-title a:hover {
+  background: var(--writing-color);
+  color: var(--bg);
+}
+
+.write-entry-excerpt {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.write-entry-tags { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+.write-tag {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  border: var(--border-width) solid var(--border);
+  padding: 0.05rem 0.35rem;
+  color: var(--muted);
+  transition: background 150ms ease, color 150ms ease;
+}
+.write-tag:hover { background: var(--writing-color); color: var(--bg); border-color: var(--writing-color); }
+
+/* Notes — compact log rows */
+.note-row {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.65rem var(--spacing-lg);
+  border-bottom: var(--border-width) solid var(--border);
+  opacity: 0;
+  transform: translateY(4px);
+  animation: now-row-in 380ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  animation-delay: calc(var(--i, 0) * 60ms + 450ms);
+  transition: background 150ms ease;
+}
+.note-row:last-child { border-bottom: none; }
+.note-row:hover { background: color-mix(in srgb, var(--notes-color) 5%, transparent); }
+
+.note-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--muted);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.note-row-sep { opacity: 0.4; }
+
+.note-row-arrow {
+  color: var(--notes-color);
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.note-row-title {
+  font-size: 0.92rem;
+  font-weight: 500;
+  margin: 0;
+  flex: 1;
+  min-width: 10rem;
+}
+.note-row-title a {
+  border-bottom: none;
+  transition: color 150ms ease;
+}
+.note-row-title a:hover { background: var(--notes-color); color: var(--bg); }
+
+.note-row-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-left: auto;
+}
+.note-tag {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  border: var(--border-width) solid var(--border);
+  padding: 0.05rem 0.3rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-title, .feed-term, .write-entry, .note-row {
+    animation: none; opacity: 1; transform: none;
+  }
+  .feed-cursor { animation: none; }
+}
+
 /* ── Responsive: large mobile / small tablet ── */
 @media (min-width: 520px) {
   .home-grid {

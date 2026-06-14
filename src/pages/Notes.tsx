@@ -19,9 +19,7 @@ export default function Notes() {
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     for (const note of sorted) {
-      for (const tag of note.tags) {
-        tagSet.add(tag);
-      }
+      for (const tag of note.tags) tagSet.add(tag);
     }
     return Array.from(tagSet).sort();
   }, [sorted]);
@@ -37,54 +35,78 @@ export default function Notes() {
         description="Quick thoughts, code snippets, learnings, and things too small for a full post."
         url={`${SITE.url}/notes`}
       />
-      <h1>/notes</h1>
-      <p className="page-subtitle">
-        Quick thoughts, code snippets, learnings, and things too small for a full post.
-      </p>
 
-      {allTags.length > 0 && (
-        <div className="tag-filter">
-          <button
-            type="button"
-            className={`tag-filter-btn ${activeTag === null ? "active" : ""}`}
-            onClick={() => setActiveTag(null)}
-          >
-            all
-          </button>
-          {allTags.map((tag) => (
+      <div className="feed-head">
+        <h1 className="feed-title">/notes</h1>
+      </div>
+
+      <div className="feed-term">
+        <div className="feed-term-bar">
+          <span className="feed-term-id">node@rameez.co — tail -f notes/feed.log</span>
+          <span className="feed-term-count">{sorted.length} entries</span>
+        </div>
+
+        {allTags.length > 0 && (
+          <div className="feed-filter-bar">
             <button
               type="button"
-              key={tag}
-              className={`tag-filter-btn ${activeTag === tag ? "active" : ""}`}
-              onClick={() => setActiveTag(tag)}
+              className={`feed-filter-btn ${activeTag === null ? "active" : ""}`}
+              onClick={() => setActiveTag(null)}
             >
-              {tag}
+              all
             </button>
+            {allTags.map((tag) => (
+              <button
+                type="button"
+                key={tag}
+                className={`feed-filter-btn ${activeTag === tag ? "active" : ""}`}
+                onClick={() => setActiveTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="feed-entries">
+          {filteredNotes.map((note, i) => (
+            <article
+              key={note.slug}
+              className="note-row"
+              style={{ "--i": i } as React.CSSProperties}
+            >
+              <div className="note-row-meta">
+                <time dateTime={note.date}>
+                  {new Date(note.date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "short",
+                    year: "numeric",
+                  })}
+                </time>
+                <span className="note-row-sep">·</span>
+                <span>{readingTimeMinutes(note.content)}m</span>
+              </div>
+              <span className="note-row-arrow" aria-hidden="true">›</span>
+              <h3 className="note-row-title">
+                <Link to={`/notes/${note.slug}`}>{note.title}</Link>
+              </h3>
+              <div className="note-row-tags">
+                {note.tags.map((tag) => (
+                  <span key={tag} className="note-tag">{tag}</span>
+                ))}
+              </div>
+            </article>
           ))}
         </div>
-      )}
 
-      <hr />
-
-      <div className="notes-list">
-        {filteredNotes.map((note, i) => (
-          <article key={note.slug} className="notes-item" style={{ "--i": i } as React.CSSProperties}>
-            <div className="notes-item-meta">
-              <time dateTime={note.date}>
-                {new Date(note.date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-              </time>
-              <span className="post-meta-read">{readingTimeMinutes(note.content)} min read</span>
-            </div>
-            <h3 className="notes-item-title">
-              <Link to={`/notes/${note.slug}`}>{note.title}</Link>
-            </h3>
-            <div className="notes-tags">
-              {note.tags.map((tag) => (
-                <span key={tag} className="notes-tag">{tag}</span>
-              ))}
-            </div>
-          </article>
-        ))}
+        <div className="feed-term-foot">
+          <span className="feed-prompt">$</span>
+          <span className="feed-term-cmd">
+            {filteredNotes.length} of {sorted.length} entries
+            {activeTag ? ` — filtered: ${activeTag}` : ""}
+          </span>
+          <span className="feed-cursor" aria-hidden="true" />
+        </div>
       </div>
     </div>
   );

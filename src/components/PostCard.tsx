@@ -17,19 +17,25 @@ interface MediumProps {
 export default function PostCard({ post, style }: Props) {
   const posthog = usePostHog();
   return (
-    <article className="post-card" style={style}>
-      <div className="post-meta">
-        {post.date}
-        <span className="post-meta-sep" />
-        <span className="post-meta-read">{readingTimeMinutes(post.content)} min read</span>
+    <article className="write-entry" style={style}>
+      <div className="write-entry-meta">
+        <span>{post.date}</span>
+        <span className="write-meta-sep">·</span>
+        <span>{readingTimeMinutes(post.content)} min read</span>
       </div>
-      <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`} viewTransition onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>{post.title}</Link>
+      <h3 className="write-entry-title">
+        <Link
+          to={`/writing/${post.slug}`}
+          viewTransition
+          onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}
+        >
+          {post.title}
+        </Link>
       </h3>
-      <p className="post-excerpt">{post.excerpt}</p>
-      <div className="post-card-tags">
+      <p className="write-entry-excerpt">{post.excerpt}</p>
+      <div className="write-entry-tags">
         {post.tags.map((tag) => (
-          <span key={tag} className="post-card-tag">{tag}</span>
+          <span key={tag} className="write-tag">{tag}</span>
         ))}
       </div>
     </article>
@@ -39,23 +45,33 @@ export default function PostCard({ post, style }: Props) {
 export function MediumCard({ post, style }: MediumProps) {
   const posthog = usePostHog();
   return (
-    <article className="post-card" style={style}>
-      <div className="post-meta">
-        {post.date}
-        <span className="post-meta-sep" />
-        <span className="post-meta-read">{readingTimeMinutes(post.content)} min read</span>
-        <span className="medium-badge">medium</span>
-        {post.publication && <span className="medium-pub">{post.publication}</span>}
+    <article className="write-entry" style={style}>
+      <div className="write-entry-meta">
+        <span>{post.date}</span>
+        <span className="write-meta-sep">·</span>
+        <span>{readingTimeMinutes(post.content)} min read</span>
+        <span className="write-meta-sep">·</span>
+        <span className="write-medium-badge">medium</span>
+        {post.publication && (
+          <>
+            <span className="write-meta-sep">·</span>
+            <span className="write-medium-pub">{post.publication}</span>
+          </>
+        )}
       </div>
-      <h3 className="post-title">
-        <Link to={`/writing/${post.slug}`} viewTransition onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}>
+      <h3 className="write-entry-title">
+        <Link
+          to={`/writing/${post.slug}`}
+          viewTransition
+          onClick={() => setTimeout(() => posthog?.capture("writing_post_clicked", { slug: post.slug, title: post.title, source: "writing_list" }), 0)}
+        >
           {post.title}
         </Link>
       </h3>
-      <p className="post-excerpt">{post.excerpt}</p>
-      <div className="post-card-tags">
+      <p className="write-entry-excerpt">{post.excerpt}</p>
+      <div className="write-entry-tags">
         {post.tags.map((tag) => (
-          <span key={tag} className="post-card-tag">{tag}</span>
+          <span key={tag} className="write-tag">{tag}</span>
         ))}
       </div>
     </article>

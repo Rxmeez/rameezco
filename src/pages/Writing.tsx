@@ -28,9 +28,7 @@ export default function Writing() {
   const allTags = useMemo(() => {
     const tagSet = new Set<string>();
     for (const entry of allEntries) {
-      for (const tag of entry.post.tags) {
-        tagSet.add(tag);
-      }
+      for (const tag of entry.post.tags) tagSet.add(tag);
     }
     return Array.from(tagSet).sort();
   }, [allEntries]);
@@ -46,43 +44,59 @@ export default function Writing() {
         description="Essays, articles, and deep dives on data engineering, tools, and whatever else I'm thinking about."
         url={`${SITE.url}/writing`}
       />
-      <h1>/writing</h1>
-      <p className="page-subtitle">
-        Essays, articles, and deep dives on data engineering, tools, and whatever else I'm thinking about.
-      </p>
 
-      {allTags.length > 0 && (
-        <div className="tag-filter">
-          <button
-            type="button"
-            className={`tag-filter-btn ${activeTag === null ? "active" : ""}`}
-            onClick={() => setActiveTag(null)}
-          >
-            all
-          </button>
-          {allTags.map((tag) => (
+      <div className="feed-head">
+        <h1 className="feed-title">/writing</h1>
+      </div>
+
+      <div className="feed-term">
+        <div className="feed-term-bar">
+          <span className="feed-term-id">node@rameez.co — git log writing/</span>
+          <span className="feed-term-count">{allEntries.length} posts</span>
+        </div>
+
+        {allTags.length > 0 && (
+          <div className="feed-filter-bar">
             <button
               type="button"
-              key={tag}
-              className={`tag-filter-btn ${activeTag === tag ? "active" : ""}`}
-              onClick={() => setActiveTag(tag)}
+              className={`feed-filter-btn ${activeTag === null ? "active" : ""}`}
+              onClick={() => setActiveTag(null)}
             >
-              {tag}
+              all
             </button>
-          ))}
+            {allTags.map((tag) => (
+              <button
+                type="button"
+                key={tag}
+                className={`feed-filter-btn ${activeTag === tag ? "active" : ""}`}
+                onClick={() => setActiveTag(tag)}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="feed-entries">
+          {filteredEntries.map((entry, i) => {
+            const style = { "--i": i } as React.CSSProperties;
+            return entry.kind === "post" ? (
+              <PostCard key={entry.post.slug} post={entry.post} style={style} />
+            ) : (
+              <MediumCard key={entry.post.slug} post={entry.post} style={style} />
+            );
+          })}
         </div>
-      )}
 
-      <hr />
-
-      {filteredEntries.map((entry, i) => {
-        const style = { "--i": i } as React.CSSProperties;
-        return entry.kind === "post" ? (
-          <PostCard key={entry.post.slug} post={entry.post} style={style} />
-        ) : (
-          <MediumCard key={entry.post.slug} post={entry.post} style={style} />
-        );
-      })}
+        <div className="feed-term-foot">
+          <span className="feed-prompt">$</span>
+          <span className="feed-term-cmd">
+            {filteredEntries.length} of {allEntries.length} posts
+            {activeTag ? ` — filtered: ${activeTag}` : ""}
+          </span>
+          <span className="feed-cursor" aria-hidden="true" />
+        </div>
+      </div>
     </div>
   );
 }
