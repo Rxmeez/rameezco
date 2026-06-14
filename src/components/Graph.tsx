@@ -556,19 +556,24 @@ export default function Graph({ data, compact, onNodeClick, onBgClick, highlight
   return (
     <div className="graph-wrapper">
       <div className="graph-toolbar">
-        <span className="graph-stats">
-          {data.nodes.length} node{data.nodes.length !== 1 ? "s" : ""} &middot;{" "}
-          {data.edges.length} link{data.edges.length !== 1 ? "s" : ""}
-        </span>
-        <span className="graph-hint">
-          <span className="legend-dot legend-dot-post" /> posts &middot;{" "}
-          <span className="legend-dot legend-dot-note" /> notes &middot;{" "}
-          <span className="legend-dot legend-dot-tag" /> tags &middot;{" "}
-          <span className="legend-dot legend-dot-project" /> projects
-        </span>
-        <button className="graph-btn" onClick={handleReset} type="button">
-          reset
-        </button>
+        <span className="graph-toolbar-id">node@rameez.co — graph --explore</span>
+        <div className="graph-toolbar-right">
+          <span className="graph-hint">
+            <span className="legend-dot legend-dot-post" /> posts
+            <span className="graph-hint-sep">·</span>
+            <span className="legend-dot legend-dot-note" /> notes
+            <span className="graph-hint-sep">·</span>
+            <span className="legend-dot legend-dot-tag" /> tags
+            <span className="graph-hint-sep">·</span>
+            <span className="legend-dot legend-dot-project" /> projects
+          </span>
+          <span className="graph-stats">
+            {data.nodes.length} nodes &middot; {data.edges.length} links
+          </span>
+          <button className="graph-btn" onClick={handleReset} type="button">
+            reset
+          </button>
+        </div>
       </div>
       <div
         ref={containerRef}

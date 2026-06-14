@@ -27,7 +27,6 @@ export default function WritingGraph() {
     setFilterId(null);
   }, []);
 
-  // Build subgraph: clicked node + level 1 connections
   const filteredGraph = useMemo(() => {
     if (!filterId) return graphData;
 
@@ -37,12 +36,10 @@ export default function WritingGraph() {
       if (e.to === filterId) connectedIds.add(e.from);
     }
 
-    const filteredNodes = graphData.nodes.filter((n) => connectedIds.has(n.id));
-    const filteredEdges = graphData.edges.filter(
-      (e) => connectedIds.has(e.from) && connectedIds.has(e.to),
-    );
-
-    return { nodes: filteredNodes, edges: filteredEdges };
+    return {
+      nodes: graphData.nodes.filter((n) => connectedIds.has(n.id)),
+      edges: graphData.edges.filter((e) => connectedIds.has(e.from) && connectedIds.has(e.to)),
+    };
   }, [filterId, graphData]);
 
   const filterNode = filterId ? nodeMap.get(filterId) : null;
@@ -77,12 +74,7 @@ export default function WritingGraph() {
         url={`${SITE.url}/graph`}
       />
       <div className="graph-page-header">
-        <h1>/graph</h1>
-        <p className="page-subtitle">
-          {filterNode
-            ? `Showing ${filteredGraph.nodes.length} node${filteredGraph.nodes.length !== 1 ? "s" : ""} connected to "${filterNode.label}".`
-            : `${graphData.nodes.length} nodes connected by ${graphData.edges.length} links. Click a node to explore.`}
-        </p>
+        <h1 className="graph-page-title">/graph</h1>
       </div>
 
       <Graph
@@ -95,7 +87,7 @@ export default function WritingGraph() {
 
       {filterNode && (
         <div className="filter-bar">
-          <span className="filter-label">Exploring:</span>
+          <span className="filter-label">exploring</span>
           <span className="filter-badge" style={{ borderColor: typeColor(filterNode.type) }}>
             <span className="filter-badge-dot" style={{ background: typeColor(filterNode.type) }} />
             {typeBadge(filterNode.type)} {filterNode.label}
@@ -107,15 +99,12 @@ export default function WritingGraph() {
       )}
 
       {filterNode && (
-        <>
-          <hr />
-          <section>
-            <h2 className="section-heading">
-              Connected
-              <span style={{ color: "var(--muted)", fontSize: "0.85rem", fontWeight: 400, marginLeft: "0.5rem" }}>
-                ({filteredGraph.nodes.length - 1})
-              </span>
-            </h2>
+        <div className="graph-page-header">
+          <div className="graph-connected">
+            <div className="graph-connected-head">
+              <span className="graph-connected-title">connections</span>
+              <span className="graph-connected-count">{filteredGraph.nodes.length - 1} linked</span>
+            </div>
             <ul className="post-index">
               {filteredGraph.nodes
                 .filter((n) => n.id !== filterId)
@@ -140,8 +129,8 @@ export default function WritingGraph() {
                   );
                 })}
             </ul>
-          </section>
-        </>
+          </div>
+        </div>
       )}
     </div>
   );
