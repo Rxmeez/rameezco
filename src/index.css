@@ -993,14 +993,6 @@ th {
   opacity: 0;
   animation: fade-in 400ms 100ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
-.now-intro {
-  color: var(--muted);
-  font-size: 1rem;
-  margin-top: var(--spacing-sm);
-  max-width: 52ch;
-  opacity: 0;
-  animation: fade-in 400ms 200ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-}
 
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 
@@ -1197,7 +1189,7 @@ th {
 @keyframes now-blink { 0%, 50% { opacity: 1; } 50.01%, 100% { opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .now-title, .now-intro, .now-term, .now-proc {
+  .now-title, .now-term, .now-proc {
     animation: none;
     opacity: 1;
     transform: none;

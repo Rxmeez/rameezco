@@ -102,13 +102,6 @@ export default function Now() {
 
       <div className="now-head">
         <h1 className="now-title">/now</h1>
-        <p className="now-intro">
-          A snapshot of what has my attention right now — inspired by{" "}
-          <a href="https://nownownow.com" target="_blank" rel="noopener noreferrer">
-            nownownow.com
-          </a>
-          .
-        </p>
       </div>
 
       <div className="now-term">
